@@ -1,0 +1,46 @@
+# =============================================================================
+# Querify Git Ignore
+# Protects secrets, build outputs, database state, and local editor settings
+# =============================================================================
+
+# Operating System & IDE Files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+*.iml
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Java & Maven Build Artifacts
+**/target/
+**/*.class
+**/*.jar
+**/*.war
+**/*.ear
+*.log
+.mvn/timing.properties
+
+# Node & Frontend Build Artifacts
+**/node_modules/
+**/dist/
+**/build/
+.npm
+*.tsbuildinfo
+.vite/
+
+# Environment Variables & Secret Keys (NEVER COMMIT SECRETS)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+application-local.properties
+
+# Database Data & Temp Dumps
+*.dump
+*.sqlite
+*.db
+*.zip
