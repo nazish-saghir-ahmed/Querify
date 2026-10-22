@@ -13,9 +13,9 @@
 ## 🌐 Live Vercel Deployment & Links
 
 - **GitHub Repository:** [https://github.com/nazish-saghir-ahmed/Querify](https://github.com/nazish-saghir-ahmed/Querify)
-- **1-Click Deploy on Vercel:** Click the **Deploy with Vercel** button above or import `nazish-saghir-ahmed/Querify` with Root Directory `frontend`.
-- **Live Frontend App:** [https://querify-frontend.vercel.app](https://querify-frontend.vercel.app) *(or your customized Vercel domain)*
-- **Full Cloud Deployment Guide:** See [docs/deployment-guide.md](docs/deployment-guide.md) for Vercel + Render step-by-step setup.
+- **1-Click Deploy on Vercel:** [Deploy with Vercel](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fnazish-saghir-ahmed%2FQuerify&root-directory=frontend) &mdash; Click to instantly build and deploy your live URL.
+- **Vercel Project Dashboard:** [vercel.com/dashboard](https://vercel.com/dashboard) &mdash; View your deployed live domain.
+- **Full Cloud Deployment Guide:** See [docs/deployment-guide.md](docs/deployment-guide.md) for step-by-step instructions.
 
 ---
 

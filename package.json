@@ -1,0 +1,10 @@
+{
+  "name": "querify",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Querify - AI-powered Text-to-SQL Clarification Engine",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "dev": "cd frontend && npm run dev"
+  }
+}
