@@ -84,16 +84,25 @@ export default function Footer({ setActiveTab }) {
             <div className="space-y-3 text-xs font-sans">
               <div className="space-y-1">
                 <div className="text-white font-semibold">Nazish Saghir</div>
-                <a
-                  href="https://github.com/nazish-saghir-ahmed/Querify"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-blue-300 hover:text-white transition-colors"
-                >
-                  <Github className="w-3.5 h-3.5" />
-                  <span>GitHub</span>
-                  <ArrowUpRight className="w-3 h-3" />
-                </a>
+                <div className="flex flex-col gap-1 text-blue-300">
+                  <a
+                    href="mailto:saghirahmed0@gmail.com"
+                    className="inline-flex items-center gap-1 hover:text-white transition-colors"
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    <span>saghirahmed0@gmail.com</span>
+                  </a>
+                  <a
+                    href="https://github.com/nazish-saghir-ahmed/Querify"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 hover:text-white transition-colors"
+                  >
+                    <Github className="w-3.5 h-3.5" />
+                    <span>GitHub: Querify</span>
+                    <ArrowUpRight className="w-3 h-3" />
+                  </a>
+                </div>
               </div>
 
               <div className="space-y-1 pt-1 border-t border-blue-900/30">

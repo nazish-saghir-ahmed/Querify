@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import FixedHeroBackground from './components/FixedHeroBackground';
+import CursorFlow from './components/CursorFlow';
 import LandingPage from './pages/LandingPage';
 import WorkspacePage from './pages/WorkspacePage';
 import ExplorerPage from './pages/ExplorerPage';
@@ -39,11 +40,14 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-[#0B0F17] text-[#F8FAFC]">
+    <div className="relative min-h-screen flex flex-col bg-[#080D1A] text-white">
       {/* 1. Subtle Stationary Background Layer */}
       <FixedHeroBackground />
 
-      {/* 2. Sticky Top Navigation */}
+      {/* 2. Fluid Cursor Flow Effect */}
+      <CursorFlow />
+
+      {/* 3. Sticky Top Navigation */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
