@@ -9,18 +9,24 @@
   }
 
   body {
-    background-color: #0B0F17;
-    color: #F8FAFC;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #080D1A;
+    color: #FFFFFF;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
   }
 
-  /* Accessible focus indicators */
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    letter-spacing: -0.025em;
+  }
+
+  /* Accessible midnight blue focus indicators */
   :focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px #0B0F17, 0 0 0 4px #3B82F6;
+    box-shadow: 0 0 0 2px #080D1A, 0 0 0 4px #2563EB;
   }
 
   /* Custom subtle scrollbar */
@@ -29,62 +35,71 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #0B0F17;
+    background: #080D1A;
   }
   ::-webkit-scrollbar-thumb {
-    background: #1F2E47;
+    background: #1B2C55;
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #334B73;
+    background: #2563EB;
   }
 }
 
-/* Card & Surface Tokens */
+/* Card & Surface Tokens (Midnight Blue & Transparent Glass) */
 .querify-card {
-  background-color: #111827;
-  border: 1px solid #1F2E47;
+  background-color: rgba(13, 23, 46, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid #1B2C55;
   border-radius: 1rem;
   transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 .querify-card-elevated {
-  background-color: #162238;
-  border: 1px solid #253856;
+  background-color: rgba(18, 32, 66, 0.75);
+  backdrop-filter: blur(16px);
+  border: 1px solid #233A6F;
   border-radius: 1rem;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 30px -5px rgba(2, 6, 23, 0.7);
 }
 
 .querify-card:hover {
-  border-color: #2E4366;
+  border-color: #2563EB;
 }
 
-/* Technical Subtle Dot/Grid Background */
+/* Technical Subtle Dot/Grid Background in Midnight Blue */
 .bg-subtle-grid {
   background-size: 28px 28px;
   background-image: 
-    linear-gradient(to right, rgba(31, 46, 71, 0.35) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(31, 46, 71, 0.35) 1px, transparent 1px);
+    linear-gradient(to right, rgba(27, 44, 85, 0.4) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(27, 44, 85, 0.4) 1px, transparent 1px);
 }
 
-/* SQL Syntax highlighting tokens */
+/* SQL Syntax highlighting tokens (Strict Midnight Blue & Crisp White) */
 .sql-keyword {
   color: #60A5FA;
+  font-weight: 700;
+}
+
+.sql-function {
+  color: #93C5FD;
   font-weight: 600;
 }
-.sql-table {
-  color: #34D399;
-}
-.sql-column {
-  color: #F8FAFC;
-}
-.sql-number {
-  color: #FBBF24;
-}
+
 .sql-string {
-  color: #F472B6;
+  color: #FFFFFF;
 }
+
+.sql-number {
+  color: #BFDBFE;
+  font-weight: 500;
+}
+
 .sql-comment {
   color: #64748B;
   font-style: italic;
+}
+
+.sql-operator {
+  color: #93C5FD;
 }

@@ -5,10 +5,10 @@ import {
 } from 'recharts';
 import { BarChart3, LineChart as LineIcon, PieChart as PieIcon } from 'lucide-react';
 
-// Cohesive palette aligned with brand tokens
+// Strict Midnight Blue & Pure White / Light Sky monochromatic palette
 const CHART_COLORS = [
-  '#3B82F6', '#60A5FA', '#10B981', '#F59E0B', '#8B5CF6',
-  '#EC4899', '#06B6D4', '#14B8A6', '#F97316', '#6366F1'
+  '#1D4ED8', '#2563EB', '#3B82F6', '#60A5FA', '#93C5FD',
+  '#BFDBFE', '#1E40AF', '#1E3A8A', '#38BDF8', '#DBEAFE'
 ];
 
 export default function ResultChart({ data, suggestion }) {
@@ -59,10 +59,10 @@ export default function ResultChart({ data, suggestion }) {
         : dataItem.value.toLocaleString();
 
       return (
-        <div className="bg-[#111827] border border-[#1F2E47] p-3 rounded-xl shadow-xl text-xs font-sans">
-          <p className="font-semibold text-white mb-1 font-mono">{label || dataItem.name}</p>
-          <p className="text-slate-400 font-mono">
-            {yKey.replace(/_/g, ' ')}: <span className="font-bold text-blue-400">{formattedVal}</span>
+        <div className="bg-[#080D1A] border border-blue-600/40 p-3 rounded-xl shadow-2xl text-xs font-sans">
+          <p className="font-bold text-white mb-1 font-mono">{label || dataItem.name}</p>
+          <p className="text-blue-200/80 font-mono">
+            {yKey.replace(/_/g, ' ')}: <span className="font-bold text-white">{formattedVal}</span>
           </p>
         </div>
       );
@@ -71,26 +71,26 @@ export default function ResultChart({ data, suggestion }) {
   };
 
   return (
-    <div className="w-full rounded-2xl bg-[#111827] border border-[#1F2E47] p-5 shadow-card">
+    <div className="w-full rounded-2xl bg-blue-950/20 border border-blue-800/40 p-5 shadow-midnight backdrop-blur-xl">
       {/* Chart Header & Type Switcher (Bar / Line / Pie) */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h4 className="text-sm font-semibold text-white font-mono">
+          <h4 className="text-sm font-display font-bold text-white tracking-wide">
             {suggestion?.title || `${yKey.replace(/_/g, ' ')} by ${xKey.replace(/_/g, ' ')}`}
           </h4>
-          <p className="text-xs text-slate-400 mt-0.5 font-sans">
+          <p className="text-xs text-blue-200/70 mt-0.5 font-sans">
             Visual distribution generated from {rows.length} verified records
           </p>
         </div>
 
         {/* Bar / Line / Pie Toggle Controls */}
-        <div className="flex items-center gap-1 bg-[#0B0F17] p-1 rounded-xl border border-[#1F2E47]">
+        <div className="flex items-center gap-1 bg-blue-950/60 p-1 rounded-xl border border-blue-900/60">
           <button
             onClick={() => setChartType('bar')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
               chartType === 'bar'
-                ? 'bg-blue-600 text-white font-semibold shadow-sm'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-blue-300 hover:text-white'
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5" />
@@ -98,10 +98,10 @@ export default function ResultChart({ data, suggestion }) {
           </button>
           <button
             onClick={() => setChartType('line')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
               chartType === 'line'
-                ? 'bg-blue-600 text-white font-semibold shadow-sm'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-blue-300 hover:text-white'
             }`}
           >
             <LineIcon className="w-3.5 h-3.5" />
@@ -109,10 +109,10 @@ export default function ResultChart({ data, suggestion }) {
           </button>
           <button
             onClick={() => setChartType('pie')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
               chartType === 'pie'
-                ? 'bg-blue-600 text-white font-semibold shadow-sm'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-blue-300 hover:text-white'
             }`}
           >
             <PieIcon className="w-3.5 h-3.5" />
@@ -126,23 +126,23 @@ export default function ResultChart({ data, suggestion }) {
         <ResponsiveContainer width="100%" height="100%">
           {chartType === 'bar' ? (
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 25 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1F2E47" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#16294D" vertical={false} />
               <XAxis
                 dataKey="name"
-                stroke="#64748B"
+                stroke="#93C5FD"
                 fontSize={11}
                 tickLine={false}
-                axisLine={{ stroke: '#1F2E47' }}
+                axisLine={{ stroke: '#1B2C55' }}
                 interval={0}
                 angle={-20}
                 textAnchor="end"
                 height={45}
               />
               <YAxis
-                stroke="#64748B"
+                stroke="#93C5FD"
                 fontSize={11}
                 tickLine={false}
-                axisLine={{ stroke: '#1F2E47' }}
+                axisLine={{ stroke: '#1B2C55' }}
                 tickFormatter={(v) =>
                   isPercentage
                     ? `${v}%`
@@ -163,23 +163,23 @@ export default function ResultChart({ data, suggestion }) {
             </BarChart>
           ) : chartType === 'line' ? (
             <LineChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 25 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1F2E47" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#16294D" vertical={false} />
               <XAxis
                 dataKey="name"
-                stroke="#64748B"
+                stroke="#93C5FD"
                 fontSize={11}
                 tickLine={false}
-                axisLine={{ stroke: '#1F2E47' }}
+                axisLine={{ stroke: '#1B2C55' }}
                 interval={0}
                 angle={-20}
                 textAnchor="end"
                 height={45}
               />
               <YAxis
-                stroke="#64748B"
+                stroke="#93C5FD"
                 fontSize={11}
                 tickLine={false}
-                axisLine={{ stroke: '#1F2E47' }}
+                axisLine={{ stroke: '#1B2C55' }}
                 tickFormatter={(v) =>
                   isPercentage
                     ? `${v}%`
@@ -194,8 +194,8 @@ export default function ResultChart({ data, suggestion }) {
                 dataKey="value"
                 stroke="#3B82F6"
                 strokeWidth={3}
-                dot={{ fill: '#3B82F6', stroke: '#111827', strokeWidth: 2, r: 4 }}
-                activeDot={{ r: 6, fill: '#60A5FA' }}
+                dot={{ fill: '#2563EB', stroke: '#FFFFFF', strokeWidth: 2, r: 4 }}
+                activeDot={{ r: 6, fill: '#FFFFFF' }}
               />
             </LineChart>
           ) : (
@@ -204,7 +204,7 @@ export default function ResultChart({ data, suggestion }) {
               <Legend
                 verticalAlign="bottom"
                 height={36}
-                formatter={(val) => <span className="text-xs text-slate-300 font-sans">{val}</span>}
+                formatter={(val) => <span className="text-xs text-white font-sans">{val}</span>}
               />
               <Pie
                 data={chartData}
@@ -220,7 +220,7 @@ export default function ResultChart({ data, suggestion }) {
                   <Cell
                     key={`pie-cell-${index}`}
                     fill={CHART_COLORS[index % CHART_COLORS.length]}
-                    stroke="#111827"
+                    stroke="#080D1A"
                     strokeWidth={2}
                   />
                 ))}

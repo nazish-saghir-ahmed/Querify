@@ -184,9 +184,9 @@ export default function ExplorerPage() {
                         className="flex items-center justify-between text-xs py-1 px-2 rounded bg-[#0B0F17] border border-[#1F2E47]/50 font-mono"
                       >
                         <div className="flex items-center gap-1.5 truncate">
-                          {col.primaryKey && <Key className="w-3 h-3 text-amber-400 shrink-0" />}
+                          {col.primaryKey && <Key className="w-3 h-3 text-white shrink-0" />}
                           {col.foreignKey && <Link2 className="w-3 h-3 text-blue-400 shrink-0" />}
-                          <span className={col.primaryKey ? 'text-amber-300 font-semibold truncate' : 'text-slate-300 truncate'}>
+                          <span className={col.primaryKey ? 'text-white font-bold truncate' : 'text-blue-100 truncate'}>
                             {col.name}
                           </span>
                         </div>

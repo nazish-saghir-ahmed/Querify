@@ -11,9 +11,9 @@ export default function ResultTable({ data, title = 'Query Results' }) {
 
   if (!data || !data.columns || data.columns.length === 0) {
     return (
-      <div className="p-8 text-center bg-[#111827] border border-[#1F2E47] rounded-2xl text-slate-400">
-        <p className="font-mono text-sm text-slate-300">No records returned for this query.</p>
-        <p className="text-xs text-slate-500 mt-1">Try refining your question or selecting another sample.</p>
+      <div className="p-8 text-center bg-blue-950/20 border border-blue-900/40 rounded-2xl text-blue-200/70">
+        <p className="font-mono text-sm text-white">No records returned for this query.</p>
+        <p className="text-xs text-blue-300/60 mt-1">Try refining your question or selecting another sample.</p>
       </div>
     );
   }
@@ -40,9 +40,9 @@ export default function ResultTable({ data, title = 'Query Results' }) {
     return null;
   };
 
-  // Format cell values based on column type
+  // Format cell values based on column type (Midnight Blue & White Only)
   const formatCellValue = (val, col) => {
-    if (val === null || val === undefined) return <span className="text-slate-600">—</span>;
+    if (val === null || val === undefined) return <span className="text-blue-900 font-mono">—</span>;
 
     const lower = col.toLowerCase();
     const num = typeof val === 'number' ? val : parseFloat(val);
@@ -51,7 +51,7 @@ export default function ResultTable({ data, title = 'Query Results' }) {
     if (/percent|growth|rate|roi|share/i.test(lower) && !isNaN(num)) {
       const isPositive = num > 0;
       return (
-        <span className={`font-mono text-xs font-medium ${isPositive ? 'text-emerald-400' : num < 0 ? 'text-rose-400' : 'text-slate-300'}`}>
+        <span className="font-mono text-xs font-bold text-white px-2 py-0.5 rounded bg-blue-600/20 border border-blue-500/30">
           {isPositive ? `+${num.toFixed(1)}%` : `${num.toFixed(1)}%`}
         </span>
       );
@@ -61,7 +61,7 @@ export default function ResultTable({ data, title = 'Query Results' }) {
     if (/revenue|profit|cost|budget|amount|investment/i.test(lower) && !isNaN(num)) {
       const formatted = Math.abs(num).toLocaleString(undefined, { maximumFractionDigits: 1 });
       return (
-        <span className={`font-mono text-xs font-medium ${num < 0 ? 'text-rose-400' : 'text-slate-200'}`}>
+        <span className="font-mono text-xs font-bold text-white">
           {num < 0 ? `-$${formatted}M` : `$${formatted}M`}
         </span>
       );
@@ -70,7 +70,7 @@ export default function ResultTable({ data, title = 'Query Results' }) {
     // Benchmark evaluation score or parameters
     if (/score|performance_index|parameter/i.test(lower) && !isNaN(num)) {
       return (
-        <span className="font-mono text-xs font-semibold text-blue-400">
+        <span className="font-mono text-xs font-bold text-blue-300">
           {num.toLocaleString(undefined, { maximumFractionDigits: 1 })}
         </span>
       );
@@ -78,10 +78,10 @@ export default function ResultTable({ data, title = 'Query Results' }) {
 
     // Numbers in general
     if (typeof val === 'number') {
-      return <span className="font-mono text-xs text-slate-300">{val.toLocaleString()}</span>;
+      return <span className="font-mono text-xs text-white">{val.toLocaleString()}</span>;
     }
 
-    return <span className="text-xs text-slate-300 font-sans">{String(val)}</span>;
+    return <span className="text-xs text-blue-100 font-sans font-medium">{String(val)}</span>;
   };
 
   // Filter rows based on search term
@@ -158,20 +158,20 @@ export default function ResultTable({ data, title = 'Query Results' }) {
   };
 
   return (
-    <div className="w-full rounded-2xl bg-[#111827] border border-[#1F2E47] overflow-hidden shadow-card">
+    <div className="w-full rounded-2xl bg-blue-950/20 border border-blue-800/40 backdrop-blur-xl overflow-hidden shadow-midnight">
       {/* Table Header Controls */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 bg-[#162238] border-b border-[#1F2E47]">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 bg-blue-950/40 border-b border-blue-900/40">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-sm text-white font-sans">{title}</span>
-            <span className="flex items-center gap-1 text-[11px] font-mono text-slate-400 bg-[#0B0F17] px-2 py-0.5 rounded border border-[#1F2E47]">
-              <Hash className="w-3 h-3 text-slate-500" />
+            <span className="font-display font-bold text-sm text-white">{title}</span>
+            <span className="flex items-center gap-1 text-[11px] font-mono text-blue-200 bg-blue-950/60 px-2.5 py-0.5 rounded-full border border-blue-800/40">
+              <Hash className="w-3 h-3 text-blue-400" />
               <span>{rowCount ?? rows.length} rows</span>
             </span>
           </div>
 
           {executionTimeMs !== undefined && (
-            <span className="flex items-center gap-1 text-[11px] font-mono text-slate-400 bg-[#0B0F17] px-2 py-0.5 rounded border border-[#1F2E47]">
+            <span className="flex items-center gap-1 text-[11px] font-mono text-blue-200 bg-blue-950/60 px-2.5 py-0.5 rounded-full border border-blue-800/40">
               <Clock className="w-3 h-3 text-blue-400" />
               <span>{executionTimeMs} ms</span>
             </span>
@@ -181,30 +181,30 @@ export default function ResultTable({ data, title = 'Query Results' }) {
         <div className="flex items-center gap-2">
           {/* Quick Filter Search */}
           <div className="relative flex-1 sm:w-48">
-            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-blue-300 absolute left-2.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
               placeholder="Search results..."
-              className="w-full pl-8 pr-3 py-1 bg-[#0B0F17] border border-[#1F2E47] rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+              className="w-full pl-8 pr-3 py-1.5 bg-blue-950/50 border border-blue-800/50 rounded-xl text-xs text-white placeholder-blue-300/60 focus:outline-none focus:border-blue-500"
             />
           </div>
 
           {/* CSV Export */}
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-[#0B0F17] hover:bg-[#1A2438] border border-[#1F2E47] transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-white bg-blue-950/60 hover:bg-blue-900/40 border border-blue-800/50 transition-colors"
             title="Export filtered records to CSV"
           >
             {exportSuccess ? (
               <>
-                <Check className="w-3.5 h-3.5 text-emerald-400" />
-                <span className="text-emerald-400">Exported</span>
+                <Check className="w-3.5 h-3.5 text-white" />
+                <span>Exported</span>
               </>
             ) : (
               <>
-                <Download className="w-3.5 h-3.5 text-slate-400" />
+                <Download className="w-3.5 h-3.5 text-blue-300" />
                 <span>Export CSV</span>
               </>
             )}
@@ -216,7 +216,7 @@ export default function ResultTable({ data, title = 'Query Results' }) {
       <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
         <table className="w-full text-left border-collapse">
           {/* Sticky Header */}
-          <thead className="sticky top-0 z-10 bg-[#162238] border-b border-[#1F2E47]">
+          <thead className="sticky top-0 z-10 bg-blue-950/90 backdrop-blur-md border-b border-blue-900/50">
             <tr>
               {columns.map((col) => {
                 const isSorted = sortCol === col;
@@ -224,13 +224,13 @@ export default function ResultTable({ data, title = 'Query Results' }) {
                   <th
                     key={col}
                     onClick={() => handleSort(col)}
-                    className="px-4 py-3 text-[11px] font-mono font-semibold uppercase tracking-wider text-slate-300 cursor-pointer select-none hover:text-white hover:bg-white/[0.03] transition-colors"
+                    className="px-4 py-3.5 text-[11px] font-mono font-bold uppercase tracking-wider text-blue-200 cursor-pointer select-none hover:text-white hover:bg-blue-900/30 transition-colors"
                   >
                     <div className="flex items-center gap-1.5">
                       <span>{col.replace(/_/g, ' ')}</span>
-                      <span className="text-slate-500">
+                      <span className="text-blue-400">
                         {isSorted ? (
-                          sortAsc ? <ChevronUp className="w-3.5 h-3.5 text-blue-400" /> : <ChevronDown className="w-3.5 h-3.5 text-blue-400" />
+                          sortAsc ? <ChevronUp className="w-3.5 h-3.5 text-white" /> : <ChevronDown className="w-3.5 h-3.5 text-white" />
                         ) : (
                           <span className="opacity-0 hover:opacity-50">•</span>
                         )}
@@ -243,10 +243,10 @@ export default function ResultTable({ data, title = 'Query Results' }) {
           </thead>
 
           {/* Zebra Striped Rows */}
-          <tbody className="divide-y divide-[#1F2E47]">
+          <tbody className="divide-y divide-blue-900/30">
             {paginatedRows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="px-4 py-8 text-center text-xs text-slate-500 font-mono">
+                <td colSpan={columns.length} className="px-4 py-8 text-center text-xs text-blue-300 font-mono">
                   No records match your search filter.
                 </td>
               </tr>
@@ -255,7 +255,7 @@ export default function ResultTable({ data, title = 'Query Results' }) {
                 return (
                   <tr
                     key={rIdx}
-                    className="transition-colors hover:bg-white/[0.03] odd:bg-[#111827] even:bg-[#0E1523]"
+                    className="transition-colors hover:bg-blue-900/20 odd:bg-transparent even:bg-blue-950/20"
                   >
                     {columns.map((col) => {
                       const val = getRowValue(row, col);
@@ -275,22 +275,22 @@ export default function ResultTable({ data, title = 'Query Results' }) {
 
       {/* Pagination Footer */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-4 py-2.5 bg-[#162238] border-t border-[#1F2E47] text-xs font-mono text-slate-400">
+        <div className="flex items-center justify-between px-4 py-3 bg-blue-950/40 border-t border-blue-900/40 text-xs font-mono text-blue-200">
           <span>
             Page {page} of {totalPages} ({sortedRows.length} total)
           </span>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             <button
-              onClick={() => setPage((p) => Math.max(p - 1, 1))}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-2.5 py-1 rounded bg-[#0B0F17] border border-[#1F2E47] disabled:opacity-40 hover:text-white"
+              className="px-3 py-1 rounded-lg bg-blue-950 border border-blue-800 disabled:opacity-40 text-white hover:bg-blue-900 transition-colors"
             >
               Previous
             </button>
             <button
-              onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-2.5 py-1 rounded bg-[#0B0F17] border border-[#1F2E47] disabled:opacity-40 hover:text-white"
+              className="px-3 py-1 rounded-lg bg-blue-950 border border-blue-800 disabled:opacity-40 text-white hover:bg-blue-900 transition-colors"
             >
               Next
             </button>

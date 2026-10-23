@@ -10,10 +10,10 @@ export default function Navbar({ activeTab, setActiveTab, health }) {
     { id: 'workspace', label: 'Query Console', icon: Terminal },
     { id: 'explorer', label: 'DB Explorer', icon: Database },
     { id: 'history', label: 'Audit Trail', icon: History },
-    { id: 'about', label: 'Architecture', icon: Info },
+    { id: 'about', label: 'Architecture Guide', icon: Info },
   ];
 
-  // Determine system mode: "Demo Mode" or "Live Gemini"
+  // Determine system mode: "Demo Mode" or "Live Gemini" in strict Midnight Blue & White
   const getSystemStatus = () => {
     const isLive = Boolean(health?.databaseConnected && health?.aiMode !== 'demo');
     const provider = (health?.aiProvider || '').toLowerCase();
@@ -21,30 +21,30 @@ export default function Navbar({ activeTab, setActiveTab, health }) {
     if (isLive && provider.includes('gemini')) {
       return {
         label: 'Live Gemini',
-        dotColor: 'bg-emerald-400',
-        badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+        dotColor: 'bg-white',
+        badgeColor: 'bg-blue-600 text-white border-blue-500 shadow-midnight',
       };
     }
 
     if (isLive) {
       return {
         label: 'Live Engine',
-        dotColor: 'bg-emerald-400',
-        badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
+        dotColor: 'bg-white',
+        badgeColor: 'bg-blue-600 text-white border-blue-500 shadow-midnight',
       };
     }
 
     return {
       label: 'Demo Mode',
-      dotColor: 'bg-amber-400',
-      badgeColor: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
+      dotColor: 'bg-blue-400',
+      badgeColor: 'bg-blue-950/40 text-blue-200 border-blue-600/40',
     };
   };
 
   const status = getSystemStatus();
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#1F2E47] bg-[#0B0F17]/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 w-full border-b border-blue-900/30 bg-[#080D1A]/90 backdrop-blur-xl">
       <div className="max-w-[1150px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <div 
@@ -55,7 +55,7 @@ export default function Navbar({ activeTab, setActiveTab, health }) {
         </div>
 
         {/* Desktop Navigation Tabs */}
-        <nav className="hidden md:flex items-center gap-1 bg-[#111827] p-1 rounded-xl border border-[#1F2E47]">
+        <nav className="hidden md:flex items-center gap-1 bg-blue-950/30 p-1 rounded-xl border border-blue-900/40 backdrop-blur-md">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -63,14 +63,14 @@ export default function Navbar({ activeTab, setActiveTab, health }) {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all duration-150 ${
                   isActive
-                    ? 'bg-blue-600 text-white font-semibold shadow-sm'
-                    : 'text-slate-300 hover:text-white hover:bg-white/[0.05]'
+                    ? 'bg-blue-600 text-white shadow-midnight'
+                    : 'text-blue-200/80 hover:text-white hover:bg-blue-900/30'
                 }`}
               >
                 {Icon && (
-                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-blue-300'}`} />
                 )}
                 <span>{item.label}</span>
               </button>
@@ -81,12 +81,12 @@ export default function Navbar({ activeTab, setActiveTab, health }) {
         {/* Right Status Badge & GitHub CTA */}
         <div className="hidden sm:flex items-center gap-3">
           {/* Status Badge: "Demo Mode" or "Live Gemini" */}
-          <div className={`flex items-center gap-2 px-2.5 py-1 rounded-full border text-xs font-mono ${status.badgeColor}`}>
+          <div className={`flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-mono font-medium ${status.badgeColor}`}>
             <span className="relative flex h-2 w-2">
               <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${status.dotColor}`} />
               <span className={`relative inline-flex rounded-full h-2 w-2 ${status.dotColor}`} />
             </span>
-            <span className="font-semibold">{status.label}</span>
+            <span>{status.label}</span>
           </div>
 
           {/* GitHub Link */}
@@ -94,9 +94,9 @@ export default function Navbar({ activeTab, setActiveTab, health }) {
             href="https://github.com/nazish-saghir-ahmed/Querify"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-[#111827] hover:bg-[#162238] border border-[#1F2E47] transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-blue-950/40 hover:bg-blue-900/40 border border-blue-800/40 transition-colors"
           >
-            <Github className="w-3.5 h-3.5 text-slate-400" />
+            <Github className="w-3.5 h-3.5 text-blue-300" />
             <span>GitHub</span>
           </a>
         </div>
@@ -110,7 +110,7 @@ export default function Navbar({ activeTab, setActiveTab, health }) {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 rounded-lg bg-[#111827] border border-[#1F2E47] text-slate-300 hover:text-white"
+            className="p-1.5 rounded-lg bg-blue-950/40 border border-blue-800/40 text-blue-200 hover:text-white"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -120,7 +120,7 @@ export default function Navbar({ activeTab, setActiveTab, health }) {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-[#1F2E47] bg-[#0B0F17] px-4 pt-2 pb-4 space-y-1">
+        <div className="md:hidden border-b border-blue-900/30 bg-[#080D1A] px-4 pt-2 pb-4 space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -131,23 +131,23 @@ export default function Navbar({ activeTab, setActiveTab, health }) {
                   setActiveTab(item.id);
                   setMobileMenuOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
                   isActive
-                    ? 'bg-blue-600 text-white font-semibold'
-                    : 'text-slate-300 hover:bg-white/[0.05]'
+                    ? 'bg-blue-600 text-white font-bold'
+                    : 'text-blue-200 hover:bg-blue-900/30'
                 }`}
               >
-                {Icon && <Icon className="w-4 h-4 text-slate-400" />}
+                {Icon && <Icon className="w-4 h-4 text-blue-300" />}
                 <span>{item.label}</span>
               </button>
             );
           })}
-          <div className="pt-2 border-t border-[#1F2E47] mt-2">
+          <div className="pt-2 border-t border-blue-900/30 mt-2">
             <a
               href="https://github.com/nazish-saghir-ahmed/Querify"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-slate-300 bg-[#111827] border border-[#1F2E47]"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-white bg-blue-950/40 border border-blue-800/40"
             >
               <Github className="w-4 h-4" />
               <span>View on GitHub</span>

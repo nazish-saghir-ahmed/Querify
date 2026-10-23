@@ -146,14 +146,14 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1.5 text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
-              <ShieldCheck className="w-3.5 h-3.5" />
+            <span className="flex items-center gap-1.5 text-[11px] font-mono font-bold text-white bg-blue-600/30 px-3 py-1 rounded-full border border-blue-400/40">
+              <ShieldCheck className="w-3.5 h-3.5 text-white" />
               <span>AST Guard Active</span>
             </span>
             {(generatedSql || resultData || question) && (
               <button
                 onClick={handleReset}
-                className="flex items-center gap-1 text-xs font-mono text-slate-400 hover:text-white px-2 py-0.5 rounded hover:bg-white/[0.05] transition-colors"
+                className="flex items-center gap-1 text-xs font-mono text-blue-300 hover:text-white px-2 py-0.5 rounded hover:bg-blue-900/30 transition-colors"
                 title="Clear current session"
               >
                 <RotateCcw className="w-3 h-3" />
@@ -178,12 +178,12 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="e.g. Which AI companies have the highest revenue in 2024?"
               disabled={isLoading}
-              className="w-full px-4 py-3.5 bg-[#0B0F17] border border-[#1F2E47] rounded-xl text-sm sm:text-base text-white placeholder-slate-500 font-sans focus:outline-none focus:border-blue-500 transition-colors disabled:opacity-50 pr-28"
+              className="w-full px-4 py-3.5 bg-blue-950/30 border border-blue-800/40 rounded-xl text-sm sm:text-base text-white placeholder-blue-300/50 font-sans focus:outline-none focus:border-blue-500 transition-colors disabled:opacity-50 pr-28 backdrop-blur-md"
             />
             <button
               type="submit"
               disabled={isLoading || !question.trim()}
-              className="absolute right-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs flex items-center gap-1.5 transition-all disabled:opacity-40 disabled:hover:bg-blue-600 shadow-sm"
+              className="absolute right-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all disabled:opacity-40 disabled:hover:bg-blue-600 shadow-midnight"
             >
               <span>{isLoading ? 'Thinking...' : 'Query'}</span>
               <CornerDownLeft className="w-3.5 h-3.5" />
@@ -192,11 +192,11 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
         </form>
 
         {/* CLICKABLE EXAMPLE QUESTION CHIPS (SPLIT INTO AMBIGUOUS VS DIRECT) */}
-        <div className="pt-2 border-t border-[#1F2E47]/70 space-y-3">
+        <div className="pt-2 border-t border-blue-900/30 space-y-3">
           {/* Ambiguous Prompts */}
           <div>
-            <div className="flex items-center gap-1.5 text-xs font-mono font-medium text-amber-400 mb-2">
-              <HelpCircle className="w-3.5 h-3.5" />
+            <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-white mb-2">
+              <HelpCircle className="w-3.5 h-3.5 text-blue-400" />
               <span>Ambiguous Questions (Triggers Clarification):</span>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -216,8 +216,8 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
 
           {/* Direct Prompts */}
           <div>
-            <div className="flex items-center gap-1.5 text-xs font-mono font-medium text-slate-300 mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+            <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-blue-200 mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-white" />
               <span>Direct Analytical Questions:</span>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -239,29 +239,29 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
 
       {/* 2. LOADING SKELETON */}
       {isLoading && (
-        <section className="p-6 rounded-2xl bg-[#111827] border border-[#1F2E47] space-y-4 animate-fade-in">
+        <section className="p-6 rounded-2xl bg-blue-950/20 border border-blue-800/40 backdrop-blur-xl space-y-4 animate-fade-in">
           <div className="flex items-center gap-3">
-            <div className="w-4 h-4 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
-            <span className="text-xs font-mono text-slate-300">
+            <div className="w-4 h-4 rounded-full border-2 border-blue-400 border-t-transparent animate-spin" />
+            <span className="text-xs font-mono text-white">
               {loadingStep || 'Evaluating semantic AST rules and querying catalog...'}
             </span>
           </div>
 
           <div className="space-y-2.5 pt-2">
-            <div className="h-4 bg-[#162238] rounded-md w-3/4 animate-pulse" />
-            <div className="h-4 bg-[#162238] rounded-md w-1/2 animate-pulse" />
-            <div className="h-24 bg-[#0B0F17] rounded-xl border border-[#1F2E47] animate-pulse" />
+            <div className="h-4 bg-blue-950/60 rounded-md w-3/4 animate-pulse" />
+            <div className="h-4 bg-blue-950/60 rounded-md w-1/2 animate-pulse" />
+            <div className="h-24 bg-blue-950/30 rounded-xl border border-blue-900/40 animate-pulse" />
           </div>
         </section>
       )}
 
       {/* 3. ERROR BANNER */}
       {error && (
-        <section className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs sm:text-sm flex items-start gap-3">
-          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+        <section className="p-4 rounded-xl bg-blue-950/40 border border-blue-500/50 text-white text-xs sm:text-sm flex items-start gap-3 backdrop-blur-xl">
+          <AlertCircle className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <p className="font-semibold text-rose-200">Execution Rejected</p>
-            <p className="font-mono text-xs">{error}</p>
+            <p className="font-bold text-white">Execution Rejected</p>
+            <p className="font-mono text-xs text-blue-200">{error}</p>
           </div>
         </section>
       )}
