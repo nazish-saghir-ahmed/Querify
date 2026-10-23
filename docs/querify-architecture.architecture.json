@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Querify System Architecture",
+    "output": "querify-architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    { "id": "users", "type": "external", "label": "User / Browser", "sublabel": "Natural Language Query", "pos": [40, 240], "size": [130, 60] },
+    { "id": "frontend", "type": "frontend", "label": "React 18 + Vite", "sublabel": "Workspace / Explorer / History", "pos": [220, 240], "size": [150, 60], "tag": "Cyberpunk UI" },
+    { "id": "error_boundary", "type": "security", "label": "ErrorBoundary", "sublabel": "Crash-Proof Shield", "pos": [220, 100], "size": [150, 60], "tag": "React 18" },
+    { "id": "api_router", "type": "backend", "label": "API Router", "sublabel": "api.js (Content-Type Check)", "pos": [420, 240], "size": [150, 60] },
+    { "id": "fallback_engine", "type": "backend", "label": "Client Demo Engine", "sublabel": "clientFallbackData.js", "pos": [420, 390], "size": [150, 60], "tag": "Zero Backend" },
+    { "id": "backend", "type": "backend", "label": "Spring Boot 3", "sublabel": "REST API (:8080)", "pos": [630, 240], "size": [140, 60] },
+    { "id": "clarification", "type": "backend", "label": "Clarification Engine", "sublabel": "Polysemy & Session State", "pos": [830, 130], "size": [150, 60], "tag": "Multi-Turn" },
+    { "id": "ai_service", "type": "cloud", "label": "Gemini 1.5/2.0 AI", "sublabel": "Schema Grounded Prompt", "pos": [830, 240], "size": [150, 60] },
+    { "id": "ast_validator", "type": "security", "label": "AST Security Guard", "sublabel": "JSqlParser SELECT-Only", "pos": [830, 350], "size": [150, 60], "tag": "LIMIT 100" },
+    { "id": "db", "type": "database", "label": "MySQL 8.0", "sublabel": "querify_db (HikariCP)", "pos": [1040, 240], "size": [140, 60] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "Presentation & Edge Tier", "wraps": ["users", "frontend", "error_boundary", "api_router", "fallback_engine"] },
+    { "kind": "region", "label": "Java Application Tier", "wraps": ["backend", "clarification", "ai_service", "ast_validator"] },
+    { "kind": "region", "label": "Data Tier", "wraps": ["db"] }
+  ],
+  "connections": [
+    { "id": "user-to-frontend", "from": "users", "to": "frontend", "label": "English Query", "variant": "emphasis" },
+    { "id": "boundary-wrap", "from": "error_boundary", "to": "frontend", "label": "protects DOM", "variant": "security" },
+    { "id": "frontend-to-api", "from": "frontend", "to": "api_router", "label": "HTTP fetch()" },
+    { "id": "api-to-fallback", "from": "api_router", "to": "fallback_engine", "label": "Vercel / Offline Fallback", "variant": "dashed" },
+    { "id": "api-to-backend", "from": "api_router", "to": "backend", "label": "JSON REST", "variant": "emphasis" },
+    { "id": "backend-to-clarify", "from": "backend", "to": "clarification", "label": "Detect Ambiguity" },
+    { "id": "clarify-to-frontend", "from": "clarification", "to": "frontend", "label": "Clarification Modal", "variant": "dashed" },
+    { "id": "backend-to-ai", "from": "backend", "to": "ai_service", "label": "Synthesized Prompt" },
+    { "id": "ai-to-ast", "from": "ai_service", "to": "ast_validator", "label": "Raw SQL" },
+    { "id": "ast-to-db", "from": "ast_validator", "to": "db", "label": "Validated SELECT", "variant": "emphasis" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Presentation & Edge Tier", "items": ["React 18 + Vite with Tailwind cyberpunk styling", "Content-Type inspection immunizes against Vercel HTML rewrites", "Zero-backend clientFallbackData provides instant offline demo parity"] },
+    { "dot": "emerald", "title": "Application Tier", "items": ["Spring Boot 3 with Java 17 LTS", "ClarificationEngine halts execution on polysemic metrics", "AiService integrates Google Gemini 1.5/2.0 REST with prompt schema grounding"] },
+    { "dot": "rose", "title": "AST Security & Data Tier", "items": ["JSqlParser verifies statement is strictly Select", "Table whitelisting blocks internal system catalogs", "Enforces maximum 100 row limits on MySQL 8 via HikariCP pool"] }
+  ]
+}

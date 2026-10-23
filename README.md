@@ -19,6 +19,18 @@
 
 ---
 
+## 📚 Project Governance, Architecture & Engineering Specs
+
+| Document | Purpose |
+| :--- | :--- |
+| **[VISION.md](VISION.md)** | Overarching philosophy, problem statement, and 3 core architectural pillars. |
+| **[GOALS.md](GOALS.md)** | Strategic OKRs, performance targets, and milestone roadmap (Phases 1–4). |
+| **[DECISIONS.md](DECISIONS.md)** | Official Architectural Decision Records (ADR-001 through ADR-010). |
+| **[AGENT.md](AGENT.md)** | Comprehensive developer & AI agent playbook, rules, directory map, and troubleshooting. |
+| **[Engineering Specs Suite](specs/README.md)** | Formal specifications for Architecture, Clarification, AST Security, DB Explorer, APIs, and UI/UX. |
+
+---
+
 ## 1. Project Overview
 
 **Querify** is an AI-powered Text-to-SQL Clarification Engine that allows non-technical users to query relational databases using ordinary English.
