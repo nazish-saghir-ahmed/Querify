@@ -70,13 +70,13 @@ export default function Footer({ setActiveTab }) {
                   onClick={() => setActiveTab('about')}
                   className="hover:text-blue-400 transition-colors"
                 >
-                  Architecture & Defense
+                  Architecture
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Developer Portfolio Links */}
+          {/* Developer Links */}
           <div>
             <h4 className="text-xs font-mono uppercase tracking-wider text-slate-200 font-semibold mb-3">
               Developer
