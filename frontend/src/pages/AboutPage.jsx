@@ -19,7 +19,7 @@ export default function AboutPage() {
     },
     {
       q: 'What database engine modes are supported and verified?',
-      a: 'Querify supports three verified execution tiers: (1) Production Live MySQL 8.0 instance via JDBC and HikariCP connection pool; (2) Intelligent Fail-Safe In-Memory H2 Database in MySQL mode, automatically auto-seeded with 20 companies, models, financials, and investments if MySQL is offline; and (3) Client-Side Edge Fallback with 100% feature parity for standalone static deployments on Vercel.'
+      a: 'Querify supports three verified execution tiers: (1) Production Live MySQL 8.0 instance via JDBC and HikariCP connection pool; (2) Intelligent Fail-Safe In-Memory H2 Database in MySQL mode, automatically auto-seeded with 20 companies, models, financials, and investments if MySQL is offline; and (3) Serverless Cloud API Integration with OpenRouter AI embedding projections and AST security safeguards.'
     },
     {
       q: 'How does the AI understand the database tables and columns?',

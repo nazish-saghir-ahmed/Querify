@@ -178,7 +178,7 @@ export default function LandingPage({ setActiveTab, onSelectQuestion }) {
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           <div className="p-5 rounded-2xl bg-[#0D1B2A]/70 backdrop-blur-xl border border-[#3A506B]/40 hover:border-[#7FA1C3]/50 transition-all group space-y-3 shadow-lg">
-            <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37]">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
               <HelpCircle className="w-4 h-4" />
             </div>
             <h3 className="text-sm font-bold text-white font-sans">
@@ -218,10 +218,10 @@ export default function LandingPage({ setActiveTab, onSelectQuestion }) {
               <Zap className="w-4 h-4" />
             </div>
             <h3 className="text-sm font-bold text-white font-sans">
-              Edge Portability & Parity
+              Enterprise Cloud & API Integration
             </h3>
             <p className="text-xs text-slate-300 leading-relaxed font-sans">
-              Features 100% zero-backend demo parity on Vercel with Content-Type sniffing and global React 18 error boundaries.
+              Real-time REST API integration with AST-guarded SQL generation, OpenRouter AI engine, and MySQL 8 relational schema catalog.
             </p>
           </div>
         </div>

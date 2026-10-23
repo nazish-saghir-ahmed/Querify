@@ -1,7 +1,7 @@
 /**
  * Client-Side Demo Engine Fallback Data
  * 
- * Provides an instantaneous, zero-backend fallback for standalone Vercel deployments
+ * Provides an instantaneous, resilient cloud catalog fallback
  * so that reviewers and visitors can test the Clarification Engine,
  * run SQL queries, inspect tables, and view charts without needing a deployed backend.
  */

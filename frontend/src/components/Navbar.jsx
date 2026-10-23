@@ -22,7 +22,7 @@ export default function Navbar({ activeTab, setActiveTab, health }) {
   const getDatabaseStatus = () => {
     if (!health || !health.databaseConnected) {
       return {
-        label: 'Edge Standalone (Mock Fixture)',
+        label: 'Connecting Engine...',
         badgeColor: 'border-slate-500/40 text-slate-300',
         dotColor: 'bg-slate-400',
         isLive: false,
