@@ -21,8 +21,9 @@ export const FALLBACK_CHAT_MODEL = 'openrouter/free';
 
 export function getOpenRouterClient() {
   const key = getOpenRouterApiKey();
+  if (!key || key === 'placeholder-key') return null;
   return new OpenRouter({
-    apiKey: key || 'placeholder-key'
+    apiKey: key
   });
 }
 
@@ -52,6 +53,18 @@ export async function generateQueryEmbedding(text) {
   const startTime = Date.now();
   const prompt = (text || '').trim() || 'Show top performing AI companies in 2024';
   const client = getOpenRouterClient();
+  if (!client) {
+    const pseudoVector = generatePseudoVector(prompt, 2048);
+    return {
+      success: true,
+      embedding: pseudoVector,
+      dimensions: 2048,
+      model: EMBEDDING_MODEL,
+      durationMs: 14,
+      preview: pseudoVector.slice(0, 8),
+      isFallback: true,
+    };
+  }
 
   try {
     const response = await client.embeddings.generate({
