@@ -260,6 +260,21 @@ export function handleFallbackClarify(sessionId, selectedOptionId) {
 }
 
 function buildResolvedResponse(question, metric) {
+  const companyLookup = {
+    1: 'OpenAI',
+    2: 'Anthropic',
+    3: 'Google DeepMind',
+    4: 'NVIDIA',
+    5: 'Microsoft AI',
+    6: 'Meta AI',
+    7: 'Mistral AI',
+    8: 'Cohere',
+    15: 'Amazon AWS AI',
+    16: 'Apple ML',
+    19: 'Midjourney',
+    20: 'Scale AI',
+  };
+
   if (metric === 'model_score' || metric === 'model_params') {
     const isScore = metric === 'model_score';
     const sql = isScore
@@ -267,8 +282,8 @@ function buildResolvedResponse(question, metric) {
       : 'SELECT m.model_name, c.company_name, m.parameter_count_billions, m.release_year FROM ai_models m JOIN companies c ON m.company_id = c.company_id WHERE m.parameter_count_billions IS NOT NULL ORDER BY m.parameter_count_billions DESC LIMIT 10;';
 
     const rows = isScore
-      ? SAMPLE_MODELS.map(m => ({ model_name: m.model_name, company_name: m.company_name, model_category: m.model_category, performance_score: m.performance_score }))
-      : SAMPLE_MODELS.map(m => ({ model_name: m.model_name, company_name: m.company_name, parameter_count_billions: m.parameter_count_billions, release_year: m.release_year }));
+      ? SAMPLE_MODELS.map(m => ({ model_name: m.model_name, company_name: companyLookup[m.company_id] || 'AI Lab', model_category: m.model_category, performance_score: m.performance_score }))
+      : SAMPLE_MODELS.map(m => ({ model_name: m.model_name, company_name: companyLookup[m.company_id] || 'AI Lab', parameter_count_billions: m.parameter_count_billions, release_year: m.release_year }));
 
     return {
       status: 'SQL_GENERATED',
@@ -302,9 +317,15 @@ function buildResolvedResponse(question, metric) {
   const orderCol = isProfit ? 'f.profit_millions' : isGrowth ? 'f.revenue_growth_percent' : 'f.revenue_millions';
   const sql = `SELECT c.company_name, f.revenue_millions, f.profit_millions, f.revenue_growth_percent FROM companies c JOIN financial_performance f ON c.company_id = f.company_id WHERE f.fiscal_year = 2024 ORDER BY ${orderCol} DESC LIMIT 10;`;
 
-  let rows = [...SAMPLE_FINANCIALS];
+  let rows = SAMPLE_FINANCIALS.map(f => ({
+    company_name: companyLookup[f.company_id] || `AI Enterprise #${f.company_id}`,
+    revenue_millions: f.revenue_millions,
+    profit_millions: f.profit_millions,
+    revenue_growth_percent: f.revenue_growth_percent,
+  }));
   if (isProfit) rows.sort((a, b) => b.profit_millions - a.profit_millions);
-  if (isGrowth) rows.sort((a, b) => b.revenue_growth_percent - a.revenue_growth_percent);
+  else if (isGrowth) rows.sort((a, b) => b.revenue_growth_percent - a.revenue_growth_percent);
+  else rows.sort((a, b) => b.revenue_millions - a.revenue_millions);
 
   return {
     status: 'SQL_GENERATED',
