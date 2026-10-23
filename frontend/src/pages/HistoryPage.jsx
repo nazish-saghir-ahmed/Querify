@@ -15,9 +15,10 @@ export default function HistoryPage({ onSelectQuestion, setActiveTab }) {
     setIsLoading(true);
     try {
       const data = await historyApi.getAll();
-      setHistoryList(data || []);
+      setHistoryList(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error('Failed to load history:', err);
+      setHistoryList([]);
     } finally {
       setIsLoading(false);
     }

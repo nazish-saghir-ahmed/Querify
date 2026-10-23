@@ -49,13 +49,17 @@ async function request(endpoint, options = {}) {
 
   try {
     const res = await fetch(`${API_BASE}${endpoint}`, config);
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    const contentType = res.headers.get('content-type') || '';
+
+    // If HTTP error OR Vercel returned HTML (due to SPA rewrite of unknown backend routes)
+    if (!res.ok || !contentType.toLowerCase().includes('application/json')) {
+      return fallbackHandler(endpoint, options);
     }
-    const data = await res.json().catch(() => ({}));
+
+    const data = await res.json();
     return data;
   } catch (err) {
-    // If backend is not available (standalone Vercel hosting), execute in client fallback mode
+    // If backend is not reachable (network failure), execute in client fallback mode
     return fallbackHandler(endpoint, options);
   }
 }

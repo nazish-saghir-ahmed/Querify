@@ -28,10 +28,12 @@ export default function ExplorerPage() {
         databaseApi.getSchema(),
         databaseApi.getTables(),
       ]);
-      setSchemaList(schemas || []);
-      setTableList(tables || []);
-      if (schemas && schemas.length > 0) {
-        setSelectedTable(schemas[0].tableName);
+      const safeSchemas = Array.isArray(schemas) ? schemas : [];
+      const safeTables = Array.isArray(tables) ? tables : [];
+      setSchemaList(safeSchemas);
+      setTableList(safeTables);
+      if (safeSchemas.length > 0) {
+        setSelectedTable(safeSchemas[0].tableName);
       }
     } catch (err) {
       console.error('Failed to load database metadata:', err);
@@ -44,15 +46,18 @@ export default function ExplorerPage() {
     setIsLoading(true);
     try {
       const sample = await databaseApi.getTableSample(table);
-      setSampleData(sample);
+      setSampleData(sample && sample.columns ? sample : null);
     } catch (err) {
       console.error('Failed to load table sample:', err);
+      setSampleData(null);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const currentSchema = schemaList.find((s) => s.tableName === selectedTable) || schemaList[0];
+  const safeSchemaList = Array.isArray(schemaList) ? schemaList : [];
+  const safeTableList = Array.isArray(tableList) ? tableList : [];
+  const currentSchema = safeSchemaList.find((s) => s.tableName === selectedTable) || safeSchemaList[0];
 
   return (
     <div className="min-h-screen bg-[#080B14] py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
@@ -81,12 +86,12 @@ export default function ExplorerPage() {
         {/* Left Column: Tables Navigation */}
         <div className="lg:col-span-1 space-y-3">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 px-1">
-            Database Tables ({schemaList.length})
+            Database Tables ({safeSchemaList.length})
           </h3>
           <div className="space-y-1.5">
-            {schemaList.map((t) => {
+            {safeSchemaList.map((t) => {
               const isSelected = selectedTable === t.tableName;
-              const countItem = tableList.find((item) => item.name === t.tableName);
+              const countItem = safeTableList.find((item) => item.name === t.tableName);
               return (
                 <button
                   key={t.tableName}
