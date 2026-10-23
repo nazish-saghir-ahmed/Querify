@@ -106,29 +106,6 @@ export default function Footer({ setActiveTab }) {
               </div>
 
               <div className="space-y-1 pt-1 border-t border-blue-900/30">
-                <div className="text-white font-semibold">Umar Imran</div>
-                <div className="flex flex-col gap-1 text-blue-300">
-                  <a
-                    href="mailto:umarimran1882@gmail.com"
-                    className="inline-flex items-center gap-1 hover:text-white transition-colors"
-                  >
-                    <Mail className="w-3.5 h-3.5" />
-                    <span>umarimran1882@gmail.com</span>
-                  </a>
-                  <a
-                    href="https://github.com/umarimran1882"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 hover:text-white transition-colors"
-                  >
-                    <Github className="w-3.5 h-3.5" />
-                    <span>GitHub: umarimran1882</span>
-                    <ArrowUpRight className="w-3 h-3" />
-                  </a>
-                </div>
-              </div>
-
-              <div className="space-y-1 pt-1 border-t border-blue-900/30">
                 <div className="text-white font-semibold">Zuryat Fatima</div>
                 <div className="flex flex-col gap-1 text-blue-300">
                   <a
@@ -150,6 +127,29 @@ export default function Footer({ setActiveTab }) {
                   </a>
                 </div>
               </div>
+
+              <div className="space-y-1 pt-1 border-t border-blue-900/30">
+                <div className="text-white font-semibold">Umar Imran</div>
+                <div className="flex flex-col gap-1 text-blue-300">
+                  <a
+                    href="mailto:umarimran1882@gmail.com"
+                    className="inline-flex items-center gap-1 hover:text-white transition-colors"
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    <span>umarimran1882@gmail.com</span>
+                  </a>
+                  <a
+                    href="https://github.com/umarimran1882"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 hover:text-white transition-colors"
+                  >
+                    <Github className="w-3.5 h-3.5" />
+                    <span>GitHub: umarimran1882</span>
+                    <ArrowUpRight className="w-3 h-3" />
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -157,7 +157,7 @@ export default function Footer({ setActiveTab }) {
         {/* Bottom Bar */}
         <div className="pt-6 border-t border-blue-900/30 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-blue-300/70">
           <div>
-            © {new Date().getFullYear()} Querify. Designed & engineered by <span className="text-white font-medium">Nazish Saghir</span>, <span className="text-white font-medium">Umar Imran</span>, and <span className="text-white font-medium">Zuryat Fatima</span>.
+            © {new Date().getFullYear()} Querify. Designed & engineered by <span className="text-white font-medium">Nazish Saghir</span>, <span className="text-white font-medium">Zuryat Fatima</span>, and <span className="text-white font-medium">Umar Imran</span>.
           </div>
           <div className="flex items-center gap-4">
             <span className="flex items-center gap-1.5 text-white">
