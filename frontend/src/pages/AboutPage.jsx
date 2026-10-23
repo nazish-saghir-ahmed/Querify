@@ -18,8 +18,8 @@ export default function AboutPage() {
       a: 'Java is an industry-standard, strongly typed, enterprise-grade language. Spring Boot provides robust REST APIs, built-in dependency injection, connection pooling via HikariCP, controlled execution via JdbcTemplate, and seamless integration with SQL AST parsers like JSqlParser for strict security enforcement.'
     },
     {
-      q: 'Why did you choose MySQL 8 as the database?',
-      a: 'MySQL 8 is the world\'s most popular open-source relational database management system. It provides full ACID compliance, indexed foreign keys, strong data types, and enterprise reliability for analytical financial and business metrics.'
+      q: 'What database engine modes are supported and verified?',
+      a: 'Querify supports three verified execution tiers: (1) Production Live MySQL 8.0 instance via JDBC and HikariCP connection pool; (2) Intelligent Fail-Safe In-Memory H2 Database in MySQL mode, automatically auto-seeded with 20 companies, models, financials, and investments if MySQL is offline; and (3) Client-Side Edge Fallback with 100% feature parity for standalone static deployments on Vercel.'
     },
     {
       q: 'How does the AI understand the database tables and columns?',
@@ -27,7 +27,7 @@ export default function AboutPage() {
     },
     {
       q: 'How do you prevent destructive or dangerous SQL (SQL Injection, DROP TABLE, etc.)?',
-      a: 'We implement defense-in-depth: (1) JSqlParser parses the generated SQL into an Abstract Syntax Tree (AST), strictly verifying that the root statement is a SELECT. (2) Any INSERT, UPDATE, DELETE, DROP, ALTER, TRUNCATE, or multi-statement query is blocked with an HTTP 403 Forbidden. (3) Table names are checked against a strict whitelist of 6 approved domain tables. (4) System schemas like information_schema are barred. (5) Queries are executed with a timeout and safe row limits.'
+      a: 'We implement layered defense-in-depth: (1) JSqlParser parses the generated SQL into an Abstract Syntax Tree (AST), strictly verifying that the root statement is an instance of net.sf.jsqlparser.statement.select.Select. (2) Semicolon Policy: A single trailing semicolon (;) is permitted and normalized as standard SQL statement termination, while multiple statements (statement chaining) are blocked via a syntax-aware lexical scanner that respects quotes and comments. (3) Table Whitelist: Extracted tables must strictly match the 6 approved domain tables. (4) System schemas like information_schema and time-based sleep/benchmark functions are prohibited. (5) Bounded Execution: Automatic LIMIT 100 is injected and queries are executed with a 5000ms timeout guard.'
     },
     {
       q: 'What happens if the external AI API is down or unavailable?',
@@ -39,7 +39,7 @@ export default function AboutPage() {
     },
     {
       q: 'How does the frontend communicate with the Java backend?',
-      a: 'The React frontend uses HTTP REST requests (fetch API) exchanging JSON payloads over endpoints like POST /api/query/analyze and POST /api/query/clarify. In development, Vite reverse-proxies /api to http://localhost:8080.'
+      a: 'The React frontend uses HTTP REST requests (fetch API) exchanging JSON payloads over endpoints like POST /api/query/analyze and POST /api/query/clarify. In development, Vite reverse-proxies /api to http://localhost:8080. If the server returns a 403 or 400 error, the client transparently parses and displays the real rejection details.'
     },
     {
       q: 'How does the multi-turn clarification state management work?',
@@ -58,24 +58,20 @@ export default function AboutPage() {
       a: 'An AST is a hierarchical tree representation of the syntactic structure of source code. By converting raw SQL strings into an AST using JSqlParser, we inspect the actual semantic nodes rather than relying on weak regex pattern matching, guaranteeing no hidden mutation keywords exist inside subqueries or comments.'
     },
     {
-      q: 'Why did you use synthetic data for financial numbers?',
-      a: 'To guarantee data integrity and academic honesty. Real proprietary AI lab financials (like OpenAI or Anthropic operating costs) are private or unverified. Clearly labeling data as realistic synthetic educational data ensures transparent evaluation while fully demonstrating complex SQL aggregation and ranking.'
+      q: 'How are company names prevented from appearing as null in results?',
+      a: 'The JDBC ResultSetMetaData can return qualified column names like "c.company_name" or uppercase identifiers like "COMPANY_NAME". The SqlExecutionService strips table qualifier prefixes, maps normalized column labels, and populates row maps with case-insensitive keys. In the frontend, ResultTable and ResultChart use resilient fallback resolvers to ensure company labels always bind accurately.'
     },
     {
-      q: 'Can the clarification engine handle multi-year comparisons?',
-      a: 'Yes! The database includes data for fiscal years 2022, 2023, and 2024. For questions like "Which companies increased revenue between 2023 and 2024?", the engine generates a self-join query comparing financial_performance rows across both years.'
-    },
-    {
-      q: 'How are empty query results handled?',
-      a: 'If a query executes successfully but matches zero rows (for example, companies founded after 2030), the backend returns an empty row list with valid column metadata. The frontend renders a clean empty state rather than crashing.'
-    },
-    {
-      q: 'What is CORS and why is it needed?',
-      a: 'Cross-Origin Resource Sharing (CORS) is a browser security mechanism that restricts HTTP requests initiated from scripts outside the origin domain. We configured CorsConfig in Spring Boot to permit requests from the Vite frontend (http://localhost:5173).'
+      q: 'How is revenue growth formatted in tables, charts, and exports?',
+      a: 'Revenue growth represents a percentage rate (e.g., 100.25%). The ResultTable, ResultChart, and CSV exporter evaluate percentage and growth keywords prior to general currency keywords, ensuring that values like revenue_growth_percent are accurately displayed with percentage formatting (100.25%) rather than currency ($100.25 M).'
     },
     {
       q: 'How are query history and audit trails stored?',
-      a: 'Successful and failed queries are persisted to the query_history table in MySQL using Spring Data JPA. This records the natural query, generated SQL, execution duration in milliseconds, rows returned, and timestamps.'
+      a: 'Successful and failed queries are persisted to the query_history table in MySQL/H2 using Spring Data JPA. This records the natural query, generated SQL, execution duration in milliseconds, rows returned, and timestamps across user sessions.'
+    },
+    {
+      q: 'How is CSV export protected against formula injection?',
+      a: 'When exporting query results to CSV, untrusted cell values beginning with formula characters (=, +, -, @) are sanitized by prefixing a single quote (\'), preventing spreadsheet applications like Microsoft Excel or Google Sheets from executing arbitrary formulas.'
     },
     {
       q: 'What are the main limitations of the current system?',
@@ -90,9 +86,9 @@ export default function AboutPage() {
   return (
     <div className="relative z-10 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
       {/* Header */}
-      <div className="pb-4 border-b border-[#415A77]/30">
+      <div className="pb-4 border-b border-[#3A506B]/35">
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-mono text-[#D4AF37] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#D4AF37]/15 border border-[#D4AF37]/30">
+          <span className="text-[11px] font-mono text-[#D4AF37] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#D4AF37]/15 border border-[#D4AF37]/35">
             Documentation & Defense Guide
           </span>
         </div>
@@ -105,10 +101,10 @@ export default function AboutPage() {
         </p>
       </div>
 
-      {/* Problem & Solution Cards (Transparent Frosted Glass) */}
+      {/* Problem & Solution Cards (Dark Navy Frosted Glass) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="p-6 rounded-2xl bg-[#0D1B2A]/60 backdrop-blur-xl border border-[#415A77]/35 space-y-3 shadow-lg">
-          <div className="w-9 h-9 rounded-xl bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400">
+        <div className="p-6 rounded-2xl bg-[#0D1B2A]/70 backdrop-blur-xl border border-[#3A506B]/40 space-y-3 shadow-lg">
+          <div className="w-9 h-9 rounded-xl bg-[#1D3557]/80 border border-[#3A506B]/60 flex items-center justify-center text-[#7FA1C3]">
             <BookOpen className="w-4 h-4" />
           </div>
           <h3 className="text-base font-bold text-[#F7F3E9] font-sans">Problem Statement</h3>
@@ -117,7 +113,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="p-6 rounded-2xl bg-[#0D1B2A]/60 backdrop-blur-xl border border-[#415A77]/35 space-y-3 shadow-lg">
+        <div className="p-6 rounded-2xl bg-[#0D1B2A]/70 backdrop-blur-xl border border-[#3A506B]/40 space-y-3 shadow-lg">
           <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37]">
             <Sparkles className="w-4 h-4" />
           </div>
@@ -128,11 +124,11 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* System Architecture Diagram (Transparent Frosted Box) */}
-      <div className="p-6 rounded-2xl bg-[#0D1B2A]/60 backdrop-blur-xl border border-[#415A77]/35 space-y-6 shadow-lg">
+      {/* System Architecture Diagram (Dark Navy Frosted Box) */}
+      <div className="p-6 rounded-2xl bg-[#0D1B2A]/70 backdrop-blur-xl border border-[#3A506B]/40 space-y-6 shadow-lg">
         <div>
           <h3 className="text-base font-bold text-[#F7F3E9] flex items-center gap-2 font-mono">
-            <Layers className="w-4 h-4 text-blue-400" />
+            <Layers className="w-4 h-4 text-[#7FA1C3]" />
             <span>End-to-End System Pipeline</span>
           </h3>
           <p className="text-xs text-slate-300 mt-1 font-sans">
@@ -141,37 +137,37 @@ export default function AboutPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono">
-          <div className="p-4 rounded-xl bg-[#1B263B]/40 border border-[#415A77]/30 space-y-1 backdrop-blur-md">
-            <span className="text-blue-400 font-bold">STAGE 1: INPUT</span>
+          <div className="p-4 rounded-xl bg-[#1B263B]/50 border border-[#3A506B]/35 space-y-1 backdrop-blur-md">
+            <span className="text-[#7FA1C3] font-bold">STAGE 1: INPUT</span>
             <p className="font-sans text-[#F7F3E9] font-semibold">Natural Language Query</p>
             <p className="font-sans text-[11px] text-slate-300">React frontend sends English question to Spring Boot REST endpoint.</p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#1B263B]/40 border border-[#D4AF37]/40 space-y-1 backdrop-blur-md">
+          <div className="p-4 rounded-xl bg-[#1B263B]/50 border border-[#D4AF37]/40 space-y-1 backdrop-blur-md">
             <span className="text-[#D4AF37] font-bold">STAGE 2 & 3: ENGINE</span>
             <p className="font-sans text-[#F7F3E9] font-semibold">Ambiguity Detection</p>
             <p className="font-sans text-[11px] text-slate-300">Clarification engine inspects intent. Multi-turn session pauses if metric is ambiguous.</p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#1B263B]/40 border border-[#415A77]/30 space-y-1 backdrop-blur-md">
-            <span className="text-blue-400 font-bold">STAGE 4 & 5: AI GEN</span>
+          <div className="p-4 rounded-xl bg-[#1B263B]/50 border border-[#3A506B]/35 space-y-1 backdrop-blur-md">
+            <span className="text-[#7FA1C3] font-bold">STAGE 4 & 5: AI GEN</span>
             <p className="font-sans text-[#F7F3E9] font-semibold">Schema-Grounded SQL</p>
             <p className="font-sans text-[11px] text-slate-300">AI service generates SQL strictly grounded in the 6 domain tables.</p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#1B263B]/40 border border-emerald-500/35 space-y-1 backdrop-blur-md">
+          <div className="p-4 rounded-xl bg-[#1B263B]/50 border border-emerald-500/35 space-y-1 backdrop-blur-md">
             <span className="text-emerald-400 font-bold">STAGE 6 & 7: EXECUTE</span>
-            <p className="font-sans text-[#F7F3E9] font-semibold">AST Guard & MySQL</p>
-            <p className="font-sans text-[11px] text-slate-300">JSqlParser verifies SELECT-only; JdbcTemplate queries MySQL 8 and visualizes results.</p>
+            <p className="font-sans text-[#F7F3E9] font-semibold">AST Guard & Database</p>
+            <p className="font-sans text-[11px] text-slate-300">JSqlParser verifies SELECT-only; JdbcTemplate queries MySQL 8/H2 and visualizes results.</p>
           </div>
         </div>
       </div>
 
       {/* 20+ Viva Preparation Questions */}
-      <div className="p-6 rounded-2xl bg-[#0D1B2A]/60 backdrop-blur-xl border border-[#415A77]/35 space-y-6 shadow-lg">
+      <div className="p-6 rounded-2xl bg-[#0D1B2A]/70 backdrop-blur-xl border border-[#3A506B]/40 space-y-6 shadow-lg">
         <div>
           <h3 className="text-lg font-bold text-[#F7F3E9] flex items-center gap-2 font-sans">
-            <HelpCircle className="w-5 h-5 text-blue-400" />
+            <HelpCircle className="w-5 h-5 text-[#7FA1C3]" />
             <span>University Viva Voce Preparation (20+ Questions & Answers)</span>
           </h3>
           <p className="text-xs text-slate-300 mt-1 font-sans">
@@ -185,7 +181,7 @@ export default function AboutPage() {
             return (
               <div
                 key={idx}
-                className="rounded-xl border border-[#415A77]/30 bg-[#1B263B]/30 overflow-hidden transition-all backdrop-blur-sm"
+                className="rounded-xl border border-[#3A506B]/35 bg-[#1B263B]/40 overflow-hidden transition-all backdrop-blur-sm"
               >
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : idx)}
@@ -195,13 +191,13 @@ export default function AboutPage() {
                     {idx + 1}. {item.q}
                   </span>
                   {isOpen ? (
-                    <ChevronUp className="w-4 h-4 text-blue-400 shrink-0" />
+                    <ChevronUp className="w-4 h-4 text-[#7FA1C3] shrink-0" />
                   ) : (
                     <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
                   )}
                 </button>
                 {isOpen && (
-                  <div className="p-4 pt-0 text-xs text-slate-300 leading-relaxed border-t border-[#415A77]/25 bg-[#0D1B2A]/50 font-sans">
+                  <div className="p-4 pt-0 text-xs text-slate-300 leading-relaxed border-t border-[#3A506B]/25 bg-[#0D1B2A]/60 font-sans">
                     <p className="mt-3 leading-relaxed">{item.a}</p>
                   </div>
                 )}

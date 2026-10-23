@@ -16,15 +16,15 @@ export default function Footer({ setActiveTab }) {
             </p>
             <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-300 pt-2">
               <span className="flex items-center gap-1.5">
-                <Cpu className="w-3.5 h-3.5 text-blue-400" />
+                <Cpu className="w-3.5 h-3.5 text-[#7FA1C3]" />
                 Java 17 LTS Backend
               </span>
               <span className="flex items-center gap-1.5">
-                <Database className="w-3.5 h-3.5 text-blue-400" />
+                <Database className="w-3.5 h-3.5 text-[#7FA1C3]" />
                 MySQL 8 Relational Store
               </span>
               <span className="flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+                <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />
                 AST Read-Only Guard
               </span>
             </div>
@@ -37,22 +37,22 @@ export default function Footer({ setActiveTab }) {
             </h4>
             <ul className="space-y-2 text-xs font-sans text-slate-300">
               <li>
-                <button onClick={() => setActiveTab('landing')} className="hover:text-blue-400 transition-colors">
+                <button onClick={() => setActiveTab('landing')} className="hover:text-[#7FA1C3] transition-colors">
                   Overview
                 </button>
               </li>
               <li>
-                <button onClick={() => setActiveTab('workspace')} className="hover:text-blue-400 transition-colors">
+                <button onClick={() => setActiveTab('workspace')} className="hover:text-[#7FA1C3] transition-colors">
                   Query Console
                 </button>
               </li>
               <li>
-                <button onClick={() => setActiveTab('explorer')} className="hover:text-blue-400 transition-colors">
+                <button onClick={() => setActiveTab('explorer')} className="hover:text-[#7FA1C3] transition-colors">
                   Database Explorer
                 </button>
               </li>
               <li>
-                <button onClick={() => setActiveTab('history')} className="hover:text-blue-400 transition-colors">
+                <button onClick={() => setActiveTab('history')} className="hover:text-[#7FA1C3] transition-colors">
                   Audit Trail
                 </button>
               </li>

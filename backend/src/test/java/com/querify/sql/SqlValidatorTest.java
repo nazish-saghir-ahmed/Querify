@@ -17,8 +17,8 @@ class SqlValidatorTest {
     }
 
     @Test
-    @DisplayName("Should permit valid SELECT with JOIN and ORDER BY")
-    void shouldPermitValidSelect() {
+    @DisplayName("Should permit valid SELECT with single trailing semicolon")
+    void shouldPermitValidSelectWithTrailingSemicolon() {
         String sql = "SELECT c.company_name, f.revenue_millions FROM companies c " +
                 "JOIN financial_performance f ON c.company_id = f.company_id " +
                 "WHERE f.fiscal_year = 2024 ORDER BY f.revenue_millions DESC LIMIT 10;";
@@ -29,12 +29,29 @@ class SqlValidatorTest {
     }
 
     @Test
-    @DisplayName("Should append safe LIMIT if query lacks LIMIT clause")
+    @DisplayName("Should permit valid SELECT without trailing semicolon and append LIMIT")
     void shouldAppendLimitWhenMissing() {
         String sql = "SELECT company_name, industry FROM companies WHERE country = 'USA'";
         String sanitized = validator.validateAndSanitize(sql);
         
         assertTrue(sanitized.toUpperCase().contains("LIMIT"));
+    }
+
+    @Test
+    @DisplayName("Should permit semicolon inside string literals without false-positive rejection")
+    void shouldPermitSemicolonInsideStringLiteral() {
+        String sql = "SELECT company_name, industry FROM companies WHERE company_name = 'Acme; Inc';";
+        String sanitized = validator.validateAndSanitize(sql);
+        assertNotNull(sanitized);
+        assertTrue(sanitized.contains("Acme; Inc"));
+    }
+
+    @Test
+    @DisplayName("Should permit semicolon inside SQL comments without false-positive rejection")
+    void shouldPermitSemicolonInsideComment() {
+        String sql = "SELECT company_name FROM companies /* note: check; here */ WHERE country = 'USA';";
+        String sanitized = validator.validateAndSanitize(sql);
+        assertNotNull(sanitized);
     }
 
     @Test
@@ -66,9 +83,16 @@ class SqlValidatorTest {
     }
 
     @Test
-    @DisplayName("Should reject multiple SQL statements (SQL injection attempt)")
+    @DisplayName("Should reject multiple SQL statements (statement chaining injection)")
     void shouldRejectMultipleStatements() {
         String sql = "SELECT * FROM companies; DROP TABLE ai_models;";
+        assertThrows(SqlSecurityException.class, () -> validator.validateAndSanitize(sql));
+    }
+
+    @Test
+    @DisplayName("Should reject multi-statement injection even with string literal preceding it")
+    void shouldRejectMultiStatementWithQuotes() {
+        String sql = "SELECT * FROM companies WHERE company_name = 'OpenAI'; DROP TABLE companies;";
         assertThrows(SqlSecurityException.class, () -> validator.validateAndSanitize(sql));
     }
 
@@ -84,5 +108,19 @@ class SqlValidatorTest {
     void shouldRejectUnauthorizedTables() {
         String sql = "SELECT * FROM user_passwords;";
         assertThrows(SqlSecurityException.class, () -> validator.validateAndSanitize(sql));
+    }
+
+    @Test
+    @DisplayName("Should reject sleep and benchmark time-based SQL injection constructs")
+    void shouldRejectTimeBasedInjection() {
+        String sql = "SELECT company_name FROM companies WHERE company_id = 1 AND sleep(5);";
+        assertThrows(SqlSecurityException.class, () -> validator.validateAndSanitize(sql));
+    }
+
+    @Test
+    @DisplayName("Should reject empty or null SQL query")
+    void shouldRejectEmptyQuery() {
+        assertThrows(SqlSecurityException.class, () -> validator.validateAndSanitize("   "));
+        assertThrows(SqlSecurityException.class, () -> validator.validateAndSanitize(null));
     }
 }

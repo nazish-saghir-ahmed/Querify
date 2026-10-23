@@ -86,8 +86,20 @@ Querify's primary goal is to **eliminate the accuracy and safety risks of natura
 - [x] Recorded ADR-011 in `DECISIONS.md` and updated `specs/06_frontend_ui_ux_spec.md`.
 - [x] Verified 100% operational on live Vercel production deployment (`https://querify-nine.vercel.app/`).
 
-### Phase 5: Enterprise Scale & Dialects (Future Roadmap)
+### Phase 5: Dark Navy Blue Redesign, AST Semicolon Normalization & Audit Synchronization (Completed)
+- [x] Redesigned visual identity around **Dark Navy Blue** (`#1D3557` brand, `#14253D` hover, `#2B4C7E` slate, `#3A506B` border, `#0D1B2A` deep navy canvas, `#F7F3E9` ivory, `#D4AF37` gold) with transparent frosted glass containers (`backdrop-blur-xl`).
+- [x] Implemented syntax-aware lexical scanner `hasMultipleStatements` in `SqlValidator.java` supporting quotes (`'...'`, `"..."`) and comments (`--`, `/*...*/`), safely normalizing single trailing semicolons while strictly rejecting statement chaining.
+- [x] Added 14 new unit tests in `SqlValidatorTest.java` (total 28 backend tests passing with 100% build success).
+- [x] Fixed `company_name` null rendering across ResultTable and ResultChart via table qualifier stripping and case-insensitive row accessors.
+- [x] Fixed metric formatting in `ResultTable.jsx`: percentage keywords evaluated before generic currency keywords (`revenue_growth_percent` now formats as `100.25%`).
+- [x] Eliminated silent fallback anti-pattern in `api.js`: authentic HTTP 403 / 400 security violations propagate directly to the UI rather than faking success.
+- [x] Protected CSV exports against CSV formula injection (`=`, `+`, `-`, `@`) and added dynamic date-stamped file naming (`query-results-YYYY-MM-DD.csv`).
+- [x] Added enterprise security violation audit logging in `SqlExecutionService.java` (`status = SECURITY_VIOLATION`).
+- [x] Added transparent runtime database indicator in Navbar (`Live MySQL 8.0` vs `Embedded In-Memory (H2)` vs `Edge Standalone`).
+- [x] Recorded ADR-013 in `DECISIONS.md` and updated engineering specs.
+
+### Phase 6: Enterprise Scale & Dialects (Future Roadmap)
 - [ ] Multi-dialect AST translation (PostgreSQL, Snowflake, ClickHouse, SQLite).
 - [ ] Dynamic database connection manager (allow users to paste their own JDBC connection strings).
 - [ ] Vector-indexed schema retrieval (RAG over enterprise metadata catalogs for 500+ table schemas).
-- [ ] Export formats: CSV, Excel, Parquet, and PDF analytical briefing reports.
+- [ ] Export formats: Parquet and PDF analytical briefing reports.

@@ -93,3 +93,37 @@ To prevent runtime errors when loading schema catalogs:
 2. **Active Schema Selector**: Tabbed pill UI switching between domains with zero page reload.
 3. **Interactive Search**: Real-time filtering of tables and columns matching search keywords.
 4. **Sample Data Drawer**: Clicking a table loads the first 5 sample rows with column header badges indicating Primary Key (`PK`) or Foreign Key (`FK`).
+
+---
+
+## 5. Verified Database Tier Architecture
+
+Querify operates with transparent runtime database mode detection across three verified execution tiers:
+
+```
++-----------------------------------------------------------------------------------+
+|                        RUNTIME DATABASE EXECUTION TIERS                           |
++-----------------------------------------------------------------------------------+
+| Tier 1: Live MySQL 8.0                                                            |
+| - Production / Local database connected via HikariCP on port 3306.                |
+| - 6 AI domain tables + query_history audit log.                                    |
+| - Full ACID transactions and relational foreign key constraints.                  |
++-----------------------------------------------------------------------------------+
+| Tier 2: Fail-Safe Embedded In-Memory Database (H2 Engine)                         |
+| - Automatically activated in Spring Boot when MySQL 8 is unreachable.             |
+| - Configured in MySQL compatibility mode (`MODE=MySQL`).                         |
+| - Populated at startup from `schema.sql` and `seed.sql` with 20 AI companies.    |
+| - Guarantees full Spring Boot REST API functionality without manual DB setup.     |
++-----------------------------------------------------------------------------------+
+| Tier 3: Edge Standalone Client Fallback                                           |
+| - Static frontend deployment on Vercel or when backend is offline.               |
+| - Powered by `clientFallbackData.js` with full query clarification, schema        |
+|   inspection, and execution simulations.                                          |
++-----------------------------------------------------------------------------------+
+```
+
+### Transparent Runtime Mode Indicator
+In [`Navbar.jsx`](file:///D:/Querify/frontend/src/components/Navbar.jsx), the application queries `/api/health` and displays an authentic indicator pill:
+- **Live MySQL 8.0**: Green status badge with live TCP connection count.
+- **Embedded In-Memory (H2)**: Emerald status badge indicating fail-safe in-memory database.
+- **Edge Standalone (Mock Fixture)**: Amber status badge indicating edge client fallback mode.

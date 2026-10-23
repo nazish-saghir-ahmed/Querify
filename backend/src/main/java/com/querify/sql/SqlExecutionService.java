@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSetMetaData;
 import java.util.*;
@@ -42,11 +41,20 @@ public class SqlExecutionService {
      * Executes the given SQL after validation, returns structured result with chart hints.
      */
     public QueryResultDto executeQuery(String rawSql, String naturalQuery, String explanation) {
+        long startTime = System.currentTimeMillis();
+        String safeSql;
+
         // 1. Structural security validation & sanitization
-        String safeSql = sqlValidator.validateAndSanitize(rawSql);
+        try {
+            safeSql = sqlValidator.validateAndSanitize(rawSql);
+        } catch (Exception secEx) {
+            long executionTimeMs = System.currentTimeMillis() - startTime;
+            recordSecurityViolation(naturalQuery, rawSql, secEx.getMessage(), executionTimeMs);
+            throw secEx;
+        }
+
         log.info("Executing safe SQL: {}", safeSql);
 
-        long startTime = System.currentTimeMillis();
         List<String> columnNames = new ArrayList<>();
         List<Map<String, Object>> rows = new ArrayList<>();
 
@@ -59,7 +67,10 @@ public class SqlExecutionService {
                 if (columnNames.isEmpty()) {
                     for (int i = 1; i <= colCount; i++) {
                         String colLabel = metaData.getColumnLabel(i);
-                        columnNames.add(colLabel != null && !colLabel.isEmpty() ? colLabel : metaData.getColumnName(i));
+                        String rawName = (colLabel != null && !colLabel.isEmpty()) ? colLabel : metaData.getColumnName(i);
+                        // Clean table qualifier prefix like "c." or "companies."
+                        String cleanName = rawName.contains(".") ? rawName.substring(rawName.lastIndexOf('.') + 1) : rawName;
+                        columnNames.add(cleanName);
                     }
                 }
 
@@ -68,6 +79,8 @@ public class SqlExecutionService {
                     String col = columnNames.get(i - 1);
                     Object val = rs.getObject(i);
                     row.put(col, val);
+                    // Also guarantee lower_case key access for seamless client binding
+                    row.put(col.toLowerCase(Locale.ROOT), val);
                 }
                 rows.add(row);
             });
@@ -83,7 +96,7 @@ public class SqlExecutionService {
         } catch (Exception e) {
             long executionTimeMs = System.currentTimeMillis() - startTime;
             log.error("Failed to execute SQL query '{}': {}", safeSql, e.getMessage());
-            saveHistory(naturalQuery != null ? naturalQuery : "Manual SQL Execution", safeSql, "FAILED", e.getMessage(), 0, executionTimeMs);
+            saveHistory(naturalQuery != null ? naturalQuery : "Manual SQL Execution", safeSql, "EXECUTION_ERROR", e.getMessage(), 0, executionTimeMs);
             throw new SqlExecutionException("Database execution failed: " + e.getMessage(), e);
         }
     }
@@ -145,8 +158,18 @@ public class SqlExecutionService {
     }
 
     private String formatTitle(String col) {
-        if (col == null) return "";
-        return col.replace("_", " ").substring(0, 1).toUpperCase(Locale.ROOT) + col.replace("_", " ").substring(1);
+        if (col == null || col.isEmpty()) return "";
+        String s = col.replace("_", " ").trim();
+        return s.substring(0, 1).toUpperCase(Locale.ROOT) + s.substring(1);
+    }
+
+    public void recordSecurityViolation(String naturalQuery, String rawSql, String reason, long timeMs) {
+        saveHistory(naturalQuery != null ? naturalQuery : "Manual SQL Execution",
+                    rawSql != null ? rawSql : "N/A",
+                    "SECURITY_VIOLATION",
+                    reason,
+                    0,
+                    timeMs);
     }
 
     private void saveHistory(String naturalQuery, String sql, String status, String explanation, int rows, long timeMs) {

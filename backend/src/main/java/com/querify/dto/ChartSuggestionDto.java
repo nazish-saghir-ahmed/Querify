@@ -1,10 +1,19 @@
 package com.querify.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ChartSuggestionDto {
 
+    @JsonProperty("type")
     private String type; // "bar", "line", "pie", or "table"
+
+    @JsonProperty("xAxis")
     private String xAxis;
+
+    @JsonProperty("yAxis")
     private String yAxis;
+
+    @JsonProperty("title")
     private String title;
 
     public ChartSuggestionDto() {
@@ -17,6 +26,7 @@ public class ChartSuggestionDto {
         this.title = title;
     }
 
+    @JsonProperty("type")
     public String getType() {
         return type;
     }
@@ -25,6 +35,7 @@ public class ChartSuggestionDto {
         this.type = type;
     }
 
+    @JsonProperty("xAxis")
     public String getXAxis() {
         return xAxis;
     }
@@ -33,6 +44,7 @@ public class ChartSuggestionDto {
         this.xAxis = xAxis;
     }
 
+    @JsonProperty("yAxis")
     public String getYAxis() {
         return yAxis;
     }
@@ -41,6 +53,7 @@ public class ChartSuggestionDto {
         this.yAxis = yAxis;
     }
 
+    @JsonProperty("title")
     public String getTitle() {
         return title;
     }

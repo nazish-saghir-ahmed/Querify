@@ -10,7 +10,7 @@
     overflow-x: hidden;
   }
 
-  /* Custom Royal precision scrollbar */
+  /* Custom Dark Navy precision scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -24,13 +24,13 @@
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #2563EB;
+    background: #1D3557;
   }
 }
 
-/* Royal Translucent Frosted Glass Boxes */
+/* Translucent Frosted Glass Boxes */
 .glass-royal {
-  background: rgba(13, 27, 42, 0.65);
+  background: rgba(13, 27, 42, 0.70);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(65, 90, 119, 0.35);
@@ -38,7 +38,7 @@
 }
 
 .glass-royal-elevated {
-  background: rgba(27, 38, 59, 0.70);
+  background: rgba(27, 38, 59, 0.75);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(65, 90, 119, 0.45);
@@ -46,17 +46,17 @@
 }
 
 .glass-royal-inner {
-  background: rgba(27, 38, 59, 0.40);
+  background: rgba(27, 38, 59, 0.45);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(65, 90, 119, 0.30);
 }
 
 .glass-royal-active {
-  background: rgba(37, 99, 235, 0.20);
+  background: rgba(29, 53, 87, 0.35);
   backdrop-filter: blur(18px);
-  border: 1px solid rgba(59, 130, 246, 0.60);
-  box-shadow: 0 0 25px -4px rgba(37, 99, 235, 0.40);
+  border: 1px solid rgba(43, 76, 126, 0.70);
+  box-shadow: 0 0 25px -4px rgba(29, 53, 87, 0.50);
 }
 
 .glass-gold-active {
@@ -66,9 +66,9 @@
   box-shadow: 0 0 25px -4px rgba(212, 175, 55, 0.30);
 }
 
-/* Royal Luxury Gradient Text */
+/* Dark Navy & Gold Gradient Text */
 .gradient-text-royal {
-  background: linear-gradient(135deg, #FFFFFF 20%, #F7F3E9 50%, #3B82F6 100%);
+  background: linear-gradient(135deg, #FFFFFF 20%, #F7F3E9 55%, #7FA1C3 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -80,7 +80,7 @@
 }
 
 .gradient-text-mono {
-  background: linear-gradient(135deg, #60A5FA 0%, #F7F3E9 100%);
+  background: linear-gradient(135deg, #9BB8D3 0%, #F7F3E9 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

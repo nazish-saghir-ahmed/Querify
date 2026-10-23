@@ -126,7 +126,7 @@ When the Java Spring Boot backend is not hosted on the same domain, any request 
 
 In naive API clients, `res.ok` evaluates to `true`. Calling `res.json()` triggers a syntax error (`Unexpected token '<'`), which defaults to `{}`. When UI components call `.map()` on `{}`, an uncaught `TypeError` unmounts the React DOM, causing a dark blank screen.
 
-### The Content-Type Defense Protocol
+### The Real Error Propagation & Content-Type Protocol
 In [`frontend/src/services/api.js`](file:///D:/Querify/frontend/src/services/api.js):
 ```javascript
 async function safeFetch(url, options) {
@@ -134,15 +134,32 @@ async function safeFetch(url, options) {
     const res = await fetch(url, options);
     const contentType = res.headers.get('content-type') || '';
     
+    // If backend returns an explicit error response with JSON body (e.g. 403 Security Violation),
+    // propagate it directly so the UI displays the authentic security rejection.
+    if (!res.ok) {
+      if (contentType.toLowerCase().includes('application/json')) {
+        const errorJson = await res.json().catch(() => null);
+        if (errorJson && (errorJson.message || errorJson.error || errorJson.status)) {
+          const err = new Error(errorJson.message || errorJson.error || `HTTP ${res.status}: Backend security or validation failure`);
+          err.status = errorJson.status || res.status;
+          err.response = errorJson;
+          throw err;
+        }
+      }
+      // HTML rewrite or generic gateway error -> trigger edge fallback
+      return null;
+    }
+    
     // Strict verification: Status must be OK AND Content-Type must be JSON
-    if (res.ok && contentType.toLowerCase().includes('application/json')) {
+    if (contentType.toLowerCase().includes('application/json')) {
       return await res.json();
     }
     
-    // HTML rewrite detected (e.g., Vercel /index.html fallback)
+    // Vercel /index.html rewrite detected -> trigger edge fallback
     console.warn(`[Querify API] Backend unavailable or HTML rewrite received for ${url}. Activating client fallback engine.`);
     return null;
   } catch (err) {
+    if (err.status || err.response) throw err; // Re-throw authentic security rejections
     console.warn(`[Querify API] Network error for ${url}. Activating client fallback engine.`, err);
     return null;
   }
@@ -164,3 +181,25 @@ When `safeFetch()` returns `null`, the API wrapper routes the call to `clientFal
 | `GET /api/history` | `clientFallbackData.getHistory()` | Returns execution audit logs with realistic durations, timestamps, and row counts. |
 
 This architecture ensures **100% demo availability** across all environments without relying on external cloud infrastructure.
+
+---
+
+## 4. CSV Export Security & Date-Stamped File Download
+
+When exporting query results from `ResultTable.jsx`:
+
+1. **Formula Injection Protection (CSV Injection)**:
+   Spreadsheet applications (Excel, Google Sheets, LibreOffice) interpret cell values starting with `=`, `+`, `-`, or `@` as executable macro formulas (DDE formula injection). Querify protects users by prefixing any offending string with a single apostrophe (`'`):
+   ```javascript
+   const sanitizeCsvValue = (val) => {
+     if (val == null) return '';
+     const str = String(val).trim();
+     if (/^[=+@-]/.test(str)) {
+       return `"'${str.replace(/"/g, '""')}"`;
+     }
+     return `"${str.replace(/"/g, '""')}"`;
+   };
+   ```
+2. **Date-Stamped Filename**:
+   Export files are automatically stamped with the user's local date:
+   `query-results-YYYY-MM-DD.csv` (e.g., `query-results-2026-10-23.csv`).

@@ -21,10 +21,10 @@ export default function BrandLogo({ size = 'md', showTagline = false }) {
           viewBox="0 0 100 100" 
           fill="none"
         >
-          {/* Database Stack in Royal Blue & Slate */}
-          <ellipse cx="50" cy="28" rx="34" ry="11" stroke="#3B82F6" strokeWidth="5" fill="#0D1B2A" />
-          <path d="M16 28 v18 c0 6 15 11 34 11 s34 -5 34 -11 v-18" stroke="#415A77" strokeWidth="4.5" fill="none" opacity="0.85" />
-          <path d="M16 46 v18 c0 6 15 11 34 11 s34 -5 34 -11 v-18" stroke="#2563EB" strokeWidth="4.5" fill="none" opacity="0.75" />
+          {/* Database Stack in Dark Navy & Steel */}
+          <ellipse cx="50" cy="28" rx="34" ry="11" stroke="#7FA1C3" strokeWidth="5" fill="#0D1B2A" />
+          <path d="M16 28 v18 c0 6 15 11 34 11 s34 -5 34 -11 v-18" stroke="#3A506B" strokeWidth="4.5" fill="none" opacity="0.85" />
+          <path d="M16 46 v18 c0 6 15 11 34 11 s34 -5 34 -11 v-18" stroke="#1D3557" strokeWidth="4.5" fill="none" opacity="0.9" />
           
           {/* Intelligence Core Diamond Spark in Royal Gold */}
           <circle cx="70" cy="70" r="15" fill="#0D1B2A" stroke="#D4AF37" strokeWidth="3" />
@@ -41,7 +41,7 @@ export default function BrandLogo({ size = 'md', showTagline = false }) {
       <div className="flex flex-col">
         <div className="flex items-center gap-2">
           <span className={`font-semibold tracking-tight font-sans text-[#F7F3E9] ${sizeClasses[size].split(' ')[2]}`}>
-            Queri<span className="text-[#3B82F6]">fy</span>
+            Queri<span className="text-[#7FA1C3]">fy</span>
           </span>
           <span className="text-[10px] font-mono font-medium tracking-wider px-1.5 py-0.5 rounded-full bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/35">
             SQL AI

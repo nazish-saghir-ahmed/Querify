@@ -13,13 +13,13 @@ export default function QuestionChip({ text, isAmbiguous = false, onClick }) {
       className={`group flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all duration-200 border text-left backdrop-blur-md ${
         isAmbiguous
           ? 'bg-[#D4AF37]/15 border-[#D4AF37]/35 text-[#D4AF37] hover:border-[#D4AF37]/60 hover:bg-[#D4AF37]/25 shadow-sm'
-          : 'bg-[#1B263B]/40 border-[#415A77]/30 text-slate-300 hover:text-[#F7F3E9] hover:border-blue-500/50 hover:bg-[#1B263B]/70 shadow-sm'
+          : 'bg-[#1B263B]/50 border-[#3A506B]/35 text-slate-300 hover:text-[#F7F3E9] hover:border-[#7FA1C3]/60 hover:bg-[#1B263B]/80 shadow-sm'
       }`}
     >
       {isAmbiguous ? (
         <HelpCircle className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
       ) : (
-        <Sparkles className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+        <Sparkles className="w-3.5 h-3.5 text-[#7FA1C3] shrink-0" />
       )}
       <span className="truncate max-w-[260px] sm:max-w-none text-[11px] font-mono">{text}</span>
       {isAmbiguous && (

@@ -41,11 +41,11 @@ Most conventional text-to-SQL chatbots naively guess when faced with ambiguous r
 
 ### Key Highlights
 - **Intelligent Clarification Engine:** Multi-turn session management resolving metric and entity ambiguity before SQL generation.
-- **AST Security Guard:** `JSqlParser` parses the Abstract Syntax Tree (AST) to strictly enforce read-only `SELECT` queries, whitelisting 6 domain tables and blocking all mutation commands (`DROP`, `DELETE`, `INSERT`, `UPDATE`, `ALTER`).
+- **AST Security Guard & Semicolon Normalizer:** `JSqlParser` parses the Abstract Syntax Tree (AST) to strictly enforce read-only `SELECT` queries, whitelisting 6 domain tables and blocking all mutation commands (`DROP`, `DELETE`, `INSERT`, `UPDATE`, `ALTER`). A syntax-aware lexical scanner normalizes single trailing semicolons while strictly blocking statement chaining.
 - **Real MySQL 8 Database:** A complete domain featuring 20 AI companies, multi-year financial performance (2022–2024), AI models, capital investments, and research projects.
 - **Dynamic Data Visualization:** Recharts-powered Bar, Line, and Pie charts deduced directly from executed SQL columns and data patterns.
 - **Zero-Downtime Offline Demo Mode:** Works 100% offline with zero API keys required, while supporting live Google Gemini API connectivity when configured.
-- **Production-Grade Architecture:** Spring Boot REST APIs, clean packaging (`com.querify`), 23 automated tests, and a modern neon-accented dark UI.
+- **Production-Grade Architecture:** Spring Boot REST APIs, clean packaging (`com.querify`), 28 automated tests (100% passing), and a Dark Navy Blue UI.
 
 ---
 
@@ -107,7 +107,7 @@ Querify/
 │       │   └── resources/
 │       │       └── application.properties    # Environment-based backend configuration
 │       └── test/
-│           ├── java/com/querify/             # 23 Unit & Integration tests (100% passing)
+│           ├── java/com/querify/             # 28 Unit & Integration tests (100% passing)
 │           └── resources/                    # H2 MySQL-mode test schema and data
 ├── frontend/
 │   ├── package.json                          # React 18, Vite 5, Tailwind CSS, Recharts

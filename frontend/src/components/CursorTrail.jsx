@@ -92,8 +92,8 @@ export default function CursorTrail() {
           ctx.fillStyle = `rgba(212, 175, 55, ${p.alpha * 0.75})`;
           ctx.shadowColor = '#D4AF37';
         } else {
-          ctx.fillStyle = `rgba(59, 130, 246, ${p.alpha * 0.75})`;
-          ctx.shadowColor = '#2563EB';
+          ctx.fillStyle = `rgba(127, 161, 195, ${p.alpha * 0.65})`;
+          ctx.shadowColor = '#1D3557';
         }
         ctx.shadowBlur = 8;
         ctx.fill();

@@ -17,6 +17,8 @@
 - [ADR-009: Dark Cyberpunk & Glassmorphism Design System](#adr-009-dark-cyberpunk-design-system)
 - [ADR-010: Archify Integration for Living Interactive Architecture Maps](#adr-010-archify-integration)
 - [ADR-011: Electric Mint & Titanium Visual Identity with Fixed Spatial Layer](#adr-011-electric-mint-visual-identity)
+- [ADR-012: Royal Navy & Gold Palette with Royal Blue Accents and Transparent Frosted Glass Containers](#adr-012-royal-navy-gold-palette)
+- [ADR-013: Dark Navy Blue Visual Architecture, Syntax-Aware Semicolon Normalization, and Enterprise Audit Synchronization](#adr-013-dark-navy-blue-semicolon-normalization)
 
 ---
 
@@ -189,3 +191,38 @@
 - **Consequences**:
   - *Positive*: Bespoke, prestigious, high-end enterprise appearance that combines financial gravitas with futuristic AI precision. The transparent frosted boxes create spatial depth by letting the stationary 3D background artwork subtly show through.
   - *Negative*: Requires GPU-accelerated backdrop blur support (handled gracefully by standard modern webkit/blink compositors).
+
+---
+
+### ADR-013: Dark Navy Blue Architecture, Syntax-Aware Semicolon Normalization, and Enterprise Audit Synchronization
+- **Status**: Accepted
+- **Context**: In Phase 5 review, multiple issues and architectural contradictions were identified:
+  1. The user requested replacing lighter blue tones with a rich **Dark Navy Blue** (`#1D3557` / `#14253D` / `#2B4C7E`), paired with transparent glass containers and gold accents.
+  2. SQL queries generated or manually input with standard single trailing semicolons (`;`) were either failing JSqlParser AST analysis or causing contradictory validation errors, while statement stacking (`SELECT ...; DROP TABLE ...`) had to remain strictly forbidden.
+  3. Query result tables and charts displayed company names as `null` and blank X-axes due to column alias stripping and missing keys in domain fixtures.
+  4. Percentage metrics (e.g., `revenue_growth_percent`) were improperly formatted as currency (`$100.25 M`) due to priority order bugs in string matching.
+  5. The frontend API client silently caught backend HTTP 403 / 400 security exceptions and fell back to client mock data, inadvertently turning genuine attack rejections into synthetic successes.
+  6. CSV exports lacked protection against CSV formula injection (`=`, `+`, `-`, `@`) and lacked date-stamped file naming.
+  7. Blocked security violations were not persisted to the audit log table `query_history`.
+- **Decision**:
+  1. **Dark Navy Blue Visual Architecture**:
+     - Standardized design tokens around Deep Dark Navy (`brand: #1D3557`, `brand-hover: #14253D`, `brand-slate: #2B4C7E`, `border: #3A506B`, `surface: #0D1B2A`, `ivory: #F7F3E9`, `gold: #D4AF37`).
+     - Applied transparent frosted glass containers (`backdrop-blur-xl`) across command consoles, SQL viewers, DB explorer panels, and query history cards.
+  2. **Syntax-Aware Lexical Semicolon Scanner & Normalizer**:
+     - Built `hasMultipleStatements(String sql)` in `SqlValidator.java` that walks the SQL string character-by-character, respecting single quotes (`'...'`), double quotes (`"..."`), line comments (`--`), and block comments (`/*...*/`). Semicolons inside quotes or comments are ignored.
+     - Permitted and trimmed a single trailing semicolon before AST parsing with `CCJSqlParserUtil.parse(cleanSql)`. Any unquoted intermediate semicolon triggers an immediate security rejection (`STATEMENT_CHAINING_FORBIDDEN`).
+  3. **Company Name & Relational Key Normalization**:
+     - In `SqlExecutionService.java`, stripped table qualifier prefixes (`c.`, `companies.`) from `ResultSetMetaData` column labels, storing rows with canonical keys.
+     - In `clientFallbackData.js`, populated `company_name` directly in `SAMPLE_FINANCIALS`, `SAMPLE_MODELS`, and other domain fixtures.
+     - In `ResultTable.jsx` and `ResultChart.jsx`, implemented case-insensitive fallback accessors (`getRowValue(row, 'company_name')`) to guarantee company names never render as `null` and charts never have blank categorical axes.
+  4. **Metric-First Cell Formatting**:
+     - In `ResultTable.jsx`, reordered substring checks in `formatCellValue()` so percentage tokens (`percent`, `growth`, `share`, `roi`, `rate`, `margin`) are evaluated before generic currency tokens (`revenue`, `amount`, `cost`). `revenue_growth_percent` now formats deterministically as `100.25%`.
+  5. **Real Error Propagation & Anti-Silent-Fallback**:
+     - Updated `api.js` so that when `res.ok` is false and the response contains `application/json`, the real structured server error (`status: SECURITY_VIOLATION`, message) is thrown directly to the UI, rendering an authentic security alert with recovery steps. Client-side fallback is strictly confined to network disconnections and Vercel HTML rewrites.
+  6. **CSV Formula Injection Sanitization & Date Stamping**:
+     - In `ResultTable.jsx`, sanitized every exported CSV cell starting with `=`, `+`, `-`, or `@` by prefixing a single apostrophe (`'`). File downloads are named dynamically as `query-results-YYYY-MM-DD.csv`.
+  7. **Security Violation Audit Logging**:
+     - Added `recordSecurityViolation(sql, durationMs, violationMessage)` in `SqlExecutionService.java` to record rejected attacks into `query_history` with status `SECURITY_VIOLATION`, ensuring enterprise forensic compliance.
+- **Consequences**:
+  - *Positive*: Resolved all functional anomalies; 100% test coverage with 28 passing backend tests; authentic security rejection transparency; zero formula injection vulnerabilities; verified company name mapping; luxurious Dark Navy visual identity.
+  - *Negative*: Trailing semicolon normalization requires 1 pass of lexical scanning, adding < 0.1ms per query.

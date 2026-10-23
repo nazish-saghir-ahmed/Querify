@@ -124,8 +124,8 @@ D:\Querify/
 | **AI LLM** | Google Gemini | 1.5/2.0 Flash | Schema-grounded SQL synthesis |
 | **Frontend** | React | 18.2+ | Declarative UI and state management |
 | **Bundler** | Vite | 5.0+ | Fast ESM development and production build |
-| **Styling** | Tailwind CSS | 3.4+ | Royal Navy & Gold with Royal Blue & transparent glass architecture |
-| **Charts** | Recharts | 2.10+ | Responsive SVG/Canvas data visualizations |
+| **Styling** | Tailwind CSS | 3.4+ | Dark Navy Blue (`#1D3557`), Deep Navy Canvas (`#0D1B2A`), Gold (`#D4AF37`), & Transparent Frosted Glass (`backdrop-blur-xl`) |
+| **Charts** | Recharts | 2.10+ | Responsive SVG/Canvas data visualizations with Dark Navy & Gold theme |
 | **Icons** | Lucide React | 0.300+ | Lightweight SVG iconography |
 | **Diagrams** | Archify | 3.2.0 | Verifiable interactive architecture maps |
 
@@ -135,28 +135,39 @@ D:\Querify/
 
 When modifying or extending this codebase, **you must strictly adhere to the following rules**:
 
-### Rule 1: Never Remove Content-Type Checks in `api.js`
-In [`frontend/src/services/api.js`](file:///D:/Querify/frontend/src/services/api.js), every `fetch()` response must inspect both `res.ok` and `res.headers.get('content-type')`:
+### Rule 1: Propagate Structured Backend Errors and Guard HTML Rewrites in `api.js`
+In [`frontend/src/services/api.js`](file:///D:/Querify/frontend/src/services/api.js), do NOT swallow backend error responses (e.g. HTTP 403 Security Violations):
 ```javascript
-const contentType = res.headers.get('content-type') || '';
-if (!res.ok || !contentType.toLowerCase().includes('application/json')) {
-  // Triggers clientFallbackData gracefully
+if (!res.ok) {
+  if (contentType.toLowerCase().includes('application/json')) {
+    const errorJson = await res.json().catch(() => null);
+    if (errorJson && (errorJson.message || errorJson.error || errorJson.status)) {
+      const err = new Error(errorJson.message || errorJson.error || `HTTP ${res.status}`);
+      err.status = errorJson.status || res.status;
+      err.response = errorJson;
+      throw err; // Propagates real security violation to UI
+    }
+  }
+  return null; // Gateway error or Vercel HTML rewrite triggers edge fallback
 }
 ```
-*Rationale:* On Vercel, unmatched `/api` routes return `200 OK` with HTML content. Attempting `res.json()` on HTML causes uncaught exceptions that crash the UI.
+*Rationale:* Swallowing 403s causes the silent fallback anti-pattern where malicious SQL injection attempts falsely appear to succeed with mock data.
 
-### Rule 2: Never Remove Defensive Array Guards
+### Rule 2: Syntax-Aware Semicolon Handling in `SqlValidator.java`
+Standard SQL formatters output queries with a trailing semicolon. Never use raw `.contains(";")` checks. Always use `hasMultipleStatements(sql)` which respects single quotes (`'...'`), double quotes (`"..."`), and comments (`--`, `/*...*/`), allowing a single trailing semicolon while blocking statement chaining (`SELECT 1; DROP TABLE`).
+
+### Rule 3: Never Remove Defensive Array Guards
 In React state consumers (e.g., `ExplorerPage.jsx`, `HistoryPage.jsx`), never call `.map()` directly on state variables without defensive guards:
 ```javascript
 const safeList = Array.isArray(items) ? items : [];
 ```
 *Rationale:* Protects against unexpected API payloads, null returns, or network anomalies.
 
-### Rule 3: Never Bypass AST Validation in Backend
+### Rule 4: Never Bypass AST Validation in Backend
 Never execute SQL using raw string concatenation or bypass `SqlValidator.validateSelectOnly()`.
 *Rationale:* `SqlValidator` uses JSqlParser to ensure statements are strictly `SELECT`, tables are whitelisted, and `LIMIT 100` is enforced.
 
-### Rule 4: Maintain Schema Parity Between Java and JavaScript Fallback
+### Rule 5: Maintain Schema Parity Between Java and JavaScript Fallback
 Whenever new tables, columns, or schemas are added to `schema.sql` or `DatabaseExplorerController.java`, identical definitions and sample rows must be mirrored in [`clientFallbackData.js`](file:///D:/Querify/frontend/src/services/clientFallbackData.js).
 *Rationale:* Ensures the live Vercel edge deployment never falls out of sync with the Java backend.
 
