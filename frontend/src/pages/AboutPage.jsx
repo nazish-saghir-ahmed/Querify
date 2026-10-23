@@ -90,91 +90,91 @@ export default function AboutPage() {
   return (
     <div className="relative z-10 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
       {/* Header */}
-      <div className="pb-4 border-b border-white/[0.08]">
+      <div className="pb-4 border-b border-[#415A77]/30">
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-mono text-[#00F5A0] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#00F5A0]/10 border border-[#00F5A0]/25">
+          <span className="text-[11px] font-mono text-[#D4AF37] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#D4AF37]/15 border border-[#D4AF37]/30">
             Documentation & Defense Guide
           </span>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-2 font-sans tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F7F3E9] mt-2 font-sans tracking-tight">
           System Architecture & Viva Guide
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 mt-2 max-w-3xl leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-300 mt-2 max-w-3xl leading-relaxed">
           Comprehensive university evaluation guide covering the problem statement, system architecture,
           database design, AST security verification, clarification algorithm, and 20+ teacher questions.
         </p>
       </div>
 
-      {/* Problem & Solution Cards */}
+      {/* Problem & Solution Cards (Transparent Frosted Glass) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="p-6 rounded-2xl bg-[#0A0E17]/95 border border-white/[0.08] space-y-3">
-          <div className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.1] flex items-center justify-center text-slate-200">
-            <BookOpen className="w-4 h-4 text-[#00F5A0]" />
+        <div className="p-6 rounded-2xl bg-[#0D1B2A]/60 backdrop-blur-xl border border-[#415A77]/35 space-y-3 shadow-lg">
+          <div className="w-9 h-9 rounded-xl bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400">
+            <BookOpen className="w-4 h-4" />
           </div>
-          <h3 className="text-base font-bold text-white font-sans">Problem Statement</h3>
-          <p className="text-xs text-slate-400 leading-relaxed font-sans">
+          <h3 className="text-base font-bold text-[#F7F3E9] font-sans">Problem Statement</h3>
+          <p className="text-xs text-slate-300 leading-relaxed font-sans">
             Relational databases power global business, but retrieving actionable insights requires proficiency in SQL, table schemas, join keys, and aggregation functions. Non-technical executives and researchers struggle to extract data directly. Furthermore, traditional text-to-SQL chatbots naively guess user intentions when queries contain semantic ambiguity, returning inaccurate or misleading data without warning.
           </p>
         </div>
 
-        <div className="p-6 rounded-2xl bg-[#0A0E17]/95 border border-white/[0.08] space-y-3">
-          <div className="w-9 h-9 rounded-xl bg-[#00F5A0]/10 border border-[#00F5A0]/25 flex items-center justify-center text-[#00F5A0]">
+        <div className="p-6 rounded-2xl bg-[#0D1B2A]/60 backdrop-blur-xl border border-[#415A77]/35 space-y-3 shadow-lg">
+          <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37]">
             <Sparkles className="w-4 h-4" />
           </div>
-          <h3 className="text-base font-bold text-white font-sans">Proposed Solution: Querify</h3>
-          <p className="text-xs text-slate-400 leading-relaxed font-sans">
+          <h3 className="text-base font-bold text-[#F7F3E9] font-sans">Proposed Solution: Querify</h3>
+          <p className="text-xs text-slate-300 leading-relaxed font-sans">
             Querify bridges natural human language and relational databases with a dedicated <strong className="text-white">Clarification Engine</strong>. When a user asks an ambiguous question ("best performing companies"), Querify detects the ambiguity, pauses execution, and presents targeted multi-turn clarification choices (revenue vs profit vs ROI) before executing safe, AST-validated SQL against MySQL.
           </p>
         </div>
       </div>
 
-      {/* System Architecture Diagram */}
-      <div className="p-6 rounded-2xl bg-[#0A0E17]/95 border border-white/[0.08] space-y-6">
+      {/* System Architecture Diagram (Transparent Frosted Box) */}
+      <div className="p-6 rounded-2xl bg-[#0D1B2A]/60 backdrop-blur-xl border border-[#415A77]/35 space-y-6 shadow-lg">
         <div>
-          <h3 className="text-base font-bold text-white flex items-center gap-2 font-mono">
-            <Layers className="w-4 h-4 text-[#00F5A0]" />
+          <h3 className="text-base font-bold text-[#F7F3E9] flex items-center gap-2 font-mono">
+            <Layers className="w-4 h-4 text-blue-400" />
             <span>End-to-End System Pipeline</span>
           </h3>
-          <p className="text-xs text-slate-400 mt-1 font-sans">
+          <p className="text-xs text-slate-300 mt-1 font-sans">
             Data flows sequentially through 8 controlled stages to guarantee safety, precision, and transparency.
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono">
-          <div className="p-4 rounded-xl bg-[#06080D] border border-white/[0.08] space-y-1">
-            <span className="text-[#00F5A0] font-bold">STAGE 1: INPUT</span>
-            <p className="font-sans text-slate-200 font-semibold">Natural Language Query</p>
-            <p className="font-sans text-[11px] text-slate-400">React frontend sends English question to Spring Boot REST endpoint.</p>
+          <div className="p-4 rounded-xl bg-[#1B263B]/40 border border-[#415A77]/30 space-y-1 backdrop-blur-md">
+            <span className="text-blue-400 font-bold">STAGE 1: INPUT</span>
+            <p className="font-sans text-[#F7F3E9] font-semibold">Natural Language Query</p>
+            <p className="font-sans text-[11px] text-slate-300">React frontend sends English question to Spring Boot REST endpoint.</p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#06080D] border border-amber-500/30 space-y-1">
-            <span className="text-amber-400 font-bold">STAGE 2 & 3: ENGINE</span>
-            <p className="font-sans text-slate-200 font-semibold">Ambiguity Detection</p>
-            <p className="font-sans text-[11px] text-slate-400">Clarification engine inspects intent. Multi-turn session pauses if metric is ambiguous.</p>
+          <div className="p-4 rounded-xl bg-[#1B263B]/40 border border-[#D4AF37]/40 space-y-1 backdrop-blur-md">
+            <span className="text-[#D4AF37] font-bold">STAGE 2 & 3: ENGINE</span>
+            <p className="font-sans text-[#F7F3E9] font-semibold">Ambiguity Detection</p>
+            <p className="font-sans text-[11px] text-slate-300">Clarification engine inspects intent. Multi-turn session pauses if metric is ambiguous.</p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#06080D] border border-white/[0.08] space-y-1">
-            <span className="text-[#00F5A0] font-bold">STAGE 4 & 5: AI GEN</span>
-            <p className="font-sans text-slate-200 font-semibold">Schema-Grounded SQL</p>
-            <p className="font-sans text-[11px] text-slate-400">AI service generates SQL strictly grounded in the 6 domain tables.</p>
+          <div className="p-4 rounded-xl bg-[#1B263B]/40 border border-[#415A77]/30 space-y-1 backdrop-blur-md">
+            <span className="text-blue-400 font-bold">STAGE 4 & 5: AI GEN</span>
+            <p className="font-sans text-[#F7F3E9] font-semibold">Schema-Grounded SQL</p>
+            <p className="font-sans text-[11px] text-slate-300">AI service generates SQL strictly grounded in the 6 domain tables.</p>
           </div>
 
-          <div className="p-4 rounded-xl bg-[#06080D] border border-emerald-500/30 space-y-1">
+          <div className="p-4 rounded-xl bg-[#1B263B]/40 border border-emerald-500/35 space-y-1 backdrop-blur-md">
             <span className="text-emerald-400 font-bold">STAGE 6 & 7: EXECUTE</span>
-            <p className="font-sans text-slate-200 font-semibold">AST Guard & MySQL</p>
-            <p className="font-sans text-[11px] text-slate-400">JSqlParser verifies SELECT-only; JdbcTemplate queries MySQL 8 and visualizes results.</p>
+            <p className="font-sans text-[#F7F3E9] font-semibold">AST Guard & MySQL</p>
+            <p className="font-sans text-[11px] text-slate-300">JSqlParser verifies SELECT-only; JdbcTemplate queries MySQL 8 and visualizes results.</p>
           </div>
         </div>
       </div>
 
       {/* 20+ Viva Preparation Questions */}
-      <div className="p-6 rounded-2xl bg-[#0A0E17]/95 border border-white/[0.08] space-y-6">
+      <div className="p-6 rounded-2xl bg-[#0D1B2A]/60 backdrop-blur-xl border border-[#415A77]/35 space-y-6 shadow-lg">
         <div>
-          <h3 className="text-lg font-bold text-white flex items-center gap-2 font-sans">
-            <HelpCircle className="w-5 h-5 text-[#00F5A0]" />
+          <h3 className="text-lg font-bold text-[#F7F3E9] flex items-center gap-2 font-sans">
+            <HelpCircle className="w-5 h-5 text-blue-400" />
             <span>University Viva Voce Preparation (20+ Questions & Answers)</span>
           </h3>
-          <p className="text-xs text-slate-400 mt-1 font-sans">
+          <p className="text-xs text-slate-300 mt-1 font-sans">
             Click on any question below to study concise, professional answers designed for professors and examiners.
           </p>
         </div>
@@ -185,23 +185,23 @@ export default function AboutPage() {
             return (
               <div
                 key={idx}
-                className="rounded-xl border border-white/[0.08] bg-[#06080D]/80 overflow-hidden transition-all"
+                className="rounded-xl border border-[#415A77]/30 bg-[#1B263B]/30 overflow-hidden transition-all backdrop-blur-sm"
               >
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : idx)}
-                  className="w-full text-left p-4 flex items-center justify-between gap-4 hover:bg-white/[0.02] transition-colors"
+                  className="w-full text-left p-4 flex items-center justify-between gap-4 hover:bg-white/[0.03] transition-colors"
                 >
-                  <span className="font-semibold text-xs sm:text-sm text-white font-sans">
+                  <span className="font-semibold text-xs sm:text-sm text-[#F7F3E9] font-sans">
                     {idx + 1}. {item.q}
                   </span>
                   {isOpen ? (
-                    <ChevronUp className="w-4 h-4 text-[#00F5A0] shrink-0" />
+                    <ChevronUp className="w-4 h-4 text-blue-400 shrink-0" />
                   ) : (
                     <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
                   )}
                 </button>
                 {isOpen && (
-                  <div className="p-4 pt-0 text-xs text-slate-300 leading-relaxed border-t border-white/[0.06] bg-[#0A0E17] font-sans">
+                  <div className="p-4 pt-0 text-xs text-slate-300 leading-relaxed border-t border-[#415A77]/25 bg-[#0D1B2A]/50 font-sans">
                     <p className="mt-3 leading-relaxed">{item.a}</p>
                   </div>
                 )}

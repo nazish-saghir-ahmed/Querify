@@ -4,61 +4,83 @@
 
 @layer base {
   body {
-    background-color: #06080D;
-    color: #F8FAFC;
+    background-color: #0D1B2A;
+    color: #F7F3E9;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
   }
 
-  /* Custom precision scrollbar */
+  /* Custom Royal precision scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #06080D;
+    background: #0D1B2A;
   }
   ::-webkit-scrollbar-thumb {
-    background: #1C2638;
+    background: #1B263B;
+    border: 1px solid rgba(65, 90, 119, 0.4);
     border-radius: 3px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #00F5A0;
+    background: #2563EB;
   }
 }
 
-/* Precision glassmorphism surfaces */
-.glass-panel {
-  background: rgba(15, 21, 35, 0.72);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-}
-
-.glass-panel-elevated {
-  background: rgba(19, 27, 42, 0.88);
+/* Royal Translucent Frosted Glass Boxes */
+.glass-royal {
+  background: rgba(13, 27, 42, 0.65);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(65, 90, 119, 0.35);
+  box-shadow: 0 16px 40px -12px rgba(5, 10, 20, 0.65), inset 0 1px 0 0 rgba(247, 243, 233, 0.08);
 }
 
-.glass-panel-brand {
-  background: rgba(19, 27, 42, 0.92);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 245, 160, 0.3);
-  box-shadow: 0 0 35px -8px rgba(0, 245, 160, 0.2);
+.glass-royal-elevated {
+  background: rgba(27, 38, 59, 0.70);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(65, 90, 119, 0.45);
+  box-shadow: 0 20px 50px -12px rgba(3, 7, 18, 0.8), inset 0 1px 0 0 rgba(247, 243, 233, 0.12);
 }
 
-/* Linear-inspired gradient text */
-.gradient-text-brand {
-  background: linear-gradient(135deg, #FFFFFF 20%, #E2E8F0 50%, #00F5A0 100%);
+.glass-royal-inner {
+  background: rgba(27, 38, 59, 0.40);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(65, 90, 119, 0.30);
+}
+
+.glass-royal-active {
+  background: rgba(37, 99, 235, 0.20);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(59, 130, 246, 0.60);
+  box-shadow: 0 0 25px -4px rgba(37, 99, 235, 0.40);
+}
+
+.glass-gold-active {
+  background: rgba(212, 175, 55, 0.15);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(212, 175, 55, 0.50);
+  box-shadow: 0 0 25px -4px rgba(212, 175, 55, 0.30);
+}
+
+/* Royal Luxury Gradient Text */
+.gradient-text-royal {
+  background: linear-gradient(135deg, #FFFFFF 20%, #F7F3E9 50%, #3B82F6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-gold {
+  background: linear-gradient(135deg, #F7F3E9 15%, #E5C158 60%, #D4AF37 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .gradient-text-mono {
-  background: linear-gradient(135deg, #00F5A0 0%, #E2E8F0 100%);
+  background: linear-gradient(135deg, #60A5FA 0%, #F7F3E9 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -67,8 +89,8 @@
 .bg-tech-grid {
   background-size: 36px 36px;
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    linear-gradient(to right, rgba(65, 90, 119, 0.12) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(65, 90, 119, 0.12) 1px, transparent 1px);
 }
 
 /* Radial spotlight mask */

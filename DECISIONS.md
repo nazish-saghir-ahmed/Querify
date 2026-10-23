@@ -167,3 +167,25 @@
 - **Consequences**:
   - *Positive*: Exceptional visual craftsmanship, higher contrast, zero generic template aesthetics, fast rendering without DOM bloat.
   - *Negative*: Requires strict CSS utility discipline to avoid introducing competing accent colors.
+
+---
+
+### ADR-012: Royal Navy & Gold Palette with Royal Blue Accents and Transparent Frosted Glass Containers
+- **Status**: Accepted
+- **Context**: To evoke a prestigious, royal yet deeply professional aesthetic suited for enterprise finance brands and high-assurance database tools, the user requested transitioning the visual identity to a Royal Navy & Gold color palette with vibrant Royal Blue interactive elements and transparent frosted glass containers that allow the stationary 3D spatial artwork to shine through subtly.
+- **Decision**:
+  1. **Color Token Alignment**:
+     - Deep Canvas: Royal Navy Dark (`#0D1B2A`).
+     - Elevated Glass Surfaces: Royal Navy Slate (`#1B263B` at 40-70% opacity with `backdrop-blur-xl`).
+     - Structural Dividers & Subdued Accents: Steel Blue (`#415A77` at 30-40% opacity).
+     - Interactive Brand Accent: Intelligent **Royal Blue** (`#2563EB`, `#3B82F6`) for primary CTAs, active tab highlights, and SQL execution buttons.
+     - Prestigious Status Accent: **Royal Gold** (`#D4AF37`, `#E5C158`) for ambiguity detection badges, SQL keywords, and KPI metrics.
+     - Typography Neutral: **Royal Champagne / Warm Ivory** (`#F7F3E9`) for high-contrast, luxurious readability.
+  2. **Transparent Frosted Glass Containers**:
+     - Configured `.glass-royal`, `.glass-royal-elevated`, and `.glass-royal-inner` with `backdrop-filter: blur(20px)` and semi-transparent backgrounds (`rgba(13, 27, 42, 0.60)` to `rgba(27, 38, 59, 0.40)`).
+     - Applied transparent glass architecture across all cards, nested console windows (`>_` prompt, clarification box, SQL code viewer), DB Explorer ERD topology, and Query History audit cards.
+  3. **Multi-Chromatic Cursor Particle Trail**:
+     - Upgraded `CursorTrail.jsx` to emit shimmering Royal Blue (`#3B82F6`) and Royal Gold (`#D4AF37`) particles with fluid damping.
+- **Consequences**:
+  - *Positive*: Bespoke, prestigious, high-end enterprise appearance that combines financial gravitas with futuristic AI precision. The transparent frosted boxes create spatial depth by letting the stationary 3D background artwork subtly show through.
+  - *Negative*: Requires GPU-accelerated backdrop blur support (handled gracefully by standard modern webkit/blink compositors).

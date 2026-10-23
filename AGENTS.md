@@ -124,7 +124,7 @@ D:\Querify/
 | **AI LLM** | Google Gemini | 1.5/2.0 Flash | Schema-grounded SQL synthesis |
 | **Frontend** | React | 18.2+ | Declarative UI and state management |
 | **Bundler** | Vite | 5.0+ | Fast ESM development and production build |
-| **Styling** | Tailwind CSS | 3.4+ | Utility-first cyberpunk design system |
+| **Styling** | Tailwind CSS | 3.4+ | Royal Navy & Gold with Royal Blue & transparent glass architecture |
 | **Charts** | Recharts | 2.10+ | Responsive SVG/Canvas data visualizations |
 | **Icons** | Lucide React | 0.300+ | Lightweight SVG iconography |
 | **Diagrams** | Archify | 3.2.0 | Verifiable interactive architecture maps |

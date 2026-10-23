@@ -2,9 +2,8 @@ import React from 'react';
 
 /**
  * Fixed, performant background layer displaying the bespoke AI + Database artwork.
- * Remains stationary while the application content scrolls smoothly in front.
- * Uses CSS overlays, technical grids, and atmospheric vignettes to guarantee
- * maximum text readability without dimming the visual impact.
+ * Uses Royal Navy & Slate depth overlays (#0D1B2A, #1B263B) with Royal Blue and Gold spotlights.
+ * Transparent frosted glass boxes hover in front of this layer so it subtly shines through.
  */
 export default function FixedHeroBackground() {
   return (
@@ -16,21 +15,24 @@ export default function FixedHeroBackground() {
       <img
         src="/hero-ai-database-bg.jpg"
         alt=""
-        className="absolute inset-0 w-full h-full object-cover object-center scale-105 opacity-[0.22] transition-transform duration-1000 ease-out"
+        className="absolute inset-0 w-full h-full object-cover object-center scale-105 opacity-[0.28] transition-transform duration-1000 ease-out"
         loading="eager"
       />
 
-      {/* Atmospheric depth gradients */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#06080D]/95 via-[#06080D]/75 to-[#06080D]/98" />
+      {/* Royal Navy atmospheric depth gradients */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0D1B2A]/90 via-[#0D1B2A]/70 to-[#0D1B2A]/95" />
       
-      {/* Radial spotlight from top center */}
-      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[1000px] h-[550px] bg-[radial-gradient(ellipse_at_center,rgba(0,245,160,0.12),transparent_70%)] blur-2xl" />
+      {/* Royal Blue spotlight from top center */}
+      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[1100px] h-[600px] bg-[radial-gradient(ellipse_at_center,rgba(37,99,235,0.18),transparent_70%)] blur-3xl" />
 
-      {/* Precision technical wireframe grid overlay */}
-      <div className="absolute inset-0 bg-tech-grid opacity-35" />
+      {/* Subtle Royal Gold accent corona */}
+      <div className="absolute top-1/4 right-1/4 w-[500px] h-[350px] bg-[radial-gradient(ellipse_at_center,rgba(212,175,55,0.08),transparent_65%)] blur-3xl" />
 
-      {/* Peripheral edge vignette */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_40%,#06080D_95%)]" />
+      {/* Precision technical wireframe grid overlay in steel blue */}
+      <div className="absolute inset-0 bg-tech-grid opacity-40" />
+
+      {/* Peripheral royal navy edge vignette */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_35%,#0D1B2A_95%)]" />
     </div>
   );
 }

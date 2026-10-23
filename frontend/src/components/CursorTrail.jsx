@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 
 /**
  * Lightweight, high-performance Canvas-based cursor trail.
- * Renders a subtle stream of luminous electric mint particles (#00F5A0)
+ * Renders a subtle stream of luminous Royal Blue (#3B82F6) and Royal Gold (#D4AF37) particles
  * that follow the user's pointer with fluid damping and decay.
  *
  * Automatically disabled on touch/coarse devices and when prefers-reduced-motion is active.
@@ -48,6 +48,7 @@ export default function CursorTrail() {
       // Add a couple of subtle particles on movement
       const speed = Math.hypot(mouse.x - mouse.prevX, mouse.y - mouse.prevY);
       if (speed > 1 && particles.length < maxParticles) {
+        const isGold = Math.random() > 0.65;
         particles.push({
           x: mouse.x,
           y: mouse.y,
@@ -56,6 +57,7 @@ export default function CursorTrail() {
           decay: 0.025 + Math.random() * 0.015,
           vx: (Math.random() - 0.5) * 0.8,
           vy: (Math.random() - 0.5) * 0.8,
+          isGold,
         });
       }
     };
@@ -86,8 +88,13 @@ export default function CursorTrail() {
         ctx.save();
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 245, 160, ${p.alpha * 0.7})`;
-        ctx.shadowColor = '#00F5A0';
+        if (p.isGold) {
+          ctx.fillStyle = `rgba(212, 175, 55, ${p.alpha * 0.75})`;
+          ctx.shadowColor = '#D4AF37';
+        } else {
+          ctx.fillStyle = `rgba(59, 130, 246, ${p.alpha * 0.75})`;
+          ctx.shadowColor = '#2563EB';
+        }
         ctx.shadowBlur = 8;
         ctx.fill();
         ctx.restore();
@@ -101,7 +108,7 @@ export default function CursorTrail() {
         for (let i = 1; i < particles.length; i++) {
           ctx.lineTo(particles[i].x, particles[i].y);
         }
-        ctx.strokeStyle = `rgba(0, 245, 160, 0.15)`;
+        ctx.strokeStyle = `rgba(59, 130, 246, 0.18)`;
         ctx.lineWidth = 1;
         ctx.stroke();
         ctx.restore();

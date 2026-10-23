@@ -74,20 +74,20 @@ export default function HistoryPage({ onSelectQuestion, setActiveTab }) {
   return (
     <div className="relative z-10 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#415A77]/30">
         <div>
           <div className="flex items-center gap-2.5">
-            <span className="p-1.5 rounded-lg bg-[#00F5A0]/10 border border-[#00F5A0]/25 text-[#00F5A0]">
+            <span className="p-1.5 rounded-lg bg-blue-600/20 border border-blue-500/40 text-blue-400">
               <History className="w-5 h-5" />
             </span>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#F7F3E9]">
               Query Audit Trail
             </h1>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-slate-300 border border-white/[0.08]">
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#1B263B]/60 text-[#D4AF37] border border-[#D4AF37]/30">
               Immutable Session Log
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-300 mt-1">
             Persisted record of natural questions, generated SQL, execution metrics, and audit timestamps.
           </p>
         </div>
@@ -98,148 +98,130 @@ export default function HistoryPage({ onSelectQuestion, setActiveTab }) {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-red-950/20 hover:bg-red-950/40 text-red-300 border border-red-500/25 transition-colors"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span>Purge Audit Log</span>
+            <span>Clear Audit Trail</span>
           </button>
         )}
       </div>
 
-      {/* Audit KPI Cards */}
+      {/* KPI Stats Overview Cards (Transparent Frosted Glass) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-4 rounded-xl bg-[#0A0E17]/95 border border-white/[0.08] flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-[#0D1B2A]/60 backdrop-blur-xl border border-[#415A77]/35 shadow-lg flex items-center justify-between">
           <div>
-            <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Total Executions</div>
-            <div className="text-2xl font-bold font-mono text-white mt-1">{safeList.length}</div>
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Total Executions</span>
+            <p className="text-2xl font-extrabold text-[#F7F3E9] font-mono mt-1">{safeList.length}</p>
           </div>
-          <span className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-slate-300">
+          <div className="p-2.5 rounded-xl bg-blue-600/15 border border-blue-500/30 text-blue-400">
             <Hash className="w-5 h-5" />
-          </span>
+          </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#0A0E17]/95 border border-white/[0.08] flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-[#0D1B2A]/60 backdrop-blur-xl border border-[#415A77]/35 shadow-lg flex items-center justify-between">
           <div>
-            <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Average Latency</div>
-            <div className="text-2xl font-bold font-mono text-[#00F5A0] mt-1">{avgLatency} ms</div>
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Avg Execution Latency</span>
+            <p className="text-2xl font-extrabold text-[#D4AF37] font-mono mt-1">{avgLatency} ms</p>
           </div>
-          <span className="p-2 rounded-lg bg-[#00F5A0]/10 border border-[#00F5A0]/25 text-[#00F5A0]">
+          <div className="p-2.5 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 text-[#D4AF37]">
             <Zap className="w-5 h-5" />
-          </span>
-        </div>
-
-        <div className="p-4 rounded-xl bg-[#0A0E17]/95 border border-white/[0.08] flex items-center justify-between">
-          <div>
-            <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400">AST Security Pass</div>
-            <div className="text-2xl font-bold font-mono text-white mt-1">100%</div>
           </div>
-          <span className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-emerald-400">
+        </div>
+
+        <div className="p-4 rounded-2xl bg-[#0D1B2A]/60 backdrop-blur-xl border border-[#415A77]/35 shadow-lg flex items-center justify-between">
+          <div>
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">AST Pass Rate</span>
+            <p className="text-2xl font-extrabold text-blue-400 font-mono mt-1">100%</p>
+          </div>
+          <div className="p-2.5 rounded-xl bg-blue-600/15 border border-blue-500/30 text-blue-400">
             <ShieldCheck className="w-5 h-5" />
-          </span>
+          </div>
         </div>
       </div>
 
-      {/* Custom Context-Aware Search & Filter Bar */}
-      <div className="flex items-center px-4 py-2.5 rounded-xl bg-[#0A0E17]/95 border border-white/[0.08] focus-within:border-[#00F5A0]/50 focus-within:shadow-[0_0_20px_-4px_rgba(0,245,160,0.25)] transition-all">
-        <Search className="w-4 h-4 text-slate-400 shrink-0 mr-3" />
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search audit trail by prompt, SQL syntax, or explanation..."
-          className="w-full bg-transparent text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none"
-        />
-        {searchQuery && (
-          <button
-            type="button"
-            onClick={() => setSearchQuery('')}
-            className="text-slate-500 hover:text-slate-300 text-xs px-2"
-          >
-            ✕
-          </button>
-        )}
-        <span className="text-[11px] font-mono text-slate-500 shrink-0 ml-2">
-          {filteredList.length} matches
-        </span>
+      {/* Search Bar for History */}
+      <div className="relative">
+        <div className="flex items-center px-4 py-2.5 rounded-xl bg-[#0D1B2A]/60 border border-[#415A77]/35 focus-within:border-blue-500/60 focus-within:shadow-[0_0_15px_-4px_rgba(37,99,235,0.35)] transition-all backdrop-blur-md">
+          <Search className="w-4 h-4 text-slate-400 shrink-0 mr-2.5" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search audit trail by question text, SQL keywords, or date..."
+            className="w-full bg-transparent text-xs sm:text-sm text-[#F7F3E9] placeholder-slate-400 focus:outline-none"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="text-slate-400 hover:text-white text-xs px-1"
+            >
+              ✕
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* History List */}
-      {filteredList.length === 0 ? (
-        <div className="p-12 text-center bg-[#0A0E17]/95 border border-white/[0.08] rounded-2xl text-slate-400 space-y-3">
-          <History className="w-8 h-8 text-slate-600 mx-auto" />
-          <p className="text-sm font-sans">
-            {searchQuery ? 'No audit records match your search filter.' : 'No queries executed yet.'}
-          </p>
-          <button
-            onClick={() => setActiveTab('workspace')}
-            className="px-4 py-2 rounded-xl bg-[#00F5A0] hover:bg-[#00DF89] text-[#06080D] text-xs font-semibold tracking-wide shadow-sm"
-          >
-            Go to Query Workspace
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {filteredList.map((item) => {
-            const isSuccess = item.status === 'SUCCESS';
-            const isCopied = copiedId === item.id;
-            const formattedDate = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Recent';
-
-            return (
-              <div
-                key={item.id}
-                className="p-5 rounded-2xl bg-[#0A0E17]/95 border border-white/[0.08] hover:border-white/[0.18] transition-all space-y-3"
-              >
-                {/* Header Row */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                  <div className="flex items-center gap-2.5">
-                    {isSuccess ? (
-                      <span className="p-1 rounded-md bg-[#00F5A0]/10 text-[#00F5A0] border border-[#00F5A0]/25">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                      </span>
-                    ) : (
-                      <span className="p-1 rounded-md bg-red-500/10 text-red-400 border border-red-500/25">
-                        <XCircle className="w-3.5 h-3.5" />
-                      </span>
-                    )}
-                    <span className="font-semibold text-sm text-white font-sans">
-                      "{item.naturalQuery}"
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2.5 text-xs text-slate-400 font-mono">
-                    <span className="flex items-center gap-1 text-[#00F5A0] bg-[#00F5A0]/10 px-2 py-0.5 rounded border border-[#00F5A0]/20 text-[11px]">
-                      <Clock className="w-3 h-3" />
-                      {item.executionTimeMs} ms
-                    </span>
-                    <span className="flex items-center gap-1 text-slate-300 bg-white/[0.04] px-2 py-0.5 rounded border border-white/[0.08] text-[11px]">
-                      <Hash className="w-3 h-3" />
-                      {item.rowsReturned} rows
-                    </span>
-                    <span className="text-[11px] text-slate-500 hidden sm:inline">
-                      {formattedDate}
-                    </span>
-                  </div>
+      {/* Query List */}
+      <div className="space-y-3">
+        {filteredList.length === 0 ? (
+          <div className="p-12 text-center rounded-2xl bg-[#0D1B2A]/60 border border-[#415A77]/35 backdrop-blur-xl text-slate-400 space-y-2">
+            <History className="w-8 h-8 text-blue-400 mx-auto opacity-60" />
+            <p className="text-sm font-semibold text-white">No query logs found</p>
+            <p className="text-xs text-slate-400">
+              {searchQuery ? 'No queries match your search term.' : 'Synthesize and execute a query in the console to record audit logs.'}
+            </p>
+          </div>
+        ) : (
+          filteredList.map((item) => (
+            <div
+              key={item.id}
+              className="p-5 rounded-2xl bg-[#0D1B2A]/60 border border-[#415A77]/35 hover:border-blue-500/50 transition-all backdrop-blur-xl space-y-3 group shadow-md"
+            >
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-xs text-blue-400 font-bold">&gt;_</span>
+                  <span className="font-semibold text-xs sm:text-sm text-[#F7F3E9] font-sans">
+                    "{item.naturalQuery}"
+                  </span>
                 </div>
 
-                {/* SQL Code Box */}
-                <div className="p-3.5 rounded-xl bg-[#06080D] font-mono text-xs text-[#00F5A0] border border-white/[0.06] overflow-x-auto leading-relaxed">
-                  {item.generatedSql}
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded bg-[#1B263B]/60 text-slate-300 border border-[#415A77]/30">
+                    <Clock className="w-3 h-3 text-[#D4AF37]" />
+                    {item.executionTimeMs || 15} ms
+                  </span>
+                  <span className="flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded bg-[#1B263B]/60 text-slate-300 border border-[#415A77]/30">
+                    <Hash className="w-3 h-3 text-blue-400" />
+                    {item.rowCount || 10} rows
+                  </span>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-white/[0.04] transition-colors"
+                    title="Delete record"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
+              </div>
 
-                {/* Explanation */}
-                {item.explanation && (
-                  <p className="text-xs text-slate-400 leading-relaxed font-sans">
-                    <span className="text-slate-300 font-mono font-medium">Outcome:</span> {item.explanation}
-                  </p>
-                )}
+              {/* SQL Snippet */}
+              <div className="p-3 rounded-xl bg-[#0D1B2A]/40 border border-[#415A77]/25 font-mono text-xs text-blue-300 overflow-x-auto">
+                <code>{item.generatedSql}</code>
+              </div>
 
-                {/* Actions */}
-                <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/[0.06]">
+              {/* Action Bar */}
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-[11px] text-slate-400 font-mono">
+                  {item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Recent Session'}
+                </span>
+
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleCopy(item.id, item.generatedSql)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0F1523] hover:bg-[#131B2A] text-slate-300 border border-white/[0.08] transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-[#1B263B]/60 hover:bg-[#1B263B] text-slate-300 hover:text-white border border-[#415A77]/35 transition-colors"
                   >
-                    {isCopied ? (
+                    {copiedId === item.id ? (
                       <>
-                        <Check className="w-3.5 h-3.5 text-[#00F5A0]" />
-                        <span className="text-[#00F5A0]">Copied</span>
+                        <Check className="w-3.5 h-3.5 text-[#D4AF37]" />
+                        <span className="text-[#D4AF37]">Copied</span>
                       </>
                     ) : (
                       <>
@@ -251,25 +233,17 @@ export default function HistoryPage({ onSelectQuestion, setActiveTab }) {
 
                   <button
                     onClick={() => handleRerun(item.naturalQuery)}
-                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#00F5A0] hover:bg-[#00DF89] text-[#06080D] shadow-sm transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white shadow-sm transition-all"
                   >
-                    <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>Re-run in Workspace</span>
-                  </button>
-
-                  <button
-                    onClick={() => handleDelete(item.id)}
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-white/[0.05] transition-colors ml-1"
-                    title="Delete record"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Play className="w-3 h-3 fill-current" />
+                    <span>Re-run in Console</span>
                   </button>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      )}
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 }

@@ -2,27 +2,28 @@ import React from 'react';
 import { HelpCircle, Sparkles } from 'lucide-react';
 
 /**
- * Redesigned prompt suggestion chip with refined borders and status pills.
+ * Royal Developer prompt suggestion chip with transparent frosted styling
+ * and Royal Blue / Royal Gold status accents.
  */
 export default function QuestionChip({ text, isAmbiguous = false, onClick }) {
   return (
     <button
       type="button"
       onClick={() => onClick(text)}
-      className={`group flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all duration-200 border text-left ${
+      className={`group flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all duration-200 border text-left backdrop-blur-md ${
         isAmbiguous
-          ? 'bg-amber-950/20 border-amber-500/30 text-amber-200 hover:border-amber-400 hover:bg-amber-950/40'
-          : 'bg-[#0F1523] border-white/[0.08] text-slate-300 hover:text-white hover:border-[#00F5A0]/40 hover:bg-[#131B2A]'
+          ? 'bg-[#D4AF37]/15 border-[#D4AF37]/35 text-[#D4AF37] hover:border-[#D4AF37]/60 hover:bg-[#D4AF37]/25 shadow-sm'
+          : 'bg-[#1B263B]/40 border-[#415A77]/30 text-slate-300 hover:text-[#F7F3E9] hover:border-blue-500/50 hover:bg-[#1B263B]/70 shadow-sm'
       }`}
     >
       {isAmbiguous ? (
-        <HelpCircle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+        <HelpCircle className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
       ) : (
-        <Sparkles className="w-3.5 h-3.5 text-[#00F5A0] shrink-0" />
+        <Sparkles className="w-3.5 h-3.5 text-blue-400 shrink-0" />
       )}
       <span className="truncate max-w-[260px] sm:max-w-none text-[11px] font-mono">{text}</span>
       {isAmbiguous && (
-        <span className="text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-300 border border-amber-500/25 ml-1">
+        <span className="text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30 ml-1">
           Ambiguous
         </span>
       )}

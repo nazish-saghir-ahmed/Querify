@@ -1,30 +1,34 @@
 # SPEC-06: Frontend UI/UX & Component Architecture Specification
 
-> **Design Tokens, Monochromatic Titanium + Electric Mint Visual Language, React 18 Tree, and Spatial Layering**
+> **Design Tokens, Royal Navy & Gold Palette with Royal Blue Accents, Transparent Frosted Glass Architecture, React 18 Tree, and Spatial Layering**
 
 ---
 
 ## 1. Design System & Craft Philosophy
 
-Querify employs a bespoke, high-craft developer tool visual identity inspired by Linear, Raycast, and Stripe Radar. It eschews generic AI templates, purple glows, and heavy glassmorphism in favor of monochromatic titanium tones, dark obsidian surfaces, and a single signature brand accent: **Intelligent Electric Mint (`#00F5A0`)**.
+Querify employs a bespoke, high-craft developer tool visual identity designed for high-assurance database technology and enterprise financial brands. It pairs deep **Royal Navy (`#0D1B2A`, `#1B263B`)** with **Royal Blue (`#2563EB`, `#3B82F6`)**, prestigious **Royal Gold (`#D4AF37`)**, and warm **Royal Champagne Ivory (`#F7F3E9`)** typography, enveloped in transparent frosted glass containers (`backdrop-blur-xl`).
 
 ```
 +-----------------------------------------------------------------------------------+
 |                              COLOR PALETTE TOKENS                                 |
 +-----------------------------------------------------------------------------------+
-|  Deep Obsidian        |  #06080D  | Root canvas and body backdrop                 |
-|  Elevated Graphite    |  #0A0E17  | Card surfaces & command consoles             |
-|  Panel Surface        |  #0F1523  | Toolbar bars & elevated flyouts              |
-|  Card Container       |  #131B2A  | Active selection cards & table rows          |
-|  Titanium Border      |  #1C2638  | Subtle structural dividers (80% opacity)     |
-|  Active Brand Accent  |  #00F5A0  | Primary CTAs, active pills, SQL keywords     |
-|  Brand Hover State    |  #00DF89  | Interactive button hover state               |
-|  Brand Subtle Glow    |  #00F5A0  | Soft 15px box-shadow under active elements   |
-|  Text Primary         |  #F8FAFC  | High-contrast crisp white typography         |
-|  Text Muted           |  #94A3B8  | Technical metadata & secondary labels        |
-|  Ambiguity Warning    |  #F59E0B  | Amber warning indicators for polysemy        |
+|  Deep Royal Navy      |  #0D1B2A  | Root canvas and body backdrop                 |
+|  Elevated Royal Slate |  #1B263B  | Transparent card surfaces (40-70% opacity)    |
+|  Steel Blue Border    |  #415A77  | Subtle structural dividers (30-40% opacity)   |
+|  Royal Blue Brand     |  #2563EB  | Primary CTAs, active pills, SQL identifiers   |
+|  Electric Royal Blue  |  #3B82F6  | Hover states & active glow indicators         |
+|  Prestigious Gold     |  #D4AF37  | Ambiguity alerts, SQL keywords, PK badges     |
+|  Champagne Ivory Text |  #F7F3E9  | High-contrast crisp warm white typography     |
+|  Muted Slate Text     |  #94A3B8  | Technical metadata & secondary labels         |
 +-----------------------------------------------------------------------------------+
 ```
+
+### Transparent Frosted Glass Containers
+All interactive boxes, terminal windows, query composers, and cards utilize multi-layered glassmorphism:
+- **Outer Shell (`.glass-royal`)**: `background: rgba(13, 27, 42, 0.65)`, `backdrop-filter: blur(20px)`, `border: 1px solid rgba(65, 90, 119, 0.35)`.
+- **Inner Nested Blocks (`.glass-royal-inner`)**: `background: rgba(27, 38, 59, 0.40)`, `backdrop-filter: blur(14px)`, `border: 1px solid rgba(65, 90, 119, 0.30)`.
+- **Active State (`.glass-royal-active`)**: `background: rgba(37, 99, 235, 0.20)`, `backdrop-filter: blur(18px)`, `border: 1px solid rgba(59, 130, 246, 0.60)`.
+- **Gold Ambiguity Alert (`.glass-gold-active`)**: `background: rgba(212, 175, 55, 0.15)`, `border: 1px solid rgba(212, 175, 55, 0.50)`.
 
 ### Typography Tokens
 - **Display & Interface**: `Inter`, `-apple-system`, `sans-serif` (balanced geometry, high legibility).

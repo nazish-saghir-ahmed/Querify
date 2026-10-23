@@ -120,33 +120,33 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
   return (
     <div className="relative z-10 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
       {/* Workspace Header Toolbar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#415A77]/30">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-              <span className="p-1.5 rounded-lg bg-[#00F5A0]/10 border border-[#00F5A0]/25 text-[#00F5A0]">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#F7F3E9] flex items-center gap-2.5">
+              <span className="p-1.5 rounded-lg bg-blue-600/20 border border-blue-500/40 text-blue-400">
                 <Terminal className="w-5 h-5" />
               </span>
               Query Workspace
             </h1>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-slate-300 border border-white/[0.08]">
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#1B263B]/60 text-[#D4AF37] border border-[#D4AF37]/30">
               v1.2 Console
             </span>
           </div>
-          <p className="text-xs text-slate-400 mt-1 font-sans">
+          <p className="text-xs text-slate-300 mt-1 font-sans">
             Natural language to AST-verified SQL translation with multi-turn ambiguity resolution.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-400 px-3 py-1.5 rounded-lg bg-[#0F1523] border border-white/[0.08]">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#00F5A0]" />
+          <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-300 px-3 py-1.5 rounded-lg bg-[#1B263B]/50 backdrop-blur-md border border-[#415A77]/35">
+            <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
             <span>AST Guard: Active</span>
           </div>
 
           <button
             onClick={handleReset}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0F1523] hover:bg-[#131B2A] text-slate-300 hover:text-white border border-white/[0.08] transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#1B263B]/50 hover:bg-[#1B263B] text-slate-300 hover:text-white border border-[#415A77]/35 transition-colors backdrop-blur-md"
             title="Reset workspace and state"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -155,24 +155,24 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
         </div>
       </div>
 
-      {/* Redesigned Query Composer / Command Console */}
-      <div className="relative rounded-2xl bg-[#0A0E17]/95 border border-white/[0.1] shadow-2xl backdrop-blur-xl overflow-hidden focus-within:border-[#00F5A0]/50 focus-within:shadow-[0_0_35px_-5px_rgba(0,245,160,0.25)] transition-all duration-300">
+      {/* Redesigned Query Composer / Command Console (Transparent Frosted Glass) */}
+      <div className="relative rounded-2xl bg-[#0D1B2A]/60 border border-[#415A77]/35 shadow-2xl backdrop-blur-2xl overflow-hidden focus-within:border-blue-500/70 focus-within:shadow-[0_0_35px_-5px_rgba(37,99,235,0.35)] transition-all duration-300">
         {/* Top Console Bar */}
-        <div className="flex items-center justify-between px-4 py-2.5 bg-[#0F1523] border-b border-white/[0.08] text-xs">
+        <div className="flex items-center justify-between px-4 py-2.5 bg-[#1B263B]/50 backdrop-blur-md border-b border-[#415A77]/30 text-xs">
           <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 font-mono text-[11px] text-[#00F5A0]">
+            <span className="flex items-center gap-1.5 font-mono text-[11px] text-blue-400">
               <Database className="w-3.5 h-3.5" />
               <span>querify_db</span>
             </span>
-            <span className="text-slate-600">•</span>
-            <span className="text-slate-400 font-mono text-[11px]">Dialect: MySQL 8</span>
-            <span className="text-slate-600">•</span>
-            <span className="text-slate-400 font-mono text-[11px]">Mode: Read-Only (SELECT)</span>
+            <span className="text-[#415A77]">•</span>
+            <span className="text-slate-300 font-mono text-[11px]">Dialect: MySQL 8</span>
+            <span className="text-[#415A77]">•</span>
+            <span className="text-slate-300 font-mono text-[11px]">Mode: Read-Only (SELECT)</span>
           </div>
 
           <div className="hidden md:flex items-center gap-2 text-[11px] text-slate-400 font-mono">
             <span>Press</span>
-            <kbd className="px-1.5 py-0.5 rounded bg-[#131B2A] border border-white/[0.1] text-slate-300 text-[10px]">
+            <kbd className="px-1.5 py-0.5 rounded bg-[#0D1B2A]/60 border border-[#415A77]/35 text-[#F7F3E9] text-[10px]">
               Enter ↵
             </kbd>
             <span>to analyze</span>
@@ -188,7 +188,7 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
           className="p-4 sm:p-5 space-y-4"
         >
           <div className="flex items-start gap-3">
-            <span className="font-mono text-sm text-[#00F5A0] font-bold select-none pt-2.5">
+            <span className="font-mono text-sm text-blue-400 font-bold select-none pt-2.5">
               &gt;_
             </span>
             <div className="flex-1 relative">
@@ -197,14 +197,14 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="Ask in natural language... e.g. Which AI companies had highest revenue in 2024?"
-                className="w-full bg-transparent text-white placeholder-slate-500 font-sans text-sm sm:text-base focus:outline-none py-2 pr-10 tracking-wide"
+                className="w-full bg-transparent text-[#F7F3E9] placeholder-slate-400 font-sans text-sm sm:text-base focus:outline-none py-2 pr-10 tracking-wide"
                 autoFocus
               />
               {question && (
                 <button
                   type="button"
                   onClick={() => setQuestion('')}
-                  className="absolute right-0 top-2.5 text-slate-500 hover:text-slate-300 transition-colors text-xs p-1"
+                  className="absolute right-0 top-2.5 text-slate-400 hover:text-white transition-colors text-xs p-1"
                   title="Clear input"
                 >
                   ✕
@@ -216,11 +216,11 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
             <button
               type="submit"
               disabled={isLoading || !question.trim()}
-              className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#00F5A0] hover:bg-[#00DF89] text-[#06080D] font-semibold text-xs tracking-wide shadow-[0_0_20px_-3px_rgba(0,245,160,0.4)] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-semibold text-xs tracking-wide shadow-[0_0_20px_-3px_rgba(37,99,235,0.5)] border border-blue-400/40 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
-                  <span className="w-3.5 h-3.5 border-2 border-[#06080D]/30 border-t-[#06080D] rounded-full animate-spin" />
+                  <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   <span>Synthesizing...</span>
                 </>
               ) : (
@@ -233,8 +233,8 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
           </div>
 
           {/* Prompt Suggestion Chips */}
-          <div className="pt-2 border-t border-white/[0.06] flex flex-wrap items-center gap-2">
-            <span className="text-[11px] font-mono text-slate-500 uppercase tracking-wider mr-1">
+          <div className="pt-2 border-t border-[#415A77]/25 flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-mono text-[#D4AF37] uppercase tracking-wider mr-1">
               Sample Prompts:
             </span>
             {sampleQuestions.slice(0, 5).map((q, idx) => (
@@ -251,7 +251,7 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
 
       {/* Error Alert Box */}
       {error && (
-        <div className="p-4 rounded-xl bg-red-950/30 border border-red-500/30 text-red-200 text-xs flex items-start gap-3 animate-fade-in">
+        <div className="p-4 rounded-xl bg-red-950/30 border border-red-500/30 text-red-200 text-xs flex items-start gap-3 animate-fade-in backdrop-blur-md">
           <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
           <div className="space-y-1">
             <span className="font-semibold text-red-300 font-mono">Execution Notice:</span>
@@ -285,18 +285,18 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
       {/* Result Display Section (Table or Chart) */}
       {resultData && resultData.rows && (
         <div className="space-y-4 animate-fade-in">
-          {/* View Mode Toggle Bar */}
-          <div className="flex items-center justify-between bg-[#0A0E17]/80 p-2 rounded-xl border border-white/[0.08]">
+          {/* View Mode Toggle Bar (Frosted Glass) */}
+          <div className="flex items-center justify-between bg-[#0D1B2A]/60 backdrop-blur-xl p-2 rounded-xl border border-[#415A77]/35">
             <div className="flex items-center gap-3">
-              <span className="text-[11px] font-mono font-medium text-slate-400 uppercase tracking-wider pl-2">
+              <span className="text-[11px] font-mono font-medium text-slate-300 uppercase tracking-wider pl-2">
                 Visualization Mode:
               </span>
-              <div className="flex items-center bg-[#0F1523] p-1 rounded-lg border border-white/[0.08]">
+              <div className="flex items-center bg-[#1B263B]/60 p-1 rounded-lg border border-[#415A77]/30">
                 <button
                   onClick={() => setViewMode('table')}
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all ${
                     viewMode === 'table'
-                      ? 'bg-[#00F5A0] text-[#06080D] font-semibold shadow-sm'
+                      ? 'bg-blue-600 text-white font-semibold shadow-[0_0_12px_rgba(37,99,235,0.4)]'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -307,7 +307,7 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
                   onClick={() => setViewMode('chart')}
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all ${
                     viewMode === 'chart'
-                      ? 'bg-[#00F5A0] text-[#06080D] font-semibold shadow-sm'
+                      ? 'bg-blue-600 text-white font-semibold shadow-[0_0_12px_rgba(37,99,235,0.4)]'
                       : 'text-slate-400 hover:text-white'
                   }`}
                 >
@@ -317,8 +317,8 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
               </div>
             </div>
 
-            <div className="text-xs font-mono text-slate-400 pr-2">
-              <span className="text-[#00F5A0] font-semibold">{resultData.rowCount || resultData.rows.length}</span> rows returned
+            <div className="text-xs font-mono text-slate-300 pr-2">
+              <span className="text-[#D4AF37] font-semibold">{resultData.rowCount || resultData.rows.length}</span> rows returned
             </div>
           </div>
 
