@@ -1,18 +1,17 @@
 /**
- * Vercel Serverless Function: GET /api/database/tables/:tableName/sample
- * Fetches sample rows and column structure for the specified table.
+ * Vercel Serverless Function: GET /api/database/tables/:tableName/sample (ESM)
  */
 
-const { getTableSample, sendJson, handleCors, maybeProxyToBackend } = require('../../../_utils');
+import { getTableSample, sendJson, handleCors, maybeProxyToBackend } from '../../../_utils.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
-  const tableName = req.query.tableName || req.query.table || 'companies';
+  const tableName = req.query?.tableName || req.query?.table || 'companies';
 
   const proxied = await maybeProxyToBackend(req, res, `/api/database/tables/${tableName}/sample`);
   if (proxied) return;
 
   const sampleData = getTableSample(tableName);
   return sendJson(res, 200, sampleData);
-};
+}

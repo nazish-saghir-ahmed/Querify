@@ -1,19 +1,18 @@
 /**
- * Vercel Serverless Function: DELETE /api/history/:id
- * Deletes a single audit log record by ID.
+ * Vercel Serverless Function: DELETE /api/history/:id (ESM)
  */
 
-const {
+import {
   AUDIT_HISTORY,
   sendJson,
   handleCors,
   maybeProxyToBackend,
-} = require('../../_utils');
+} from '../../_utils.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
-  const id = req.query.id;
+  const id = req.query?.id;
 
   const proxied = await maybeProxyToBackend(req, res, `/api/history/${id}`);
   if (proxied) return;
@@ -24,4 +23,4 @@ module.exports = async function handler(req, res) {
   }
 
   return sendJson(res, 200, { success: true, id });
-};
+}

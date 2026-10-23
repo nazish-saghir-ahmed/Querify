@@ -1,11 +1,10 @@
 /**
- * Vercel Serverless Function: Catch-All Router /api/*
- * Forwards any unmapped API request to the backend or returns standard JSON.
+ * Vercel Serverless Function: Catch-All Router /api/* (ESM)
  */
 
-const { sendJson, handleCors, maybeProxyToBackend } = require('./_utils');
+import { sendJson, handleCors, maybeProxyToBackend } from './_utils.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
   const urlPath = req.url || '/api';
@@ -17,4 +16,4 @@ module.exports = async function handler(req, res) {
     message: 'Querify Enterprise Serverless API Gateway',
     path: urlPath,
   });
-};
+}

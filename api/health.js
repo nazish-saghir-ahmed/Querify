@@ -1,14 +1,13 @@
 /**
- * Vercel Serverless Function: GET /api/health
+ * Vercel Serverless Function: GET /api/health (ESM)
  * Returns JSON health status, verifying database readiness and AI provider status.
  */
 
-const { sendJson, handleCors, maybeProxyToBackend } = require('./_utils');
+import { sendJson, handleCors, maybeProxyToBackend } from './_utils.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
-  // Try proxying to live Spring Boot backend if configured
   const proxied = await maybeProxyToBackend(req, res, '/api/health');
   if (proxied) return;
 
@@ -22,4 +21,4 @@ module.exports = async function handler(req, res) {
     aiMode: 'production',
     uptimeSeconds: uptime,
   });
-};
+}

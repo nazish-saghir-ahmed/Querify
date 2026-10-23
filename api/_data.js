@@ -3,7 +3,7 @@
  * Provides relational schema and domain data for the 6 AI analytics tables.
  */
 
-const TABLES = [
+export const TABLES = [
   { name: 'companies', rowCount: 15 },
   { name: 'ai_models', rowCount: 16 },
   { name: 'financial_performance', rowCount: 18 },
@@ -12,7 +12,7 @@ const TABLES = [
   { name: 'market_performance', rowCount: 15 },
 ];
 
-const SCHEMA = [
+export const SCHEMA = [
   {
     tableName: 'companies',
     description: 'Stores AI enterprises, frontier research labs, and technology corporations.',
@@ -102,7 +102,7 @@ const SCHEMA = [
   },
 ];
 
-const COMPANIES = [
+export const COMPANIES = [
   { company_id: 1, company_name: 'OpenAI', industry: 'Generative AI & LLMs', country: 'USA', founded_year: 2015, company_type: 'Private AI Lab', headquarters_city: 'San Francisco' },
   { company_id: 2, company_name: 'Anthropic', industry: 'AI Safety & Research', country: 'USA', founded_year: 2021, company_type: 'Public Benefit Corp', headquarters_city: 'San Francisco' },
   { company_id: 3, company_name: 'Google DeepMind', industry: 'Frontier AI & Science', country: 'United Kingdom', founded_year: 2010, company_type: 'Subsidiary', headquarters_city: 'London' },
@@ -120,7 +120,7 @@ const COMPANIES = [
   { company_id: 15, company_name: 'xAI', industry: 'Frontier LLMs & Reasoning', country: 'USA', founded_year: 2023, company_type: 'Private Startup', headquarters_city: 'Palo Alto' },
 ];
 
-const AI_MODELS = [
+export const AI_MODELS = [
   { model_id: 1, company_id: 1, company_name: 'OpenAI', model_name: 'GPT-4o', model_category: 'Multimodal', release_year: 2024, parameter_count_billions: 200.0, performance_score: 93.2 },
   { model_id: 2, company_id: 1, company_name: 'OpenAI', model_name: 'o1 Reasoning', model_category: 'Reasoning', release_year: 2024, parameter_count_billions: 120.0, performance_score: 96.8 },
   { model_id: 3, company_id: 2, company_name: 'Anthropic', model_name: 'Claude 3.5 Sonnet', model_category: 'Reasoning', release_year: 2024, parameter_count_billions: 175.0, performance_score: 94.6 },
@@ -139,7 +139,7 @@ const AI_MODELS = [
   { model_id: 16, company_id: 5, company_name: 'Microsoft AI', model_name: 'Phi-3.5 Medium', model_category: 'Small Language Model', release_year: 2024, parameter_count_billions: 14.0, performance_score: 87.8 },
 ];
 
-const FINANCIAL_PERFORMANCE = [
+export const FINANCIAL_PERFORMANCE = [
   { performance_id: 1, company_id: 4, company_name: 'NVIDIA', fiscal_year: 2024, revenue_millions: 122000.0, profit_millions: 68000.0, operating_cost_millions: 54000.0, revenue_growth_percent: 100.25 },
   { performance_id: 2, company_id: 5, company_name: 'Microsoft AI', fiscal_year: 2024, revenue_millions: 38500.0, profit_millions: 14200.0, operating_cost_millions: 24300.0, revenue_growth_percent: 43.66 },
   { performance_id: 3, company_id: 9, company_name: 'Amazon AWS AI', fiscal_year: 2024, revenue_millions: 31000.0, profit_millions: 10800.0, operating_cost_millions: 20200.0, revenue_growth_percent: 47.62 },
@@ -160,7 +160,7 @@ const FINANCIAL_PERFORMANCE = [
   { performance_id: 18, company_id: 1, company_name: 'OpenAI', fiscal_year: 2023, revenue_millions: 1600.0, profit_millions: -900.0, operating_cost_millions: 2500.0, revenue_growth_percent: 700.00 },
 ];
 
-const AI_INVESTMENTS = [
+export const AI_INVESTMENTS = [
   { investment_id: 1, company_id: 1, company_name: 'OpenAI', investment_year: 2024, investment_amount_millions: 10000.0, investment_category: 'Compute Infrastructure & Clusters', estimated_return_percent: 45.0 },
   { investment_id: 2, company_id: 2, company_name: 'Anthropic', investment_year: 2024, investment_amount_millions: 4000.0, investment_category: 'AI Safety Research & Scaling', estimated_return_percent: 38.5 },
   { investment_id: 3, company_id: 4, company_name: 'NVIDIA', investment_year: 2024, investment_amount_millions: 15000.0, investment_category: 'Next-Gen GPU Architecture (Blackwell)', estimated_return_percent: 85.0 },
@@ -178,7 +178,7 @@ const AI_INVESTMENTS = [
   { investment_id: 15, company_id: 13, company_name: 'Hugging Face', investment_year: 2024, investment_amount_millions: 235.0, investment_category: 'Decentralized Open Weights Compute', estimated_return_percent: 36.0 },
 ];
 
-const RESEARCH_PROJECTS = [
+export const RESEARCH_PROJECTS = [
   { project_id: 1, company_id: 1, company_name: 'OpenAI', project_name: 'Project Strawberry / Orion', research_area: 'Reasoning & Self-Correction', budget_millions: 150.0, project_status: 'Active', start_date: '2024-01-15' },
   { project_id: 2, company_id: 2, company_name: 'Anthropic', project_name: 'Constitutional AI Scaling', research_area: 'AI Safety & Alignment', budget_millions: 90.0, project_status: 'Active', start_date: '2023-08-01' },
   { project_id: 3, company_id: 3, company_name: 'Google DeepMind', project_name: 'AlphaFold Next', research_area: 'Scientific Discovery & Biology', budget_millions: 200.0, project_status: 'Active', start_date: '2022-06-10' },
@@ -193,7 +193,7 @@ const RESEARCH_PROJECTS = [
   { project_id: 12, company_id: 14, company_name: 'Perplexity AI', project_name: 'Neural Citations & Fact Verification', research_area: 'Hallucination Mitigation', budget_millions: 35.0, project_status: 'Active', start_date: '2024-03-15' },
 ];
 
-const MARKET_PERFORMANCE = [
+export const MARKET_PERFORMANCE = [
   { market_id: 1, company_id: 4, company_name: 'NVIDIA', fiscal_year: 2024, market_share_percent: 82.5, customer_growth_percent: 110.0, performance_index: 96.5 },
   { market_id: 2, company_id: 1, company_name: 'OpenAI', fiscal_year: 2024, market_share_percent: 42.0, customer_growth_percent: 140.0, performance_index: 91.0 },
   { market_id: 3, company_id: 5, company_name: 'Microsoft AI', fiscal_year: 2024, market_share_percent: 34.0, customer_growth_percent: 65.0, performance_index: 88.0 },
@@ -211,7 +211,7 @@ const MARKET_PERFORMANCE = [
   { market_id: 15, company_id: 13, company_name: 'Hugging Face', fiscal_year: 2024, market_share_percent: 31.0, customer_growth_percent: 120.0, performance_index: 90.5 },
 ];
 
-function getTableSample(tableName) {
+export function getTableSample(tableName) {
   const clean = (tableName || '').toLowerCase().trim();
   let rows = COMPANIES;
   if (clean.includes('model')) rows = AI_MODELS;
@@ -229,15 +229,3 @@ function getTableSample(tableName) {
     executionTimeMs: 10,
   };
 }
-
-module.exports = {
-  TABLES,
-  SCHEMA,
-  COMPANIES,
-  AI_MODELS,
-  FINANCIAL_PERFORMANCE,
-  AI_INVESTMENTS,
-  RESEARCH_PROJECTS,
-  MARKET_PERFORMANCE,
-  getTableSample,
-};

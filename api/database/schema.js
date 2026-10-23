@@ -1,15 +1,14 @@
 /**
- * Vercel Serverless Function: GET /api/database/schema
- * Exposes detailed schema metadata, primary/foreign keys, and column definitions.
+ * Vercel Serverless Function: GET /api/database/schema (ESM)
  */
 
-const { SCHEMA, sendJson, handleCors, maybeProxyToBackend } = require('../_utils');
+import { SCHEMA, sendJson, handleCors, maybeProxyToBackend } from '../_utils.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
   const proxied = await maybeProxyToBackend(req, res, '/api/database/schema');
   if (proxied) return;
 
   return sendJson(res, 200, SCHEMA);
-};
+}

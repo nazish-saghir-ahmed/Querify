@@ -1,16 +1,15 @@
 /**
- * Vercel Serverless Function: GET /api/history & DELETE /api/history
- * Exposes the immutable audit trail of executed queries and security events.
+ * Vercel Serverless Function: GET /api/history & DELETE /api/history (ESM)
  */
 
-const {
+import {
   AUDIT_HISTORY,
   sendJson,
   handleCors,
   maybeProxyToBackend,
-} = require('./_utils');
+} from './_utils.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
   const proxied = await maybeProxyToBackend(req, res, '/api/history');
@@ -22,4 +21,4 @@ module.exports = async function handler(req, res) {
   }
 
   return sendJson(res, 200, AUDIT_HISTORY);
-};
+}

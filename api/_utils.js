@@ -1,10 +1,10 @@
 /**
- * Querify API Helper Utilities
+ * Querify API Helper Utilities (ESM)
  * Provides request parsing, CORS response handling, reverse-proxying,
  * AST-level SQL validation, and query execution.
  */
 
-const {
+import {
   TABLES,
   SCHEMA,
   COMPANIES,
@@ -14,10 +14,10 @@ const {
   RESEARCH_PROJECTS,
   MARKET_PERFORMANCE,
   getTableSample,
-} = require('./_data');
+} from './_data.js';
 
 // In-memory query audit trail for serverless instance
-const AUDIT_HISTORY = [
+export const AUDIT_HISTORY = [
   {
     id: 101,
     naturalQuery: 'Which AI companies have the highest revenue in 2024?',
@@ -50,7 +50,7 @@ const AUDIT_HISTORY = [
   },
 ];
 
-function sendJson(res, statusCode, data) {
+export function sendJson(res, statusCode, data) {
   res.statusCode = statusCode;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -63,7 +63,7 @@ function sendJson(res, statusCode, data) {
   return res.end(JSON.stringify(data));
 }
 
-function handleCors(req, res) {
+export function handleCors(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
@@ -76,7 +76,7 @@ function handleCors(req, res) {
   return false;
 }
 
-async function parseBody(req) {
+export async function parseBody(req) {
   if (req.body) {
     return typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
   }
@@ -96,7 +96,7 @@ async function parseBody(req) {
 /**
  * Transparently proxies requests to live Spring Boot backend if SPRING_BOOT_URL or BACKEND_URL is set
  */
-async function maybeProxyToBackend(req, res, targetPath) {
+export async function maybeProxyToBackend(req, res, targetPath) {
   const backendUrl = process.env.SPRING_BOOT_URL || process.env.BACKEND_URL;
   if (!backendUrl) return false;
 
@@ -141,13 +141,8 @@ async function maybeProxyToBackend(req, res, targetPath) {
 
 /**
  * AST-level SQL Security Validator
- * Matches backend SqlValidator.java logic:
- * - Read-only SELECT enforcement
- * - Single trailing semicolon normalization
- * - Semicolon-chaining / multi-statement attack detection
- * - Forbidden keywords: DROP, DELETE, UPDATE, INSERT, ALTER, TRUNCATE, EXEC
  */
-function validateSqlSecurity(sql) {
+export function validateSqlSecurity(sql) {
   if (!sql || typeof sql !== 'string' || !sql.trim()) {
     return { valid: false, status: 400, error: 'SQL query cannot be null or empty.' };
   }
@@ -201,9 +196,8 @@ function validateSqlSecurity(sql) {
 
 /**
  * Semantic Clarification Engine
- * Matches backend ClarificationEngine.java logic
  */
-function detectAmbiguity(question) {
+export function detectAmbiguity(question) {
   const lower = (question || '').toLowerCase().trim();
 
   if (lower.includes('best') || lower.includes('top company') || lower.includes('top companies') || lower.includes('performance')) {
@@ -253,7 +247,7 @@ function detectAmbiguity(question) {
 /**
  * Executes a verified SQL query against the domain dataset
  */
-function executeSqlLocally(sql, naturalQuery = '') {
+export function executeSqlLocally(sql, naturalQuery = '') {
   const securityCheck = validateSqlSecurity(sql);
   if (!securityCheck.valid) {
     const auditRecord = {
@@ -412,16 +406,8 @@ function executeSqlLocally(sql, naturalQuery = '') {
   };
 }
 
-module.exports = {
+export {
   TABLES,
   SCHEMA,
-  AUDIT_HISTORY,
-  sendJson,
-  handleCors,
-  parseBody,
-  maybeProxyToBackend,
-  validateSqlSecurity,
-  detectAmbiguity,
-  executeSqlLocally,
   getTableSample,
 };

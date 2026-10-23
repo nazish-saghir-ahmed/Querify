@@ -1,19 +1,17 @@
 /**
- * Vercel Serverless Function: POST /api/query/analyze
- * Analyzes natural language question, detects ambiguity,
- * triggers multi-turn clarification when needed, or generates executed SQL.
+ * Vercel Serverless Function: POST /api/query/analyze (ESM)
  */
 
-const {
+import {
   sendJson,
   handleCors,
   parseBody,
   maybeProxyToBackend,
   detectAmbiguity,
   executeSqlLocally,
-} = require('../_utils');
+} from '../_utils.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
   if (req.method !== 'POST') {
@@ -31,7 +29,6 @@ module.exports = async function handler(req, res) {
     return sendJson(res, 400, { error: 'Query question cannot be empty.' });
   }
 
-  // Check for semantic ambiguity
   const ambiguity = detectAmbiguity(question);
   if (ambiguity.isAmbiguous) {
     return sendJson(res, 200, {
@@ -50,7 +47,6 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  // Unambiguous query: synthesize SQL and execute
   const lower = question.toLowerCase();
   let sql = 'SELECT c.company_name, f.revenue_millions, f.profit_millions, f.revenue_growth_percent FROM companies c JOIN financial_performance f ON c.company_id = f.company_id WHERE f.fiscal_year = 2024 ORDER BY f.revenue_millions DESC LIMIT 10;';
 
@@ -79,4 +75,4 @@ module.exports = async function handler(req, res) {
     explanation: 'Synthesized deterministic SQL query based on semantic intent and domain schema.',
     data: execution.data,
   });
-};
+}

@@ -1,15 +1,14 @@
 /**
- * Vercel Serverless Function: GET /api/database/tables
- * Returns catalog of available tables with their respective row counts.
+ * Vercel Serverless Function: GET /api/database/tables (ESM)
  */
 
-const { TABLES, sendJson, handleCors, maybeProxyToBackend } = require('../_utils');
+import { TABLES, sendJson, handleCors, maybeProxyToBackend } from '../_utils.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
   const proxied = await maybeProxyToBackend(req, res, '/api/database/tables');
   if (proxied) return;
 
   return sendJson(res, 200, TABLES);
-};
+}

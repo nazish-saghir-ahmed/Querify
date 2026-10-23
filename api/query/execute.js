@@ -1,18 +1,16 @@
 /**
- * Vercel Serverless Function: POST /api/query/execute
- * Validates generated SQL against AST security rules,
- * enforces read-only SELECT constraints, and executes the query.
+ * Vercel Serverless Function: POST /api/query/execute (ESM)
  */
 
-const {
+import {
   sendJson,
   handleCors,
   parseBody,
   maybeProxyToBackend,
   executeSqlLocally,
-} = require('../_utils');
+} from '../_utils.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
   if (req.method !== 'POST') {
@@ -45,4 +43,4 @@ module.exports = async function handler(req, res) {
   }
 
   return sendJson(res, 200, execution.data);
-};
+}

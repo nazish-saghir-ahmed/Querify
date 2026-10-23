@@ -1,18 +1,16 @@
 /**
- * Vercel Serverless Function: POST /api/query/clarify
- * Resolves an active clarification session with the user's selected disambiguation option,
- * synthesizes the finalized SQL, and executes it.
+ * Vercel Serverless Function: POST /api/query/clarify (ESM)
  */
 
-const {
+import {
   sendJson,
   handleCors,
   parseBody,
   maybeProxyToBackend,
   executeSqlLocally,
-} = require('../_utils');
+} from '../_utils.js';
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (handleCors(req, res)) return;
 
   if (req.method !== 'POST') {
@@ -56,4 +54,4 @@ module.exports = async function handler(req, res) {
     explanation,
     data: execution.data,
   });
-};
+}
