@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
-import Footer from './components/Footer';
 import FixedHeroBackground from './components/FixedHeroBackground';
 import CursorTrail from './components/CursorTrail';
 import LandingPage from './pages/LandingPage';
@@ -55,7 +54,7 @@ export default function App() {
       />
 
       {/* 4. Foreground Scrolling View Container */}
-      <main className="flex-1 relative z-10">
+      <main className="flex-1 relative z-10 pb-12">
         {activeTab === 'landing' && (
           <LandingPage
             setActiveTab={setActiveTab}
@@ -81,9 +80,6 @@ export default function App() {
 
         {activeTab === 'about' && <AboutPage />}
       </main>
-
-      {/* 5. Global Platform Footer */}
-      <Footer setActiveTab={setActiveTab} />
     </div>
   );
 }
