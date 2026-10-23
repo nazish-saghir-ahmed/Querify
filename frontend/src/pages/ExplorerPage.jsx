@@ -52,7 +52,7 @@ export default function ExplorerPage() {
     }
   };
 
-  const currentSchema = schemaList.find((s) => s.tableName === selectedTable);
+  const currentSchema = schemaList.find((s) => s.tableName === selectedTable) || schemaList[0];
 
   return (
     <div className="min-h-screen bg-[#080B14] py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
@@ -185,34 +185,41 @@ export default function ExplorerPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#1E293B]/60 font-mono">
-                    {currentSchema.columns.map((c) => (
-                      <tr key={c.name} className="hover:bg-[#151E30]/40 transition-colors">
-                        <td className="py-2 px-3.5 font-bold text-cyan-300">
-                          {c.name}
-                        </td>
-                        <td className="py-2 px-3.5 text-purple-300">
-                          {c.type}
-                        </td>
-                        <td className="py-2 px-3.5">
-                          {c.primaryKey && (
-                            <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                              <Key className="w-2.5 h-2.5" /> PRIMARY KEY
-                            </span>
-                          )}
-                          {c.foreignKey && (
-                            <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
-                              <Link2 className="w-2.5 h-2.5" /> FOREIGN KEY
-                            </span>
-                          )}
-                          {!c.primaryKey && !c.foreignKey && (
-                            <span className="text-slate-500 font-sans text-[11px]">-</span>
-                          )}
-                        </td>
-                        <td className="py-2 px-3.5 font-sans text-slate-300 text-xs">
-                          {c.comment || '-'}
-                        </td>
-                      </tr>
-                    ))}
+                    {currentSchema.columns?.map((c) => {
+                      const colName = c.name || c.columnName;
+                      const colType = c.type || c.dataType;
+                      const isPk = c.primaryKey || c.columnKey === 'PRI';
+                      const isFk = c.foreignKey || c.columnKey === 'MUL';
+                      const colComment = c.comment || c.description || '-';
+                      return (
+                        <tr key={colName} className="hover:bg-[#151E30]/40 transition-colors">
+                          <td className="py-2 px-3.5 font-bold text-cyan-300">
+                            {colName}
+                          </td>
+                          <td className="py-2 px-3.5 text-purple-300">
+                            {colType}
+                          </td>
+                          <td className="py-2 px-3.5">
+                            {isPk && (
+                              <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                                <Key className="w-2.5 h-2.5" /> PRIMARY KEY
+                              </span>
+                            )}
+                            {isFk && (
+                              <span className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                                <Link2 className="w-2.5 h-2.5" /> FOREIGN KEY
+                              </span>
+                            )}
+                            {!isPk && !isFk && (
+                              <span className="text-slate-500 font-sans text-[11px]">-</span>
+                            )}
+                          </td>
+                          <td className="py-2 px-3.5 font-sans text-slate-300 text-xs">
+                            {colComment}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -232,8 +239,19 @@ export default function ExplorerPage() {
           )}
 
           {/* 2. Live Sample Records View */}
-          {activeSubTab === 'sample' && sampleData && (
-            <ResultTable data={sampleData} title={`Sample 10 Rows from '${selectedTable}'`} />
+          {activeSubTab === 'sample' && (
+            isLoading ? (
+              <div className="p-12 text-center bg-[#101827] border border-[#1E293B] rounded-2xl text-slate-400">
+                <RefreshCw className="w-6 h-6 text-cyan-400 animate-spin mx-auto mb-2" />
+                <span className="text-xs">Loading sample records for '{selectedTable}'...</span>
+              </div>
+            ) : sampleData ? (
+              <ResultTable data={sampleData} title={`Sample 10 Rows from '${selectedTable}'`} />
+            ) : (
+              <div className="p-8 text-center bg-[#101827] border border-[#1E293B] rounded-2xl text-slate-400">
+                No sample records available for '{selectedTable}'.
+              </div>
+            )
           )}
 
           {/* 3. Entity-Relationship Diagram (ERD) View */}

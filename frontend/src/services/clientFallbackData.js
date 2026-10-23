@@ -18,72 +18,84 @@ export const FALLBACK_TABLES = [
 export const FALLBACK_SCHEMA = [
   {
     tableName: 'companies',
+    description: 'Stores AI enterprises, frontier research labs, and technology corporations.',
+    foreignKeys: [],
     columns: [
-      { columnName: 'company_id', dataType: 'INT', isNullable: 'NO', columnKey: 'PRI', defaultValue: null },
-      { columnName: 'company_name', dataType: 'VARCHAR(100)', isNullable: 'NO', columnKey: 'UNI', defaultValue: null },
-      { columnName: 'industry', dataType: 'VARCHAR(100)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'country', dataType: 'VARCHAR(50)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'founded_year', dataType: 'INT', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'company_type', dataType: 'VARCHAR(50)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'headquarters_city', dataType: 'VARCHAR(100)', isNullable: 'NO', columnKey: '', defaultValue: null },
+      { name: 'company_id', type: 'INT', nullable: false, primaryKey: true, foreignKey: false, comment: 'Unique company primary key' },
+      { name: 'company_name', type: 'VARCHAR(100)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Official company or laboratory name' },
+      { name: 'industry', type: 'VARCHAR(100)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Primary market sector or tech specialization' },
+      { name: 'country', type: 'VARCHAR(50)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Country of legal incorporation' },
+      { name: 'founded_year', type: 'INT', nullable: false, primaryKey: false, foreignKey: false, comment: 'Year established' },
+      { name: 'company_type', type: 'VARCHAR(50)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Public, Private AI Lab, Enterprise Tech' },
+      { name: 'headquarters_city', type: 'VARCHAR(100)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Primary HQ city' },
     ],
   },
   {
     tableName: 'ai_models',
+    description: 'Catalog of prominent artificial intelligence models and benchmark evaluations.',
+    foreignKeys: ['FOREIGN KEY (company_id) REFERENCES companies(company_id)'],
     columns: [
-      { columnName: 'model_id', dataType: 'INT', isNullable: 'NO', columnKey: 'PRI', defaultValue: null },
-      { columnName: 'company_id', dataType: 'INT', isNullable: 'NO', columnKey: 'MUL', defaultValue: null },
-      { columnName: 'model_name', dataType: 'VARCHAR(100)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'model_category', dataType: 'VARCHAR(50)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'release_year', dataType: 'INT', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'parameter_count_billions', dataType: 'DECIMAL(10,2)', isNullable: 'YES', columnKey: '', defaultValue: null },
-      { columnName: 'performance_score', dataType: 'DECIMAL(5,2)', isNullable: 'NO', columnKey: '', defaultValue: null },
+      { name: 'model_id', type: 'INT', nullable: false, primaryKey: true, foreignKey: false, comment: 'Unique model primary key' },
+      { name: 'company_id', type: 'INT', nullable: false, primaryKey: false, foreignKey: true, comment: 'Foreign key to companies.company_id' },
+      { name: 'model_name', type: 'VARCHAR(100)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Name of AI model/system' },
+      { name: 'model_category', type: 'VARCHAR(50)', nullable: false, primaryKey: false, foreignKey: false, comment: 'LLM, Multimodal, Vision, Reasoning' },
+      { name: 'release_year', type: 'INT', nullable: false, primaryKey: false, foreignKey: false, comment: 'Official public launch year' },
+      { name: 'parameter_count_billions', type: 'DECIMAL(10,2)', nullable: true, primaryKey: false, foreignKey: false, comment: 'Total model parameter size in billions' },
+      { name: 'performance_score', type: 'DECIMAL(5,2)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Synthetic standardized benchmark score (0-100)' },
     ],
   },
   {
     tableName: 'financial_performance',
+    description: 'Annual balance sheet, top-line revenue, and net profit records (Millions USD).',
+    foreignKeys: ['FOREIGN KEY (company_id) REFERENCES companies(company_id)'],
     columns: [
-      { columnName: 'performance_id', dataType: 'INT', isNullable: 'NO', columnKey: 'PRI', defaultValue: null },
-      { columnName: 'company_id', dataType: 'INT', isNullable: 'NO', columnKey: 'MUL', defaultValue: null },
-      { columnName: 'fiscal_year', dataType: 'INT', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'revenue_millions', dataType: 'DECIMAL(12,2)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'profit_millions', dataType: 'DECIMAL(12,2)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'operating_cost_millions', dataType: 'DECIMAL(12,2)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'revenue_growth_percent', dataType: 'DECIMAL(6,2)', isNullable: 'NO', columnKey: '', defaultValue: null },
+      { name: 'performance_id', type: 'INT', nullable: false, primaryKey: true, foreignKey: false, comment: 'Unique record primary key' },
+      { name: 'company_id', type: 'INT', nullable: false, primaryKey: false, foreignKey: true, comment: 'Foreign key to companies.company_id' },
+      { name: 'fiscal_year', type: 'INT', nullable: false, primaryKey: false, foreignKey: false, comment: 'Reporting fiscal year (2022-2024)' },
+      { name: 'revenue_millions', type: 'DECIMAL(12,2)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Gross revenue in millions USD' },
+      { name: 'profit_millions', type: 'DECIMAL(12,2)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Net profit after taxes in millions USD' },
+      { name: 'operating_cost_millions', type: 'DECIMAL(12,2)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Operational & compute expenses in millions USD' },
+      { name: 'revenue_growth_percent', type: 'DECIMAL(6,2)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Year-over-year revenue percentage growth' },
     ],
   },
   {
     tableName: 'ai_investments',
+    description: 'Capital investments allocated to AI compute clusters, research, and chips.',
+    foreignKeys: ['FOREIGN KEY (company_id) REFERENCES companies(company_id)'],
     columns: [
-      { columnName: 'investment_id', dataType: 'INT', isNullable: 'NO', columnKey: 'PRI', defaultValue: null },
-      { columnName: 'company_id', dataType: 'INT', isNullable: 'NO', columnKey: 'MUL', defaultValue: null },
-      { columnName: 'investment_year', dataType: 'INT', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'investment_amount_millions', dataType: 'DECIMAL(12,2)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'investment_category', dataType: 'VARCHAR(100)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'estimated_return_percent', dataType: 'DECIMAL(6,2)', isNullable: 'NO', columnKey: '', defaultValue: null },
+      { name: 'investment_id', type: 'INT', nullable: false, primaryKey: true, foreignKey: false, comment: 'Unique investment primary key' },
+      { name: 'company_id', type: 'INT', nullable: false, primaryKey: false, foreignKey: true, comment: 'Foreign key to companies.company_id' },
+      { name: 'investment_year', type: 'INT', nullable: false, primaryKey: false, foreignKey: false, comment: 'Year of capital deployment' },
+      { name: 'investment_amount_millions', type: 'DECIMAL(12,2)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Capital amount deployed in millions USD' },
+      { name: 'investment_category', type: 'VARCHAR(100)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Compute Infrastructure, Chips, AI Safety' },
+      { name: 'estimated_return_percent', type: 'DECIMAL(6,2)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Projected ROI percentage' },
     ],
   },
   {
     tableName: 'research_projects',
+    description: 'Specialized frontier R&D initiatives, robotics, and scientific explorations.',
+    foreignKeys: ['FOREIGN KEY (company_id) REFERENCES companies(company_id)'],
     columns: [
-      { columnName: 'project_id', dataType: 'INT', isNullable: 'NO', columnKey: 'PRI', defaultValue: null },
-      { columnName: 'company_id', dataType: 'INT', isNullable: 'NO', columnKey: 'MUL', defaultValue: null },
-      { columnName: 'project_name', dataType: 'VARCHAR(150)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'research_area', dataType: 'VARCHAR(100)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'budget_millions', dataType: 'DECIMAL(10,2)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'project_status', dataType: 'VARCHAR(50)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'start_date', dataType: 'DATE', isNullable: 'NO', columnKey: '', defaultValue: null },
+      { name: 'project_id', type: 'INT', nullable: false, primaryKey: true, foreignKey: false, comment: 'Unique project primary key' },
+      { name: 'company_id', type: 'INT', nullable: false, primaryKey: false, foreignKey: true, comment: 'Foreign key to companies.company_id' },
+      { name: 'project_name', type: 'VARCHAR(150)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Internal project or code name' },
+      { name: 'research_area', type: 'VARCHAR(100)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Robotics, Reasoning, Drug Discovery, Safety' },
+      { name: 'budget_millions', type: 'DECIMAL(10,2)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Allocated project budget in millions USD' },
+      { name: 'project_status', type: 'VARCHAR(50)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Active, Completed, Testing' },
+      { name: 'start_date', type: 'DATE', nullable: false, primaryKey: false, foreignKey: false, comment: 'Formal project inception date' },
     ],
   },
   {
     tableName: 'market_performance',
+    description: 'Market dominance, adoption velocity, and composite health indexes.',
+    foreignKeys: ['FOREIGN KEY (company_id) REFERENCES companies(company_id)'],
     columns: [
-      { columnName: 'market_id', dataType: 'INT', isNullable: 'NO', columnKey: 'PRI', defaultValue: null },
-      { columnName: 'company_id', dataType: 'INT', isNullable: 'NO', columnKey: 'MUL', defaultValue: null },
-      { columnName: 'fiscal_year', dataType: 'INT', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'market_share_percent', dataType: 'DECIMAL(5,2)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'customer_growth_percent', dataType: 'DECIMAL(6,2)', isNullable: 'NO', columnKey: '', defaultValue: null },
-      { columnName: 'performance_index', dataType: 'DECIMAL(5,2)', isNullable: 'NO', columnKey: '', defaultValue: null },
+      { name: 'market_id', type: 'INT', nullable: false, primaryKey: true, foreignKey: false, comment: 'Unique market metric primary key' },
+      { name: 'company_id', type: 'INT', nullable: false, primaryKey: false, foreignKey: true, comment: 'Foreign key to companies.company_id' },
+      { name: 'fiscal_year', type: 'INT', nullable: false, primaryKey: false, foreignKey: false, comment: 'Fiscal year evaluated' },
+      { name: 'market_share_percent', type: 'DECIMAL(5,2)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Estimated global/sector market share percentage' },
+      { name: 'customer_growth_percent', type: 'DECIMAL(6,2)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Customer/active user percentage growth' },
+      { name: 'performance_index', type: 'DECIMAL(5,2)', nullable: false, primaryKey: false, foreignKey: false, comment: 'Composite health and agility score (0-100)' },
     ],
   },
 ];
@@ -100,26 +112,66 @@ export const SAMPLE_COMPANIES = [
 ];
 
 export const SAMPLE_MODELS = [
-  { model_id: 1, model_name: 'GPT-4o', company_name: 'OpenAI', model_category: 'Multimodal', release_year: 2024, parameter_count_billions: 200.0, performance_score: 92.8 },
-  { model_id: 4, model_name: 'Claude 3.5 Sonnet', company_name: 'Anthropic', model_category: 'Reasoning', release_year: 2024, parameter_count_billions: 175.0, performance_score: 93.4 },
-  { model_id: 6, model_name: 'Gemini 1.5 Pro', company_name: 'Google DeepMind', model_category: 'Multimodal', release_year: 2024, parameter_count_billions: 220.0, performance_score: 93.1 },
-  { model_id: 7, model_name: 'AlphaFold 3', company_name: 'Google DeepMind', model_category: 'Scientific AI', release_year: 2024, parameter_count_billions: 15.0, performance_score: 97.5 },
-  { model_id: 12, model_name: 'Llama 3.1 405B', company_name: 'Meta AI', model_category: 'LLM', release_year: 2024, parameter_count_billions: 405.0, performance_score: 92.4 },
-  { model_id: 20, model_name: 'Midjourney v6', company_name: 'Midjourney', model_category: 'Computer Vision', release_year: 2024, parameter_count_billions: 25.0, performance_score: 94.3 },
+  { model_id: 1, company_id: 1, model_name: 'GPT-4o', model_category: 'Multimodal', release_year: 2024, parameter_count_billions: 200.0, performance_score: 92.8 },
+  { model_id: 2, company_id: 1, model_name: 'GPT-4 Turbo', model_category: 'LLM', release_year: 2023, parameter_count_billions: 180.0, performance_score: 90.1 },
+  { model_id: 4, company_id: 2, model_name: 'Claude 3.5 Sonnet', model_category: 'Reasoning', release_year: 2024, parameter_count_billions: 175.0, performance_score: 93.4 },
+  { model_id: 5, company_id: 2, model_name: 'Claude 3 Opus', model_category: 'LLM', release_year: 2024, parameter_count_billions: 250.0, performance_score: 91.5 },
+  { model_id: 6, company_id: 3, model_name: 'Gemini 1.5 Pro', model_category: 'Multimodal', release_year: 2024, parameter_count_billions: 220.0, performance_score: 93.1 },
+  { model_id: 7, company_id: 3, model_name: 'AlphaFold 3', model_category: 'Scientific AI', release_year: 2024, parameter_count_billions: 15.0, performance_score: 97.5 },
+  { model_id: 12, company_id: 6, model_name: 'Llama 3.1 405B', model_category: 'LLM', release_year: 2024, parameter_count_billions: 405.0, performance_score: 92.4 },
+  { model_id: 20, company_id: 19, model_name: 'Midjourney v6', model_category: 'Computer Vision', release_year: 2024, parameter_count_billions: 25.0, performance_score: 94.3 },
 ];
 
 export const SAMPLE_FINANCIALS = [
-  { company_name: 'NVIDIA', fiscal_year: 2024, revenue_millions: 122000.0, profit_millions: 68000.0, revenue_growth_percent: 100.25 },
-  { company_name: 'Microsoft AI', fiscal_year: 2024, revenue_millions: 38500.0, profit_millions: 14200.0, revenue_growth_percent: 43.66 },
-  { company_name: 'Amazon AWS AI', fiscal_year: 2024, revenue_millions: 31000.0, profit_millions: 10800.0, revenue_growth_percent: 47.62 },
-  { company_name: 'Meta AI', fiscal_year: 2024, revenue_millions: 24500.0, profit_millions: 6900.0, revenue_growth_percent: 51.23 },
-  { company_name: 'Apple AI', fiscal_year: 2024, revenue_millions: 19800.0, profit_millions: 7200.0, revenue_growth_percent: 46.67 },
-  { company_name: 'IBM Watson', fiscal_year: 2024, revenue_millions: 8900.0, profit_millions: 1450.0, revenue_growth_percent: 17.11 },
-  { company_name: 'Baidu AI Lab', fiscal_year: 2024, revenue_millions: 7600.0, profit_millions: 1300.0, revenue_growth_percent: 31.03 },
-  { company_name: 'OpenAI', fiscal_year: 2024, revenue_millions: 3700.0, profit_millions: -1200.0, revenue_growth_percent: 131.25 },
-  { company_name: 'Google DeepMind', fiscal_year: 2024, revenue_millions: 3100.0, profit_millions: 580.0, revenue_growth_percent: 58.97 },
-  { company_name: 'Databricks', fiscal_year: 2024, revenue_millions: 2500.0, profit_millions: 150.0, revenue_growth_percent: 56.25 },
+  { performance_id: 10, company_id: 4, fiscal_year: 2024, revenue_millions: 122000.0, profit_millions: 68000.0, operating_cost_millions: 54000.0, revenue_growth_percent: 100.25 },
+  { performance_id: 13, company_id: 5, fiscal_year: 2024, revenue_millions: 38500.0, profit_millions: 14200.0, operating_cost_millions: 24300.0, revenue_growth_percent: 43.66 },
+  { performance_id: 40, company_id: 15, fiscal_year: 2024, revenue_millions: 31000.0, profit_millions: 10800.0, operating_cost_millions: 20200.0, revenue_growth_percent: 47.62 },
+  { performance_id: 16, company_id: 6, fiscal_year: 2024, revenue_millions: 24500.0, profit_millions: 6900.0, operating_cost_millions: 17600.0, revenue_growth_percent: 51.23 },
+  { performance_id: 43, company_id: 16, fiscal_year: 2024, revenue_millions: 19800.0, profit_millions: 7200.0, operating_cost_millions: 12600.0, revenue_growth_percent: 46.67 },
+  { performance_id: 55, company_id: 20, fiscal_year: 2024, revenue_millions: 8900.0, profit_millions: 1450.0, operating_cost_millions: 7450.0, revenue_growth_percent: 17.11 },
+  { performance_id: 3, company_id: 1, fiscal_year: 2024, revenue_millions: 3700.0, profit_millions: -1200.0, operating_cost_millions: 4900.0, revenue_growth_percent: 131.25 },
+  { performance_id: 9, company_id: 3, fiscal_year: 2024, revenue_millions: 3100.0, profit_millions: 580.0, operating_cost_millions: 2520.0, revenue_growth_percent: 58.97 },
 ];
+
+export const SAMPLE_INVESTMENTS = [
+  { investment_id: 1, company_id: 1, investment_year: 2024, investment_amount_millions: 10000.0, investment_category: 'Compute Infrastructure & Clusters', estimated_return_percent: 45.0 },
+  { investment_id: 2, company_id: 2, investment_year: 2024, investment_amount_millions: 4000.0, investment_category: 'AI Safety Research & Scaling', estimated_return_percent: 38.5 },
+  { investment_id: 3, company_id: 4, investment_year: 2024, investment_amount_millions: 15000.0, investment_category: 'Next-Gen GPU Architecture (Blackwell)', estimated_return_percent: 85.0 },
+  { investment_id: 4, company_id: 5, investment_year: 2024, investment_amount_millions: 12000.0, investment_category: 'Cloud AI Datacenters', estimated_return_percent: 52.0 },
+];
+
+export const SAMPLE_PROJECTS = [
+  { project_id: 1, company_id: 1, project_name: 'Project Strawberry / Orion', research_area: 'Reasoning & Self-Correction', budget_millions: 150.0, project_status: 'Active', start_date: '2024-01-15' },
+  { project_id: 2, company_id: 2, project_name: 'Constitutional AI Scaling', research_area: 'AI Safety & Alignment', budget_millions: 90.0, project_status: 'Active', start_date: '2023-08-01' },
+  { project_id: 3, company_id: 3, project_name: 'AlphaFold Next', research_area: 'Scientific Discovery & Biology', budget_millions: 200.0, project_status: 'Active', start_date: '2022-06-10' },
+  { project_id: 4, company_id: 4, project_name: 'Project GR00T', research_area: 'Humanoid Robotics Foundation Model', budget_millions: 120.0, project_status: 'Active', start_date: '2024-03-01' },
+];
+
+export const SAMPLE_MARKET = [
+  { market_id: 1, company_id: 4, fiscal_year: 2024, market_share_percent: 82.5, customer_growth_percent: 110.0, performance_index: 96.5 },
+  { market_id: 2, company_id: 1, fiscal_year: 2024, market_share_percent: 42.0, customer_growth_percent: 140.0, performance_index: 91.0 },
+  { market_id: 3, company_id: 5, fiscal_year: 2024, market_share_percent: 34.0, customer_growth_percent: 65.0, performance_index: 88.0 },
+  { market_id: 4, company_id: 2, fiscal_year: 2024, market_share_percent: 18.5, customer_growth_percent: 210.0, performance_index: 89.5 },
+];
+
+export function getFallbackTableSample(tableName) {
+  const clean = (tableName || '').toLowerCase();
+  let rows = SAMPLE_COMPANIES;
+  if (clean.includes('model')) rows = SAMPLE_MODELS;
+  else if (clean.includes('financial')) rows = SAMPLE_FINANCIALS;
+  else if (clean.includes('investment')) rows = SAMPLE_INVESTMENTS;
+  else if (clean.includes('project')) rows = SAMPLE_PROJECTS;
+  else if (clean.includes('market')) rows = SAMPLE_MARKET;
+
+  const columns = rows.length > 0 ? Object.keys(rows[0]) : [];
+  return {
+    tableName: clean,
+    columns,
+    rows,
+    rowCount: rows.length,
+    executionTimeMs: 8,
+  };
+}
 
 /**
  * Simulates the Clarification Engine locally when no backend server is reached.

@@ -12,6 +12,7 @@ import {
   SAMPLE_COMPANIES,
   SAMPLE_MODELS,
   SAMPLE_FINANCIALS,
+  getFallbackTableSample,
   handleFallbackAnalyze,
   handleFallbackClarify,
 } from './clientFallbackData';
@@ -82,9 +83,9 @@ function fallbackHandler(endpoint, options) {
   }
 
   if (endpoint.startsWith('/database/tables/')) {
-    if (endpoint.includes('companies')) return SAMPLE_COMPANIES;
-    if (endpoint.includes('ai_models')) return SAMPLE_MODELS;
-    return SAMPLE_FINANCIALS;
+    const parts = endpoint.split('/');
+    const tableName = parts[3] || 'companies';
+    return getFallbackTableSample(tableName);
   }
 
   if (endpoint === '/query/analyze') {
