@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { HelpCircle, ChevronDown, ChevronUp, Cpu, Database, ShieldCheck, Sparkles, BookOpen, Layers, Terminal, ArrowRight } from 'lucide-react';
+import {
+  HelpCircle, ChevronDown, ChevronUp, Cpu, Database,
+  ShieldCheck, Sparkles, BookOpen, Layers, Terminal, ArrowRight,
+  ExternalLink, Github, Linkedin, CheckCircle2
+} from 'lucide-react';
 
 export default function AboutPage() {
   const [openFaq, setOpenFaq] = useState(0);
@@ -7,7 +11,7 @@ export default function AboutPage() {
   const vivaQuestions = [
     {
       q: 'What is Text-to-SQL?',
-      a: 'Text-to-SQL is a natural language processing technology that translates questions written in human language (like English) into structured, executable SQL database queries without requiring the user to know SQL syntax, table schemas, or relational algebra.'
+      a: 'Text-to-SQL is a natural language processing technology that translates questions written in human language (like English) into structured, executable SQL queries without requiring the user to know SQL syntax, table schemas, or relational algebra.'
     },
     {
       q: 'What is a Clarification Engine, and how is Querify different from a standard chatbot?',
@@ -27,7 +31,7 @@ export default function AboutPage() {
     },
     {
       q: 'How do you prevent destructive or dangerous SQL (SQL Injection, DROP TABLE, etc.)?',
-      a: 'We implement layered defense-in-depth: (1) JSqlParser parses the generated SQL into an Abstract Syntax Tree (AST), strictly verifying that the root statement is an instance of net.sf.jsqlparser.statement.select.Select. (2) Semicolon Policy: A single trailing semicolon (;) is permitted and normalized as standard SQL statement termination, while multiple statements (statement chaining) are blocked via a syntax-aware lexical scanner that respects quotes and comments. (3) Table Whitelist: Extracted tables must strictly match the 6 approved domain tables. (4) System schemas like information_schema and time-based sleep/benchmark functions are prohibited. (5) Bounded Execution: Automatic LIMIT 100 is injected and queries are executed with a 5000ms timeout guard.'
+      a: 'We implement layered defense-in-depth: (1) JSqlParser parses the generated SQL into an Abstract Syntax Tree (AST), strictly verifying that the root statement is an instance of Select.class. (2) Semicolon Policy: A single trailing semicolon (;) is permitted and normalized as standard SQL statement termination, while multiple statements (statement chaining) are blocked via a lexical scanner. (3) Table Whitelist: Extracted tables must strictly match the 6 approved domain tables. (4) Bounded Execution: Automatic LIMIT 100 is injected and queries are executed with a timeout guard.'
     },
     {
       q: 'How is NVIDIA Nemotron 3.5 Embed integrated via OpenRouter SDK?',
@@ -42,174 +46,182 @@ export default function AboutPage() {
       a: 'Security and architectural separation of concerns. The browser must never hold database credentials (root passwords) or secret AI API keys. The backend acts as a secure controller that authenticates requests, validates SQL syntax, and isolates the database behind a firewall.'
     },
     {
-      q: 'How does the frontend communicate with the Java backend?',
-      a: 'The React frontend uses HTTP REST requests (fetch API) exchanging JSON payloads over endpoints like POST /api/query/analyze and POST /api/query/clarify. In development, Vite reverse-proxies /api to http://localhost:8080. If the server returns a 403 or 400 error, the client transparently parses and displays the real rejection details.'
-    },
-    {
-      q: 'How does the multi-turn clarification state management work?',
-      a: 'When an ambiguous question is submitted, the backend creates a ClarificationSession with a unique UUID. It stores the original question, pending options, and turn count. When the user selects an option in the modal, the frontend sends the sessionId and optionId back to POST /api/query/clarify. The backend merges the selection into the query context and resumes execution.'
-    },
-    {
       q: 'What database tables did you design for the AI finance domain?',
       a: 'We designed 6 interrelated tables: companies (central entity), ai_models (parameters and benchmark scores), financial_performance (multi-year revenue, profit, costs), ai_investments (capital and estimated ROI), research_projects (budgets and status), and market_performance (market share and performance indexes).'
     },
-    {
-      q: 'How does the system automatically decide whether to render a table, bar chart, or line chart?',
-      a: 'The SqlExecutionService analyzes the returned result metadata. If columns include temporal data (like fiscal_year or start_date), it recommends a Line Chart. If it has categorical names (like company_name) and numeric values (like revenue_millions), it recommends a Bar Chart. If it has percentages or market share with <= 8 rows, it suggests a Pie Chart.'
-    },
-    {
-      q: 'What is an Abstract Syntax Tree (AST) in SQL validation?',
-      a: 'An AST is a hierarchical tree representation of the syntactic structure of source code. By converting raw SQL strings into an AST using JSqlParser, we inspect the actual semantic nodes rather than relying on weak regex pattern matching, guaranteeing no hidden mutation keywords exist inside subqueries or comments.'
-    },
-    {
-      q: 'How are company names prevented from appearing as null in results?',
-      a: 'The JDBC ResultSetMetaData can return qualified column names like "c.company_name" or uppercase identifiers like "COMPANY_NAME". The SqlExecutionService strips table qualifier prefixes, maps normalized column labels, and populates row maps with case-insensitive keys. In the frontend, ResultTable and ResultChart use resilient fallback resolvers to ensure company labels always bind accurately.'
-    },
-    {
-      q: 'How is revenue growth formatted in tables, charts, and exports?',
-      a: 'Revenue growth represents a percentage rate (e.g., 100.25%). The ResultTable, ResultChart, and CSV exporter evaluate percentage and growth keywords prior to general currency keywords, ensuring that values like revenue_growth_percent are accurately displayed with percentage formatting (100.25%) rather than currency ($100.25 M).'
-    },
-    {
-      q: 'How are query history and audit trails stored?',
-      a: 'Successful and failed queries are persisted to the query_history table in MySQL/H2 using Spring Data JPA. This records the natural query, generated SQL, execution duration in milliseconds, rows returned, and timestamps across user sessions.'
-    },
-    {
-      q: 'How is CSV export protected against formula injection?',
-      a: 'When exporting query results to CSV, untrusted cell values beginning with formula characters (=, +, -, @) are sanitized by prefixing a single quote (\'), preventing spreadsheet applications like Microsoft Excel or Google Sheets from executing arbitrary formulas.'
-    },
-    {
-      q: 'What are the main limitations of the current system?',
-      a: 'Current limitations: it operates on a single relational database schema; it currently supports read-only analytical queries rather than database modifications; and it limits results to 100 rows for performance safety.'
-    },
-    {
-      q: 'What future enhancements could be added?',
-      a: 'Future enhancements could include multi-database connection switching, vector embedding search for domain terminology, voice-to-text input, and automated PDF report generation.'
-    }
   ];
 
   return (
-    <div className="relative z-10 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
-      {/* Header */}
-      <div className="pb-4 border-b border-[#3A506B]/35">
+    <div className="w-full max-w-[1150px] mx-auto px-4 sm:px-6 py-8 space-y-10">
+      {/* 1. PROJECT VISION */}
+      <section className="p-6 sm:p-8 rounded-2xl bg-[#111827] border border-[#1F2E47] space-y-4">
         <div className="flex items-center gap-2">
-          <span className="text-[11px] font-mono text-[#D4AF37] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#D4AF37]/15 border border-[#D4AF37]/35">
-            Documentation & Defense Guide
-          </span>
+          <BookOpen className="w-5 h-5 text-blue-400" />
+          <h1 className="text-xl sm:text-2xl font-bold text-white font-sans">
+            Project Vision & Core Philosophy
+          </h1>
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-[#F7F3E9] mt-2 font-sans tracking-tight">
-          System Architecture & Viva Guide
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-300 mt-2 max-w-3xl leading-relaxed">
-          Comprehensive university evaluation guide covering the problem statement, system architecture,
-          database design, AST security verification, clarification algorithm, and 20+ teacher questions.
+        <p className="text-sm text-slate-300 leading-relaxed max-w-3xl font-sans">
+          In business analytics, ambiguity is the primary failure mode of text-to-SQL systems. 
+          When a stakeholder asks a deceptively simple question like <em>"Who is our top client?"</em>, standard AI chatbots blindly assume a metric (revenue, transaction count, retention, or profitability) and produce convincing but misleading numbers.
         </p>
-      </div>
+        <p className="text-sm text-slate-300 leading-relaxed max-w-3xl font-sans">
+          <strong>Querify</strong> solves this by introducing a <strong>Clarification Engine</strong> paired with a <strong>JSqlParser AST Security Guard</strong>. Execution halts when ambiguity is flagged, engaging the user in a rapid, structured clarification dialogue before generating mathematically sound, read-only SQL.
+        </p>
+      </section>
 
-      {/* Problem & Solution Cards (Dark Navy Frosted Glass) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="p-6 rounded-2xl bg-[#0D1B2A]/70 backdrop-blur-xl border border-[#3A506B]/40 space-y-3 shadow-lg">
-          <div className="w-9 h-9 rounded-xl bg-[#1D3557]/80 border border-[#3A506B]/60 flex items-center justify-center text-[#7FA1C3]">
-            <BookOpen className="w-4 h-4" />
-          </div>
-          <h3 className="text-base font-bold text-[#F7F3E9] font-sans">Problem Statement</h3>
-          <p className="text-xs text-slate-300 leading-relaxed font-sans">
-            Relational databases power global business, but retrieving actionable insights requires proficiency in SQL, table schemas, join keys, and aggregation functions. Non-technical executives and researchers struggle to extract data directly. Furthermore, traditional text-to-SQL chatbots naively guess user intentions when queries contain semantic ambiguity, returning inaccurate or misleading data without warning.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-[#0D1B2A]/70 backdrop-blur-xl border border-[#3A506B]/40 space-y-3 shadow-lg">
-          <div className="w-9 h-9 rounded-xl bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37]">
-            <Sparkles className="w-4 h-4" />
-          </div>
-          <h3 className="text-base font-bold text-[#F7F3E9] font-sans">Proposed Solution: Querify</h3>
-          <p className="text-xs text-slate-300 leading-relaxed font-sans">
-            Querify bridges natural human language and relational databases with a dedicated <strong className="text-white">Clarification Engine</strong>. When a user asks an ambiguous question ("best performing companies"), Querify detects the ambiguity, pauses execution, and presents targeted multi-turn clarification choices (revenue vs profit vs ROI) before executing safe, AST-validated SQL against MySQL.
-          </p>
-        </div>
-      </div>
-
-      {/* System Architecture Diagram (Dark Navy Frosted Box) */}
-      <div className="p-6 rounded-2xl bg-[#0D1B2A]/70 backdrop-blur-xl border border-[#3A506B]/40 space-y-6 shadow-lg">
+      {/* 2. ARCHITECTURE DIAGRAM */}
+      <section className="p-6 sm:p-8 rounded-2xl bg-[#111827] border border-[#1F2E47] space-y-6">
         <div>
-          <h3 className="text-base font-bold text-[#F7F3E9] flex items-center gap-2 font-mono">
-            <Layers className="w-4 h-4 text-[#7FA1C3]" />
-            <span>End-to-End System Pipeline</span>
-          </h3>
-          <p className="text-xs text-slate-300 mt-1 font-sans">
-            Data flows sequentially through 8 controlled stages to guarantee safety, precision, and transparency.
+          <span className="text-xs font-mono uppercase tracking-wider text-blue-400 font-semibold">
+            System Architecture
+          </span>
+          <h2 className="text-lg sm:text-xl font-bold text-white font-sans mt-1">
+            End-to-End Enterprise Data Flow
+          </h2>
+        </div>
+
+        {/* Interactive Architecture Flow Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+          {/* Layer 1: React UI */}
+          <div className="p-4 rounded-xl bg-[#0B0F17] border border-[#1F2E47] space-y-2">
+            <div className="flex items-center gap-2 text-blue-400 text-xs font-mono font-semibold">
+              <Layers className="w-4 h-4" />
+              <span>1. React 18 UI</span>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Vite 5, Tailwind CSS, Recharts. Dispatches REST requests & renders sticky tables.
+            </p>
+          </div>
+
+          {/* Layer 2: Spring Boot API */}
+          <div className="p-4 rounded-xl bg-[#0B0F17] border border-[#1F2E47] space-y-2">
+            <div className="flex items-center gap-2 text-emerald-400 text-xs font-mono font-semibold">
+              <Cpu className="w-4 h-4" />
+              <span>2. Spring Boot 3</span>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Java 17/21 REST Gateway. Handles session UUIDs, turns, and exception mapping.
+            </p>
+          </div>
+
+          {/* Layer 3: Clarification & AI */}
+          <div className="p-4 rounded-xl bg-[#0B0F17] border border-[#1F2E47] space-y-2">
+            <div className="flex items-center gap-2 text-amber-400 text-xs font-mono font-semibold">
+              <Sparkles className="w-4 h-4" />
+              <span>3. AI Engine</span>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Ambiguity detector, Gemini / Nemotron vector projections, and metric option synthesizer.
+            </p>
+          </div>
+
+          {/* Layer 4: JSqlParser AST */}
+          <div className="p-4 rounded-xl bg-[#0B0F17] border border-[#1F2E47] space-y-2">
+            <div className="flex items-center gap-2 text-rose-400 text-xs font-mono font-semibold">
+              <ShieldCheck className="w-4 h-4" />
+              <span>4. AST Guard</span>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Parses SQL tree. Strictly blocks DROP, DELETE, UPDATE, and statement chaining.
+            </p>
+          </div>
+
+          {/* Layer 5: MySQL 8 */}
+          <div className="p-4 rounded-xl bg-[#0B0F17] border border-[#1F2E47] space-y-2">
+            <div className="flex items-center gap-2 text-cyan-400 text-xs font-mono font-semibold">
+              <Database className="w-4 h-4" />
+              <span>5. MySQL 8 Store</span>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              HikariCP pool, 6 relational domain tables, and in-memory H2 test fallback.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. BUILT BY PORTFOLIO SECTION */}
+      <section className="p-6 sm:p-8 rounded-2xl bg-[#162238] border border-blue-500/30 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="space-y-2 max-w-xl">
+          <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/30 text-xs font-mono">
+            <span>Portfolio Project</span>
+          </div>
+          <h2 className="text-xl font-bold text-white font-sans">
+            Built by Nazish Saghir
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Full-stack software engineer specializing in developer tooling, resilient distributed architectures, AI agent integrations, and relational database systems.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono">
-          <div className="p-4 rounded-xl bg-[#1B263B]/50 border border-[#3A506B]/35 space-y-1 backdrop-blur-md">
-            <span className="text-[#7FA1C3] font-bold">STAGE 1: INPUT</span>
-            <p className="font-sans text-[#F7F3E9] font-semibold">Natural Language Query</p>
-            <p className="font-sans text-[11px] text-slate-300">React frontend sends English question to Spring Boot REST endpoint.</p>
-          </div>
+        <div className="flex items-center gap-3 w-full md:w-auto">
+          <a
+            href="https://github.com/nazish-saghir-ahmed/Querify"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#0B0F17] hover:bg-[#111827] text-white border border-[#1F2E47] text-xs font-medium transition-colors"
+          >
+            <Github className="w-4 h-4" />
+            <span>GitHub</span>
+          </a>
 
-          <div className="p-4 rounded-xl bg-[#1B263B]/50 border border-[#D4AF37]/40 space-y-1 backdrop-blur-md">
-            <span className="text-[#D4AF37] font-bold">STAGE 2 & 3: ENGINE</span>
-            <p className="font-sans text-[#F7F3E9] font-semibold">Ambiguity Detection</p>
-            <p className="font-sans text-[11px] text-slate-300">Clarification engine inspects intent. Multi-turn session pauses if metric is ambiguous.</p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-[#1B263B]/50 border border-[#3A506B]/35 space-y-1 backdrop-blur-md">
-            <span className="text-[#7FA1C3] font-bold">STAGE 4 & 5: AI GEN</span>
-            <p className="font-sans text-[#F7F3E9] font-semibold">Schema-Grounded SQL</p>
-            <p className="font-sans text-[11px] text-slate-300">AI service generates SQL strictly grounded in the 6 domain tables.</p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-[#1B263B]/50 border border-emerald-500/35 space-y-1 backdrop-blur-md">
-            <span className="text-emerald-400 font-bold">STAGE 6 & 7: EXECUTE</span>
-            <p className="font-sans text-[#F7F3E9] font-semibold">AST Guard & Database</p>
-            <p className="font-sans text-[11px] text-slate-300">JSqlParser verifies SELECT-only; JdbcTemplate queries MySQL 8/H2 and visualizes results.</p>
-          </div>
+          <a
+            href="https://linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium transition-colors shadow-sm"
+          >
+            <Linkedin className="w-4 h-4" />
+            <span>LinkedIn</span>
+            <ExternalLink className="w-3.5 h-3.5 ml-0.5" />
+          </a>
         </div>
-      </div>
+      </section>
 
-      {/* 20+ Viva Preparation Questions */}
-      <div className="p-6 rounded-2xl bg-[#0D1B2A]/70 backdrop-blur-xl border border-[#3A506B]/40 space-y-6 shadow-lg">
-        <div>
-          <h3 className="text-lg font-bold text-[#F7F3E9] flex items-center gap-2 font-sans">
-            <HelpCircle className="w-5 h-5 text-[#7FA1C3]" />
-            <span>University Viva Voce Preparation (20+ Questions & Answers)</span>
-          </h3>
-          <p className="text-xs text-slate-300 mt-1 font-sans">
-            Click on any question below to study concise, professional answers designed for professors and examiners.
+      {/* 4. TECHNICAL VIVA VOCE ACCORDION */}
+      <section className="space-y-4">
+        <div className="space-y-1">
+          <h2 className="text-lg sm:text-xl font-bold text-white font-sans">
+            Technical Viva Voce Defense Guide
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400 font-sans">
+            Frequently asked questions, architectural defense points, and evaluation criteria.
           </p>
         </div>
 
         <div className="space-y-2.5">
-          {vivaQuestions.map((item, idx) => {
-            const isOpen = openFaq === idx;
+          {vivaQuestions.map((item, index) => {
+            const isOpen = openFaq === index;
             return (
               <div
-                key={idx}
-                className="rounded-xl border border-[#3A506B]/35 bg-[#1B263B]/40 overflow-hidden transition-all backdrop-blur-sm"
+                key={index}
+                className="rounded-xl bg-[#111827] border border-[#1F2E47] overflow-hidden transition-colors"
               >
                 <button
-                  onClick={() => setOpenFaq(isOpen ? null : idx)}
-                  className="w-full text-left p-4 flex items-center justify-between gap-4 hover:bg-white/[0.03] transition-colors"
+                  onClick={() => setOpenFaq(isOpen ? -1 : index)}
+                  className="w-full flex items-center justify-between p-4 text-left text-xs sm:text-sm font-semibold text-slate-200 hover:text-white transition-colors"
                 >
-                  <span className="font-semibold text-xs sm:text-sm text-[#F7F3E9] font-sans">
-                    {idx + 1}. {item.q}
+                  <span className="flex items-center gap-2.5">
+                    <span className="font-mono text-blue-400 text-xs font-bold">Q{index + 1}.</span>
+                    <span>{item.q}</span>
                   </span>
                   {isOpen ? (
-                    <ChevronUp className="w-4 h-4 text-[#7FA1C3] shrink-0" />
+                    <ChevronUp className="w-4 h-4 text-blue-400 shrink-0 ml-2" />
                   ) : (
-                    <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
+                    <ChevronDown className="w-4 h-4 text-slate-500 shrink-0 ml-2" />
                   )}
                 </button>
+
                 {isOpen && (
-                  <div className="p-4 pt-0 text-xs text-slate-300 leading-relaxed border-t border-[#3A506B]/25 bg-[#0D1B2A]/60 font-sans">
-                    <p className="mt-3 leading-relaxed">{item.a}</p>
+                  <div className="px-4 pb-4 pt-1 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-[#1F2E47]/60 font-sans">
+                    {item.a}
                   </div>
                 )}
               </div>
             );
           })}
         </div>
-      </div>
+      </section>
     </div>
   );
 }

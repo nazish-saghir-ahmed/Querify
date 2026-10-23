@@ -11,9 +11,9 @@ export default function ResultTable({ data, title = 'Query Results' }) {
 
   if (!data || !data.columns || data.columns.length === 0) {
     return (
-      <div className="p-8 text-center bg-[#0D1B2A]/70 border border-[#3A506B]/40 rounded-2xl text-slate-300 backdrop-blur-xl">
+      <div className="p-8 text-center bg-[#111827] border border-[#1F2E47] rounded-2xl text-slate-400">
         <p className="font-mono text-sm text-slate-300">No records returned for this query.</p>
-        <p className="text-xs text-slate-400 mt-1">Try refining your question or broadening search filters.</p>
+        <p className="text-xs text-slate-500 mt-1">Try refining your question or selecting another sample.</p>
       </div>
     );
   }
@@ -38,6 +38,50 @@ export default function ResultTable({ data, title = 'Query Results' }) {
       return row.project_name ?? row.projectName ?? null;
     }
     return null;
+  };
+
+  // Format cell values based on column type
+  const formatCellValue = (val, col) => {
+    if (val === null || val === undefined) return <span className="text-slate-600">—</span>;
+
+    const lower = col.toLowerCase();
+    const num = typeof val === 'number' ? val : parseFloat(val);
+
+    // Percentage values
+    if (/percent|growth|rate|roi|share/i.test(lower) && !isNaN(num)) {
+      const isPositive = num > 0;
+      return (
+        <span className={`font-mono text-xs font-medium ${isPositive ? 'text-emerald-400' : num < 0 ? 'text-rose-400' : 'text-slate-300'}`}>
+          {isPositive ? `+${num.toFixed(1)}%` : `${num.toFixed(1)}%`}
+        </span>
+      );
+    }
+
+    // Currency values in Millions USD
+    if (/revenue|profit|cost|budget|amount|investment/i.test(lower) && !isNaN(num)) {
+      const formatted = Math.abs(num).toLocaleString(undefined, { maximumFractionDigits: 1 });
+      return (
+        <span className={`font-mono text-xs font-medium ${num < 0 ? 'text-rose-400' : 'text-slate-200'}`}>
+          {num < 0 ? `-$${formatted}M` : `$${formatted}M`}
+        </span>
+      );
+    }
+
+    // Benchmark evaluation score or parameters
+    if (/score|performance_index|parameter/i.test(lower) && !isNaN(num)) {
+      return (
+        <span className="font-mono text-xs font-semibold text-blue-400">
+          {num.toLocaleString(undefined, { maximumFractionDigits: 1 })}
+        </span>
+      );
+    }
+
+    // Numbers in general
+    if (typeof val === 'number') {
+      return <span className="font-mono text-xs text-slate-300">{val.toLocaleString()}</span>;
+    }
+
+    return <span className="text-xs text-slate-300 font-sans">{String(val)}</span>;
   };
 
   // Filter rows based on search term
@@ -70,7 +114,7 @@ export default function ResultTable({ data, title = 'Query Results' }) {
     });
   }, [filteredRows, sortCol, sortAsc]);
 
-  // Paginated slice
+  // Pagination
   const totalPages = Math.ceil(sortedRows.length / pageSize) || 1;
   const paginatedRows = useMemo(() => {
     const start = (page - 1) * pageSize;
@@ -93,151 +137,134 @@ export default function ResultTable({ data, title = 'Query Results' }) {
       columns.map((col) => {
         const val = getRowValue(row, col);
         let strVal = val === null || val === undefined ? '' : String(val);
-        // Formula injection protection: prevent Excel/Sheets formula execution
         if (/^[=+\-@]/.test(strVal)) {
           strVal = "'" + strVal;
         }
         return `"${strVal.replace(/"/g, '""')}"`;
       }).join(',')
     );
-    const csvContent = [headers, ...csvRows].join('\r\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers, ...csvRows].join('\n');
+    const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
-    const today = new Date().toISOString().split('T')[0];
-    link.setAttribute('href', url);
-    link.setAttribute('download', `query-results-${today}.csv`);
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `querify_export_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    setExportSuccess(true);
-    setTimeout(() => setExportSuccess(false), 2500);
-  };
 
-  const formatCellValue = (val, colName) => {
-    if (val === null || val === undefined) {
-      return <span className="text-slate-500 italic font-mono text-[11px]">null</span>;
-    }
-    if (typeof val === 'number') {
-      const lower = colName.toLowerCase();
-      // CRITICAL: Evaluate percentage / growth metrics FIRST so revenue_growth_percent is formatted as %
-      if (lower.includes('percent') || lower.includes('growth') || lower.includes('share') || lower.includes('roi') || lower.includes('rate')) {
-        return <span className="font-mono text-[#D4AF37] font-semibold">{val.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 2 })}%</span>;
-      }
-      // Currency values (revenue, profit, cost, budget, amount)
-      if (lower.includes('revenue') || lower.includes('profit') || lower.includes('cost') || lower.includes('budget') || lower.includes('amount')) {
-        return <span className="font-mono text-[#F7F3E9]">${val.toLocaleString()} M</span>;
-      }
-      return <span className="font-mono text-[#F7F3E9]">{val.toLocaleString()}</span>;
-    }
-    return String(val);
+    setExportSuccess(true);
+    setTimeout(() => setExportSuccess(false), 2000);
   };
 
   return (
-    <div className="w-full rounded-2xl bg-[#0D1B2A]/70 border border-[#3A506B]/40 overflow-hidden shadow-2xl backdrop-blur-2xl">
-      {/* Table Toolbar */}
-      <div className="p-4 bg-[#1B263B]/60 border-b border-[#3A506B]/35 flex flex-col sm:flex-row items-center justify-between gap-3 backdrop-blur-md">
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          {title && <span className="font-semibold text-xs sm:text-sm text-[#F7F3E9] font-mono">{title}</span>}
+    <div className="w-full rounded-2xl bg-[#111827] border border-[#1F2E47] overflow-hidden shadow-card">
+      {/* Table Header Controls */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-4 bg-[#162238] border-b border-[#1F2E47]">
+        <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-[#0D1B2A]/80 text-slate-300 border border-[#3A506B]/40 font-mono">
-              <Hash className="w-3 h-3 text-[#7FA1C3]" />
+            <span className="font-semibold text-sm text-white font-sans">{title}</span>
+            <span className="flex items-center gap-1 text-[11px] font-mono text-slate-400 bg-[#0B0F17] px-2 py-0.5 rounded border border-[#1F2E47]">
+              <Hash className="w-3 h-3 text-slate-500" />
               <span>{rowCount ?? rows.length} rows</span>
             </span>
-            {executionTimeMs !== undefined && (
-              <span className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-[#0D1B2A]/80 text-[#D4AF37] border border-[#D4AF37]/35 font-mono">
-                <Clock className="w-3 h-3 text-[#D4AF37]" />
-                <span>{executionTimeMs} ms</span>
-              </span>
-            )}
           </div>
+
+          {executionTimeMs !== undefined && (
+            <span className="flex items-center gap-1 text-[11px] font-mono text-slate-400 bg-[#0B0F17] px-2 py-0.5 rounded border border-[#1F2E47]">
+              <Clock className="w-3 h-3 text-blue-400" />
+              <span>{executionTimeMs} ms</span>
+            </span>
+          )}
         </div>
 
-        <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
-          {/* Quick Search */}
+        <div className="flex items-center gap-2">
+          {/* Quick Filter Search */}
           <div className="relative flex-1 sm:w-48">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Filter results..."
-              className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg bg-[#0D1B2A]/80 border border-[#3A506B]/40 text-[#F7F3E9] placeholder-slate-400 focus:outline-none focus:border-[#7FA1C3] transition-colors"
+              onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }}
+              placeholder="Search results..."
+              className="w-full pl-8 pr-3 py-1 bg-[#0B0F17] border border-[#1F2E47] rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
             />
           </div>
 
-          {/* Export to CSV */}
+          {/* CSV Export */}
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#1D3557]/80 hover:bg-[#1D3557] text-[#F7F3E9] border border-[#3A506B]/60 transition-colors shrink-0 shadow-sm"
-            title="Download verified query results as CSV"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium text-slate-300 hover:text-white bg-[#0B0F17] hover:bg-[#1A2438] border border-[#1F2E47] transition-colors"
+            title="Export filtered records to CSV"
           >
             {exportSuccess ? (
               <>
-                <Check className="w-3.5 h-3.5 text-[#D4AF37]" />
-                <span className="text-[#D4AF37]">Exported!</span>
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-emerald-400">Exported</span>
               </>
             ) : (
               <>
-                <Download className="w-3.5 h-3.5 text-[#7FA1C3]" />
-                <span className="hidden sm:inline">Export CSV</span>
+                <Download className="w-3.5 h-3.5 text-slate-400" />
+                <span>Export CSV</span>
               </>
             )}
           </button>
         </div>
       </div>
 
-      {/* Table Content */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr className="bg-[#1B263B]/50 border-b border-[#3A506B]/35 text-slate-300 uppercase tracking-wider font-mono text-[11px]">
-              <th className="py-3 px-4 w-12 text-[#415A77]">#</th>
+      {/* Responsive Horizontal Scroll Wrapper */}
+      <div className="overflow-x-auto max-h-[500px] overflow-y-auto">
+        <table className="w-full text-left border-collapse">
+          {/* Sticky Header */}
+          <thead className="sticky top-0 z-10 bg-[#162238] border-b border-[#1F2E47]">
+            <tr>
               {columns.map((col) => {
                 const isSorted = sortCol === col;
                 return (
                   <th
                     key={col}
                     onClick={() => handleSort(col)}
-                    className="py-3 px-4 cursor-pointer select-none hover:text-[#F7F3E9] transition-colors"
+                    className="px-4 py-3 text-[11px] font-mono font-semibold uppercase tracking-wider text-slate-300 cursor-pointer select-none hover:text-white hover:bg-white/[0.03] transition-colors"
                   >
                     <div className="flex items-center gap-1.5">
                       <span>{col.replace(/_/g, ' ')}</span>
-                      {isSorted && (
-                        sortAsc ? <ChevronUp className="w-3.5 h-3.5 text-[#7FA1C3]" /> : <ChevronDown className="w-3.5 h-3.5 text-[#7FA1C3]" />
-                      )}
+                      <span className="text-slate-500">
+                        {isSorted ? (
+                          sortAsc ? <ChevronUp className="w-3.5 h-3.5 text-blue-400" /> : <ChevronDown className="w-3.5 h-3.5 text-blue-400" />
+                        ) : (
+                          <span className="opacity-0 hover:opacity-50">•</span>
+                        )}
+                      </span>
                     </div>
                   </th>
                 );
               })}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#3A506B]/25">
+
+          {/* Zebra Striped Rows */}
+          <tbody className="divide-y divide-[#1F2E47]">
             {paginatedRows.length === 0 ? (
               <tr>
-                <td colSpan={columns.length + 1} className="p-8 text-center text-slate-400">
-                  No matching records found.
+                <td colSpan={columns.length} className="px-4 py-8 text-center text-xs text-slate-500 font-mono">
+                  No records match your search filter.
                 </td>
               </tr>
             ) : (
-              paginatedRows.map((row, idx) => {
-                const rowNum = (page - 1) * pageSize + idx + 1;
+              paginatedRows.map((row, rIdx) => {
                 return (
                   <tr
-                    key={idx}
-                    className="hover:bg-[#1B263B]/40 transition-colors group font-sans"
+                    key={rIdx}
+                    className="transition-colors hover:bg-white/[0.03] odd:bg-[#111827] even:bg-[#0E1523]"
                   >
-                    <td className="py-2.5 px-4 font-mono text-[11px] text-[#415A77] group-hover:text-slate-400">
-                      {rowNum}
-                    </td>
-                    {columns.map((col) => (
-                      <td key={col} className="py-2.5 px-4 text-[#F7F3E9]">
-                        {formatCellValue(getRowValue(row, col), col)}
-                      </td>
-                    ))}
+                    {columns.map((col) => {
+                      const val = getRowValue(row, col);
+                      return (
+                        <td key={col} className="px-4 py-3 whitespace-nowrap">
+                          {formatCellValue(val, col)}
+                        </td>
+                      );
+                    })}
                   </tr>
                 );
               })
@@ -246,27 +273,24 @@ export default function ResultTable({ data, title = 'Query Results' }) {
         </table>
       </div>
 
-      {/* Pagination Controls */}
+      {/* Pagination Footer */}
       {totalPages > 1 && (
-        <div className="p-3 bg-[#1B263B]/60 border-t border-[#3A506B]/35 flex items-center justify-between text-xs text-slate-300 font-mono backdrop-blur-md">
+        <div className="flex items-center justify-between px-4 py-2.5 bg-[#162238] border-t border-[#1F2E47] text-xs font-mono text-slate-400">
           <span>
-            {(page - 1) * pageSize + 1} - {Math.min(page * pageSize, sortedRows.length)} of {sortedRows.length} results
+            Page {page} of {totalPages} ({sortedRows.length} total)
           </span>
           <div className="flex items-center gap-1.5">
             <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              onClick={() => setPage((p) => Math.max(p - 1, 1))}
               disabled={page === 1}
-              className="px-2.5 py-1 rounded bg-[#0D1B2A]/80 hover:bg-[#1B263B] text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed border border-[#3A506B]/40"
+              className="px-2.5 py-1 rounded bg-[#0B0F17] border border-[#1F2E47] disabled:opacity-40 hover:text-white"
             >
               Previous
             </button>
-            <span className="px-2 text-[#7FA1C3] font-bold">
-              {page} / {totalPages}
-            </span>
             <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
               disabled={page === totalPages}
-              className="px-2.5 py-1 rounded bg-[#0D1B2A]/80 hover:bg-[#1B263B] text-slate-300 disabled:opacity-40 disabled:cursor-not-allowed border border-[#3A506B]/40"
+              className="px-2.5 py-1 rounded bg-[#0B0F17] border border-[#1F2E47] disabled:opacity-40 hover:text-white"
             >
               Next
             </button>

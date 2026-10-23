@@ -7,7 +7,11 @@ import ResultChart from '../components/ResultChart';
 import QuestionChip from '../components/QuestionChip';
 import EmbeddingInspector from '../components/EmbeddingInspector';
 import { generateQueryEmbedding, computeTableRelevance } from '../services/openrouterService';
-import { Terminal, Table as TableIcon, BarChart3, AlertCircle, RotateCcw, ShieldCheck, Database, CornerDownLeft, Sparkles, HelpCircle, Cpu } from 'lucide-react';
+import {
+  Terminal, Table as TableIcon, BarChart3, AlertCircle, RotateCcw,
+  ShieldCheck, Database, CornerDownLeft, Sparkles, HelpCircle, Layers,
+  ChevronRight, ArrowRight
+} from 'lucide-react';
 
 export default function WorkspacePage({ initialQuestion = '', onClearInitialQuestion }) {
   const [question, setQuestion] = useState(initialQuestion);
@@ -25,16 +29,15 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
   const [isExecuting, setIsExecuting] = useState(false);
   const [error, setError] = useState(null);
 
-  // Suggested sample queries
-  const sampleQuestions = [
+  // Grouped example questions as explicitly requested
+  const ambiguousQuestions = [
     { text: 'Show me the best performing AI companies', isAmbiguous: true },
     { text: 'Which AI company made the most money?', isAmbiguous: true },
-    { text: 'Show the top AI models', isAmbiguous: true },
-    { text: 'Which companies are growing fast?', isAmbiguous: true },
-    { text: 'Which AI companies have the highest revenue in 2024?', isAmbiguous: false },
-    { text: 'Show the five most profitable companies.', isAmbiguous: false },
-    { text: 'Compare revenue across companies in 2024.', isAmbiguous: false },
-    { text: 'Which research projects have the largest budgets?', isAmbiguous: false },
+  ];
+
+  const directQuestions = [
+    { text: 'Show the five most profitable companies', isAmbiguous: false },
+    { text: 'Compare revenue across companies in 2024', isAmbiguous: false },
   ];
 
   // Auto-run if question was passed from landing or history
@@ -51,17 +54,17 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
     if (!q) return;
 
     setIsLoading(true);
-    setLoadingStep('Embedding query vector (NVIDIA Nemotron 3.5) & analyzing semantics...');
+    setLoadingStep('Analyzing semantic intent and inspecting ambiguity...');
     setError(null);
     setClarification(null);
 
     // Concurrently trigger vector embedding generation via OpenRouter SDK
     generateQueryEmbedding(q)
-      .then(emb => {
+      .then((emb) => {
         setEmbeddingData(emb);
         setTableRelevance(computeTableRelevance(q));
       })
-      .catch(err => {
+      .catch((err) => {
         console.warn('[OpenRouter] Embedding generation warning:', err);
       });
 
@@ -88,7 +91,7 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
     if (!sessionId) return;
 
     setIsLoading(true);
-    setLoadingStep('Synthesizing SQL for clarified metric...');
+    setLoadingStep('Synthesizing verified SQL for chosen metric...');
     setError(null);
 
     try {
@@ -97,41 +100,26 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
       setGeneratedSql(response.generatedSql);
       setExplanation(response.explanation);
       setResultData(response.data);
-
-      const clarifiedText = `${question} [Metric: ${selectedOptionId}]`;
-      generateQueryEmbedding(clarifiedText)
-        .then(emb => {
-          setEmbeddingData(emb);
-          setTableRelevance(computeTableRelevance(clarifiedText));
-        })
-        .catch(() => {});
     } catch (err) {
-      setError(err.message || 'Clarification resolution failed');
+      setError(err.message || 'Failed to resolve clarification session');
     } finally {
       setIsLoading(false);
       setLoadingStep('');
     }
   };
 
-  const handleDirectExecute = async (sqlToRun) => {
-    if (!sqlToRun) return;
-
+  const handleExecuteCustomSql = async (sqlToRun) => {
     setIsExecuting(true);
     setError(null);
 
     try {
-      const result = await queryApi.execute(sqlToRun, question, explanation);
-      setResultData(result);
+      const response = await queryApi.execute(sqlToRun, question, explanation);
+      setResultData(response);
     } catch (err) {
-      setError(err.message || 'Direct SQL execution failed');
+      setError(err.message || 'SQL execution failed AST security or database checks');
     } finally {
       setIsExecuting(false);
     }
-  };
-
-  const handleChipClick = (chipText) => {
-    setQuestion(chipText);
-    handleAnalyze(chipText);
   };
 
   const handleReset = () => {
@@ -141,168 +129,144 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
     setGeneratedSql('');
     setExplanation('');
     setResultData(null);
-    setError(null);
     setEmbeddingData(null);
-    setTableRelevance([]);
+    setError(null);
   };
 
   return (
-    <div className="relative z-10 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
-      {/* Workspace Header Toolbar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-[#3A506B]/35">
-        <div>
+    <div className="w-full max-w-[1150px] mx-auto px-4 sm:px-6 py-8 space-y-6">
+      {/* 1. QUERY CONSOLE INPUT CARD */}
+      <section className="p-6 rounded-2xl bg-[#111827] border border-[#1F2E47] shadow-card space-y-4">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-[#F7F3E9] flex items-center gap-2.5">
-              <span className="p-1.5 rounded-lg bg-[#1D3557]/80 border border-[#3A506B]/60 text-[#7FA1C3]">
-                <Terminal className="w-5 h-5" />
-              </span>
-              Query Workspace
-            </h1>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-[#1B263B]/60 text-[#D4AF37] border border-[#D4AF37]/35">
-              v1.2 Console
-            </span>
-          </div>
-          <p className="text-xs text-slate-300 mt-1 font-sans">
-            Natural language to AST-verified SQL translation with multi-turn ambiguity resolution.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-300 px-3 py-1.5 rounded-lg bg-[#1B263B]/50 backdrop-blur-md border border-[#3A506B]/35">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#D4AF37]" />
-            <span>AST Guard: Active</span>
+            <Terminal className="w-4 h-4 text-blue-400" />
+            <h2 className="text-sm font-semibold text-white uppercase tracking-wider font-mono">
+              Natural Language Console
+            </h2>
           </div>
 
-          <button
-            onClick={handleReset}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#1B263B]/50 hover:bg-[#1B263B] text-slate-300 hover:text-white border border-[#3A506B]/35 transition-colors backdrop-blur-md"
-            title="Reset workspace and state"
-          >
-            <RotateCcw className="w-3.5 h-3.5" />
-            <span>New Session</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Query Composer / Command Console (Dark Navy Frosted Glass) */}
-      <div className="relative rounded-2xl bg-[#0D1B2A]/70 border border-[#3A506B]/40 shadow-2xl backdrop-blur-2xl overflow-hidden focus-within:border-[#7FA1C3] transition-all duration-300">
-        {/* Top Console Bar */}
-        <div className="flex items-center justify-between px-4 py-2.5 bg-[#1B263B]/60 backdrop-blur-md border-b border-[#3A506B]/35 text-xs">
-          <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1.5 font-mono text-[11px] text-[#7FA1C3]">
-              <Database className="w-3.5 h-3.5" />
-              <span>querify_db</span>
+          <div className="flex items-center gap-2">
+            <span className="flex items-center gap-1.5 text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>AST Guard Active</span>
             </span>
-            <span className="text-[#3A506B]">•</span>
-            <span className="text-slate-300 font-mono text-[11px]">Dialect: MySQL 8</span>
-            <span className="text-[#3A506B]">•</span>
-            <span className="text-slate-300 font-mono text-[11px]">Mode: Read-Only</span>
-            <span className="text-[#3A506B]">•</span>
-            <span className="inline-flex items-center gap-1 font-mono text-[11px] text-[#D4AF37]">
-              <Sparkles className="w-3 h-3 text-[#D4AF37]" />
-              <span>NVIDIA Nemotron 3.5</span>
-            </span>
-          </div>
-
-          <div className="hidden md:flex items-center gap-2 text-[11px] text-slate-400 font-mono">
-            <span>Press</span>
-            <kbd className="px-1.5 py-0.5 rounded bg-[#0D1B2A]/80 border border-[#3A506B]/40 text-[#F7F3E9] text-[10px]">
-              Enter ↵
-            </kbd>
-            <span>to analyze</span>
+            {(generatedSql || resultData || question) && (
+              <button
+                onClick={handleReset}
+                className="flex items-center gap-1 text-xs font-mono text-slate-400 hover:text-white px-2 py-0.5 rounded hover:bg-white/[0.05] transition-colors"
+                title="Clear current session"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Reset</span>
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Input Chamber */}
+        {/* Input Form */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleAnalyze();
           }}
-          className="p-4 sm:p-5 space-y-4"
+          className="relative"
         >
-          <div className="flex items-start gap-3">
-            <span className="font-mono text-sm text-[#7FA1C3] font-bold select-none pt-2.5">
-              &gt;_
-            </span>
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                placeholder="Ask in natural language... e.g. Which AI companies had highest revenue in 2024?"
-                className="w-full bg-transparent text-[#F7F3E9] placeholder-slate-400 font-sans text-sm sm:text-base focus:outline-none py-2 pr-10 tracking-wide"
-                autoFocus
-              />
-              {question && (
-                <button
-                  type="button"
-                  onClick={() => setQuestion('')}
-                  className="absolute right-0 top-2.5 text-slate-400 hover:text-white transition-colors text-xs p-1"
-                  title="Clear input"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-
-            {/* Synthesize Action Button */}
+          <div className="relative flex items-center">
+            <input
+              type="text"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              placeholder="e.g. Which AI companies have the highest revenue in 2024?"
+              disabled={isLoading}
+              className="w-full px-4 py-3.5 bg-[#0B0F17] border border-[#1F2E47] rounded-xl text-sm sm:text-base text-white placeholder-slate-500 font-sans focus:outline-none focus:border-blue-500 transition-colors disabled:opacity-50 pr-28"
+            />
             <button
               type="submit"
               disabled={isLoading || !question.trim()}
-              className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#1D3557] hover:bg-[#14253D] text-[#F7F3E9] font-semibold text-xs tracking-wide shadow-sm border border-[#3A506B]/80 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="absolute right-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs flex items-center gap-1.5 transition-all disabled:opacity-40 disabled:hover:bg-blue-600 shadow-sm"
             >
-              {isLoading ? (
-                <>
-                  <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-[#D4AF37] rounded-full animate-spin" />
-                  <span>{loadingStep || 'Processing...'}</span>
-                </>
-              ) : (
-                <>
-                  <span>Synthesize SQL</span>
-                  <CornerDownLeft className="w-3.5 h-3.5 text-[#D4AF37]" />
-                </>
-              )}
+              <span>{isLoading ? 'Thinking...' : 'Query'}</span>
+              <CornerDownLeft className="w-3.5 h-3.5" />
             </button>
           </div>
-
-          {/* Prompt Suggestion Chips */}
-          <div className="pt-2 border-t border-[#3A506B]/25 flex flex-wrap items-center gap-2">
-            <span className="text-[11px] font-mono text-[#D4AF37] uppercase tracking-wider mr-1">
-              Sample Prompts:
-            </span>
-            {sampleQuestions.slice(0, 5).map((q, idx) => (
-              <QuestionChip
-                key={idx}
-                text={q.text}
-                isAmbiguous={q.isAmbiguous}
-                onClick={handleChipClick}
-              />
-            ))}
-          </div>
         </form>
-      </div>
 
-      {/* Error Alert Box */}
-      {error && (
-        <div className="p-4 rounded-xl bg-red-950/30 border border-red-500/40 text-red-200 text-xs flex items-start justify-between gap-3 animate-fade-in backdrop-blur-md">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <span className="font-semibold text-red-300 font-mono">Execution Notice / Security Status:</span>
-              <p className="leading-relaxed">{error}</p>
+        {/* CLICKABLE EXAMPLE QUESTION CHIPS (SPLIT INTO AMBIGUOUS VS DIRECT) */}
+        <div className="pt-2 border-t border-[#1F2E47]/70 space-y-3">
+          {/* Ambiguous Prompts */}
+          <div>
+            <div className="flex items-center gap-1.5 text-xs font-mono font-medium text-amber-400 mb-2">
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span>Ambiguous Questions (Triggers Clarification):</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {ambiguousQuestions.map((q, idx) => (
+                <QuestionChip
+                  key={idx}
+                  text={q.text}
+                  isAmbiguous={q.isAmbiguous}
+                  onClick={(val) => {
+                    setQuestion(val);
+                    handleAnalyze(val);
+                  }}
+                />
+              ))}
             </div>
           </div>
-          <button
-            onClick={() => setError(null)}
-            className="px-2.5 py-1 rounded bg-red-900/40 hover:bg-red-900/60 text-red-200 text-xs border border-red-500/30 font-mono"
-          >
-            Dismiss
-          </button>
+
+          {/* Direct Prompts */}
+          <div>
+            <div className="flex items-center gap-1.5 text-xs font-mono font-medium text-slate-300 mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+              <span>Direct Analytical Questions:</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {directQuestions.map((q, idx) => (
+                <QuestionChip
+                  key={idx}
+                  text={q.text}
+                  isAmbiguous={q.isAmbiguous}
+                  onClick={(val) => {
+                    setQuestion(val);
+                    handleAnalyze(val);
+                  }}
+                />
+              ))}
+            </div>
+          </div>
         </div>
+      </section>
+
+      {/* 2. LOADING SKELETON */}
+      {isLoading && (
+        <section className="p-6 rounded-2xl bg-[#111827] border border-[#1F2E47] space-y-4 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-4 h-4 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
+            <span className="text-xs font-mono text-slate-300">
+              {loadingStep || 'Evaluating semantic AST rules and querying catalog...'}
+            </span>
+          </div>
+
+          <div className="space-y-2.5 pt-2">
+            <div className="h-4 bg-[#162238] rounded-md w-3/4 animate-pulse" />
+            <div className="h-4 bg-[#162238] rounded-md w-1/2 animate-pulse" />
+            <div className="h-24 bg-[#0B0F17] rounded-xl border border-[#1F2E47] animate-pulse" />
+          </div>
+        </section>
       )}
 
-      {/* Clarification Modal Popup */}
+      {/* 3. ERROR BANNER */}
+      {error && (
+        <section className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs sm:text-sm flex items-start gap-3">
+          <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <p className="font-semibold text-rose-200">Execution Rejected</p>
+            <p className="font-mono text-xs">{error}</p>
+          </div>
+        </section>
+      )}
+
+      {/* 4. CLARIFICATION MODAL */}
       {clarification && (
         <ClarificationModal
           clarification={clarification}
@@ -312,105 +276,81 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
         />
       )}
 
-      {/* Neural Vector Embedding Inspector (NVIDIA Nemotron 3.5 Embed via OpenRouter SDK) */}
-      {embeddingData && (
-        <div className="animate-fade-in">
-          <EmbeddingInspector
-            embeddingData={embeddingData}
-            queryText={question}
-            tableRelevance={tableRelevance}
-          />
-        </div>
+      {/* 5. SQL VIEWER & AST CONTROLS */}
+      {generatedSql && !isLoading && (
+        <SqlViewer
+          sql={generatedSql}
+          explanation={explanation}
+          onRun={handleExecuteCustomSql}
+          isExecuting={isExecuting}
+        />
       )}
 
-      {/* Generated SQL Viewer */}
-      {generatedSql && (
-        <div className="animate-fade-in">
-          <SqlViewer
-            sql={generatedSql}
-            explanation={explanation}
-            onRun={handleDirectExecute}
-            isExecuting={isExecuting}
-          />
-        </div>
+      {/* 6. OPENROUTER VECTOR INSPECTOR (COLLAPSIBLE / OPTIONAL) */}
+      {embeddingData && !isLoading && (
+        <EmbeddingInspector
+          embedding={embeddingData.embedding}
+          model={embeddingData.model}
+          tableRelevance={tableRelevance}
+        />
       )}
 
-      {/* Result Display Section (Table or Chart) */}
-      {resultData && resultData.rows && (
-        <div className="space-y-4 animate-fade-in">
-          {/* View Mode Toggle Bar (Frosted Glass) */}
-          <div className="flex items-center justify-between bg-[#0D1B2A]/70 backdrop-blur-xl p-2 rounded-xl border border-[#3A506B]/40">
-            <div className="flex items-center gap-3">
-              <span className="text-[11px] font-mono font-medium text-slate-300 uppercase tracking-wider pl-2">
-                Visualization Mode:
-              </span>
-              <div className="flex items-center bg-[#1B263B]/60 p-1 rounded-lg border border-[#3A506B]/35">
-                <button
-                  onClick={() => setViewMode('table')}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all ${
-                    viewMode === 'table'
-                      ? 'bg-[#1D3557] text-[#F7F3E9] font-semibold border border-[#3A506B]/70 shadow-sm'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <TableIcon className="w-3.5 h-3.5 text-[#7FA1C3]" />
-                  <span>Data Table</span>
-                </button>
-                <button
-                  onClick={() => setViewMode('chart')}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all ${
-                    viewMode === 'chart'
-                      ? 'bg-[#1D3557] text-[#F7F3E9] font-semibold border border-[#3A506B]/70 shadow-sm'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <BarChart3 className="w-3.5 h-3.5 text-[#7FA1C3]" />
-                  <span>Visual Chart</span>
-                </button>
-              </div>
+      {/* 7. RESULT TABS & VISUALIZATION */}
+      {resultData && !isLoading && (
+        <section className="space-y-4">
+          <div className="flex items-center justify-between border-b border-[#1F2E47] pb-3">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setViewMode('table')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  viewMode === 'table'
+                    ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                    : 'text-slate-400 hover:text-white bg-[#111827] border border-[#1F2E47]'
+                }`}
+              >
+                <TableIcon className="w-3.5 h-3.5" />
+                <span>Table View</span>
+              </button>
+
+              <button
+                onClick={() => setViewMode('chart')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  viewMode === 'chart'
+                    ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                    : 'text-slate-400 hover:text-white bg-[#111827] border border-[#1F2E47]'
+                }`}
+              >
+                <BarChart3 className="w-3.5 h-3.5" />
+                <span>Chart Projection</span>
+              </button>
             </div>
 
-            <div className="text-xs font-mono text-slate-300 pr-2">
-              <span className="text-[#D4AF37] font-semibold">{resultData.rowCount || resultData.rows.length}</span> rows returned
-            </div>
+            <span className="text-xs font-mono text-slate-400">
+              Query returned {resultData.rowCount ?? resultData.rows?.length ?? 0} verified records
+            </span>
           </div>
 
-          {/* Conditional View */}
           {viewMode === 'table' ? (
-            <ResultTable data={resultData} title="Query Results" />
+            <ResultTable data={resultData} title="Query Execution Results" />
           ) : (
             <ResultChart data={resultData} suggestion={resultData.chartSuggestion} />
           )}
-        </div>
+        </section>
       )}
 
-      {/* Initial Empty State when no query has been run yet */}
-      {!resultData && !generatedSql && !isLoading && !clarification && (
-        <div className="p-8 rounded-2xl bg-[#0D1B2A]/60 border border-[#3A506B]/30 backdrop-blur-xl text-center space-y-4">
-          <div className="w-12 h-12 rounded-2xl bg-[#1B263B]/70 border border-[#3A506B]/40 flex items-center justify-center mx-auto text-[#7FA1C3]">
-            <Sparkles className="w-6 h-6 text-[#D4AF37]" />
+      {/* 8. FRIENDLY EMPTY STATE (WHEN NO QUERY IS RUN YET) */}
+      {!isLoading && !generatedSql && !resultData && !error && (
+        <section className="py-12 px-6 rounded-2xl bg-[#111827] border border-[#1F2E47] text-center space-y-3">
+          <div className="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/30 flex items-center justify-center text-blue-400 mx-auto">
+            <Database className="w-5 h-5" />
           </div>
-          <div className="space-y-1">
-            <h3 className="text-sm sm:text-base font-semibold text-[#F7F3E9] font-mono">Console Ready for Natural Language Queries</h3>
-            <p className="text-xs text-slate-300 max-w-xl mx-auto">
-              Type a business question above or click any sample prompt. Ambiguous requests will trigger the Clarification Engine, while unambiguous queries compile straight into AST-verified SQL.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto pt-2 text-left">
-            <div className="p-3 rounded-xl bg-[#1B263B]/40 border border-[#3A506B]/30 text-xs">
-              <div className="font-semibold text-[#D4AF37] font-mono mb-1">1. Ask Naturally</div>
-              <p className="text-slate-400 text-[11px]">Free-form questions without needing to know SQL table schemas.</p>
-            </div>
-            <div className="p-3 rounded-xl bg-[#1B263B]/40 border border-[#3A506B]/30 text-xs">
-              <div className="font-semibold text-[#7FA1C3] font-mono mb-1">2. Clarify Metrics</div>
-              <p className="text-slate-400 text-[11px]">Resolve ambiguous business terms (e.g. revenue vs profit vs growth).</p>
-            </div>
-            <div className="p-3 rounded-xl bg-[#1B263B]/40 border border-[#3A506B]/30 text-xs">
-              <div className="font-semibold text-emerald-400 font-mono mb-1">3. AST Security</div>
-              <p className="text-slate-400 text-[11px]">Strictly read-only SELECT execution with bounded row limits.</p>
-            </div>
-          </div>
-        </div>
+          <h3 className="text-sm font-semibold text-white font-sans">
+            Ready to Translate Analytical Inquiries
+          </h3>
+          <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+            Click one of the sample prompt chips above or type a natural language inquiry. If your question contains ambiguity, Querify will ask for clarification before querying the database.
+          </p>
+        </section>
       )}
     </div>
   );

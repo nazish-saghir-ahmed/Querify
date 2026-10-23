@@ -15,10 +15,10 @@ export default async function handler(req, res) {
 
   return sendJson(res, 200, {
     status: 'UP',
-    databaseConnected: true,
-    databaseEngine: 'MySQL 8.0 Cloud Compatible / Relational Store',
-    aiProvider: 'OpenRouter / NVIDIA Nemotron 3.5',
-    aiMode: 'production',
+    databaseConnected: false,
+    databaseEngine: 'Demo Relational Catalog',
+    aiProvider: 'gemini',
+    aiMode: 'demo',
     uptimeSeconds: uptime,
   });
 }

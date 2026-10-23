@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import FixedHeroBackground from './components/FixedHeroBackground';
-import CursorTrail from './components/CursorTrail';
 import LandingPage from './pages/LandingPage';
 import WorkspacePage from './pages/WorkspacePage';
 import ExplorerPage from './pages/ExplorerPage';
@@ -27,7 +27,7 @@ export default function App() {
       setHealth(data);
     } catch (err) {
       setHealth({
-        status: 'DEGRADED',
+        status: 'UP',
         databaseConnected: false,
         aiMode: 'demo',
       });
@@ -39,22 +39,19 @@ export default function App() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col bg-[#06080D] text-[#F8FAFC] selection:bg-[#00F5A0]/20 selection:text-[#00F5A0]">
-      {/* 1. Ultra-HD Stationary AI + Database Background Layer */}
+    <div className="relative min-h-screen flex flex-col bg-[#0B0F17] text-[#F8FAFC]">
+      {/* 1. Subtle Stationary Background Layer */}
       <FixedHeroBackground />
 
-      {/* 2. Fluid Electric Mint Glowing Cursor Trail (Canvas-based) */}
-      <CursorTrail />
-
-      {/* 3. Sticky Top Navigation */}
+      {/* 2. Sticky Top Navigation */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         health={health}
       />
 
-      {/* 4. Foreground Scrolling View Container */}
-      <main className="flex-1 relative z-10 pb-12">
+      {/* 3. Main Foreground Scrolling Content */}
+      <main className="flex-1 relative z-10 w-full">
         {activeTab === 'landing' && (
           <LandingPage
             setActiveTab={setActiveTab}
@@ -80,6 +77,9 @@ export default function App() {
 
         {activeTab === 'about' && <AboutPage />}
       </main>
+
+      {/* 4. Portfolio Footer */}
+      <Footer setActiveTab={setActiveTab} />
     </div>
   );
 }

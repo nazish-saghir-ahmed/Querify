@@ -1,29 +1,25 @@
 import React from 'react';
 import { HelpCircle, Sparkles } from 'lucide-react';
 
-/**
- * Royal Developer prompt suggestion chip with transparent frosted styling
- * and Royal Blue / Royal Gold status accents.
- */
 export default function QuestionChip({ text, isAmbiguous = false, onClick }) {
   return (
     <button
       type="button"
       onClick={() => onClick(text)}
-      className={`group flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all duration-200 border text-left backdrop-blur-md ${
+      className={`group flex items-center gap-2 px-3 py-2 rounded-xl text-xs transition-all duration-150 border text-left ${
         isAmbiguous
-          ? 'bg-[#D4AF37]/15 border-[#D4AF37]/35 text-[#D4AF37] hover:border-[#D4AF37]/60 hover:bg-[#D4AF37]/25 shadow-sm'
-          : 'bg-[#1B263B]/50 border-[#3A506B]/35 text-slate-300 hover:text-[#F7F3E9] hover:border-[#7FA1C3]/60 hover:bg-[#1B263B]/80 shadow-sm'
+          ? 'bg-[#111827] border-amber-500/30 text-amber-200 hover:border-amber-500/60 hover:bg-amber-500/5'
+          : 'bg-[#111827] border-[#1F2E47] text-slate-300 hover:text-white hover:border-blue-500/50 hover:bg-blue-500/5'
       }`}
     >
       {isAmbiguous ? (
-        <HelpCircle className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
+        <HelpCircle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
       ) : (
-        <Sparkles className="w-3.5 h-3.5 text-[#7FA1C3] shrink-0" />
+        <Sparkles className="w-3.5 h-3.5 text-blue-400 shrink-0" />
       )}
-      <span className="truncate max-w-[260px] sm:max-w-none text-[11px] font-mono">{text}</span>
+      <span className="font-mono text-[11px] truncate">{text}</span>
       {isAmbiguous && (
-        <span className="text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30 ml-1">
+        <span className="text-[9px] font-mono uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 ml-auto">
           Ambiguous
         </span>
       )}
