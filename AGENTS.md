@@ -59,29 +59,31 @@ D:\Querify/
 │   ├── src/
 │   │   ├── App.jsx                       # Main application shell & tab routing
 │   │   ├── main.jsx                      # React 18 DOM mount point & ErrorBoundary wrapper
-│   │   ├── index.css                     # Tailwind CSS imports & custom animations
-│   │   ├── components/                   # Reusable UI components
-│   │   │   ├── BrandLogo.jsx             # Cyberpunk animated brand glyph
-│   │   │   ├── ClarificationModal.jsx    # Neon modal for multi-turn disambiguation
+│   │   ├── index.css                     # Tailwind CSS tokens, animations & obsidian theme
+│   │   ├── components/                   # High-craft developer UI components
+│   │   │   ├── BrandLogo.jsx             # Architectural database stack & neural diamond
+│   │   │   ├── FixedHeroBackground.jsx   # Ultra-HD Stationary 3D AI + Relational DB spatial layer
+│   │   │   ├── CursorTrail.jsx           # Canvas-based Electric Mint particle stream
+│   │   │   ├── ClarificationModal.jsx    # High-contrast decision modal for multi-turn disambiguation
 │   │   │   ├── ErrorBoundary.jsx         # Global crash protection boundary
 │   │   │   ├── Footer.jsx                # System footer with links & status
-│   │   │   ├── Navbar.jsx                # Top bar with tab navigation & engine badge
+│   │   │   ├── Navbar.jsx                # Linear-style tab pills & live engine badge
 │   │   │   ├── QuestionChip.jsx          # Clickable prompt suggestion chips
 │   │   │   ├── ResultChart.jsx           # Dynamic Recharts visualization (Bar/Line/Pie)
 │   │   │   ├── ResultTable.jsx           # Paginated data table with CSV export
 │   │   │   └── SqlViewer.jsx             # Syntax-highlighted SQL with explanation
 │   │   ├── pages/                        # View controllers
-│   │   │   ├── LandingPage.jsx           # Hero page & introductory walkthrough
-│   │   │   ├── WorkspacePage.jsx         # Primary Text-to-SQL query workspace
-│   │   │   ├── ExplorerPage.jsx          # Multi-domain Database Schema Explorer
-│   │   │   ├── HistoryPage.jsx           # Query execution audit log & statistics
+│   │   │   ├── LandingPage.jsx           # Hero page & interactive terminal walkthrough
+│   │   │   ├── WorkspacePage.jsx         # Intelligent Command Console with schema dialect badges
+│   │   │   ├── ExplorerPage.jsx          # Database Schema Explorer with ERD topology & column filters
+│   │   │   ├── HistoryPage.jsx           # Query execution audit log & KPI metrics cards
 │   │   │   └── AboutPage.jsx             # Architecture, pipeline, & viva guide
 │   │   └── services/                     # Network & fallback services
 │   │       ├── api.js                    # API client with Vercel HTML rewrite detection
 │   │       └── clientFallbackData.js     # Zero-backend client demo engine
 │   ├── package.json                      # Frontend dependencies (React, Vite, Recharts, Lucide)
 │   ├── vite.config.js                    # Vite bundler configuration & local proxy
-│   └── tailwind.config.js                # Cyberpunk theme color tokens & fonts
+│   └── tailwind.config.js                # Monochromatic titanium & Electric Mint design tokens
 │
 ├── specs/                                # Formal Engineering Specifications
 │   ├── README.md                         # Specifications Index
