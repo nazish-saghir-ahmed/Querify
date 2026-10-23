@@ -5,7 +5,9 @@ import SqlViewer from '../components/SqlViewer';
 import ResultTable from '../components/ResultTable';
 import ResultChart from '../components/ResultChart';
 import QuestionChip from '../components/QuestionChip';
-import { Terminal, Table as TableIcon, BarChart3, AlertCircle, RotateCcw, ShieldCheck, Database, CornerDownLeft, Sparkles, HelpCircle } from 'lucide-react';
+import EmbeddingInspector from '../components/EmbeddingInspector';
+import { generateQueryEmbedding, computeTableRelevance } from '../services/openrouterService';
+import { Terminal, Table as TableIcon, BarChart3, AlertCircle, RotateCcw, ShieldCheck, Database, CornerDownLeft, Sparkles, HelpCircle, Cpu } from 'lucide-react';
 
 export default function WorkspacePage({ initialQuestion = '', onClearInitialQuestion }) {
   const [question, setQuestion] = useState(initialQuestion);
@@ -15,6 +17,8 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
   const [explanation, setExplanation] = useState('');
   const [resultData, setResultData] = useState(null);
   const [viewMode, setViewMode] = useState('table'); // 'table' or 'chart'
+  const [embeddingData, setEmbeddingData] = useState(null);
+  const [tableRelevance, setTableRelevance] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState('');
@@ -47,9 +51,19 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
     if (!q) return;
 
     setIsLoading(true);
-    setLoadingStep('Analyzing query semantics & ambiguity...');
+    setLoadingStep('Embedding query vector (NVIDIA Nemotron 3.5) & analyzing semantics...');
     setError(null);
     setClarification(null);
+
+    // Concurrently trigger vector embedding generation via OpenRouter SDK
+    generateQueryEmbedding(q)
+      .then(emb => {
+        setEmbeddingData(emb);
+        setTableRelevance(computeTableRelevance(q));
+      })
+      .catch(err => {
+        console.warn('[OpenRouter] Embedding generation warning:', err);
+      });
 
     try {
       const response = await queryApi.analyze(q, sessionId);
@@ -83,6 +97,14 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
       setGeneratedSql(response.generatedSql);
       setExplanation(response.explanation);
       setResultData(response.data);
+
+      const clarifiedText = `${question} [Metric: ${selectedOptionId}]`;
+      generateQueryEmbedding(clarifiedText)
+        .then(emb => {
+          setEmbeddingData(emb);
+          setTableRelevance(computeTableRelevance(clarifiedText));
+        })
+        .catch(() => {});
     } catch (err) {
       setError(err.message || 'Clarification resolution failed');
     } finally {
@@ -120,6 +142,8 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
     setExplanation('');
     setResultData(null);
     setError(null);
+    setEmbeddingData(null);
+    setTableRelevance([]);
   };
 
   return (
@@ -172,7 +196,12 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
             <span className="text-[#3A506B]">•</span>
             <span className="text-slate-300 font-mono text-[11px]">Dialect: MySQL 8</span>
             <span className="text-[#3A506B]">•</span>
-            <span className="text-slate-300 font-mono text-[11px]">Mode: Read-Only (SELECT)</span>
+            <span className="text-slate-300 font-mono text-[11px]">Mode: Read-Only</span>
+            <span className="text-[#3A506B]">•</span>
+            <span className="inline-flex items-center gap-1 font-mono text-[11px] text-[#D4AF37]">
+              <Sparkles className="w-3 h-3 text-[#D4AF37]" />
+              <span>NVIDIA Nemotron 3.5</span>
+            </span>
           </div>
 
           <div className="hidden md:flex items-center gap-2 text-[11px] text-slate-400 font-mono">
@@ -281,6 +310,17 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
           onCancel={() => setClarification(null)}
           isLoading={isLoading}
         />
+      )}
+
+      {/* Neural Vector Embedding Inspector (NVIDIA Nemotron 3.5 Embed via OpenRouter SDK) */}
+      {embeddingData && (
+        <div className="animate-fade-in">
+          <EmbeddingInspector
+            embeddingData={embeddingData}
+            queryText={question}
+            tableRelevance={tableRelevance}
+          />
+        </div>
       )}
 
       {/* Generated SQL Viewer */}

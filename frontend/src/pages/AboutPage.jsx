@@ -30,6 +30,10 @@ export default function AboutPage() {
       a: 'We implement layered defense-in-depth: (1) JSqlParser parses the generated SQL into an Abstract Syntax Tree (AST), strictly verifying that the root statement is an instance of net.sf.jsqlparser.statement.select.Select. (2) Semicolon Policy: A single trailing semicolon (;) is permitted and normalized as standard SQL statement termination, while multiple statements (statement chaining) are blocked via a syntax-aware lexical scanner that respects quotes and comments. (3) Table Whitelist: Extracted tables must strictly match the 6 approved domain tables. (4) System schemas like information_schema and time-based sleep/benchmark functions are prohibited. (5) Bounded Execution: Automatic LIMIT 100 is injected and queries are executed with a 5000ms timeout guard.'
     },
     {
+      q: 'How is NVIDIA Nemotron 3.5 Embed integrated via OpenRouter SDK?',
+      a: 'Querify integrates @openrouter/sdk to query NVIDIA’s frontier nvidia/nemotron-3.5-embed-1b:free model on OpenRouter. For every query submitted, it computes a 2048-dimensional dense float vector embedding, inspects the vector slices, and projects semantic cosine similarity against relational schema tables in real-time.'
+    },
+    {
       q: 'What happens if the external AI API is down or unavailable?',
       a: 'Querify has an integrated offline Demo Mode. It uses a deterministic local rule engine that matches canonical analytical patterns, handles multi-turn clarification, and generates valid SQL without requiring an internet connection or external API key.'
     },

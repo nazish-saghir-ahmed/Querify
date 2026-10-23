@@ -61,6 +61,33 @@ If `ai.mode=gemini` is selected but `GEMINI_API_KEY` is blank or invalid, `AiSer
 
 ---
 
+## 2.1 OpenRouter SDK & NVIDIA Nemotron 3.5 Vector Embeddings (`openrouterService.js`)
+
+On the Vercel-deployed frontend and client-side workspace, Querify integrates `@openrouter/sdk` with NVIDIA's `nvidia/nemotron-3.5-embed-1b:free` model:
+
+```javascript
+import { OpenRouter } from "@openrouter/sdk";
+
+const openrouter = new OpenRouter({
+  apiKey: process.env.VITE_OPENROUTER_API_KEY
+});
+
+const embedding = await openrouter.embeddings.generate({
+  requestBody: {
+    model: "nvidia/nemotron-3.5-embed-1b:free",
+    input: userQuery,
+    encodingFormat: "float"
+  }
+});
+```
+
+### Architectural Capabilities:
+1. **2048-Dimensional Dense Float Embeddings**: Translates natural language questions into continuous vector representations for semantic understanding.
+2. **Cosine Similarity Projection**: Computes mathematical cosine distance between query embeddings and schema anchors to identify relevant database tables before query execution.
+3. **Interactive Vector Inspector**: Exposes real-time vector slices, latency diagnostics, and schema match percentages in the UI.
+
+---
+
 ## 3. AST Structural Security Architecture (`SqlValidator.java`)
 
 All generated SQL queries—regardless of whether they originated from Gemini, the demo provider, or client fallback—must pass through the **Syntax-Aware Lexical Guard & JSqlParser AST Security Pipeline** before reaching the database connection pool.

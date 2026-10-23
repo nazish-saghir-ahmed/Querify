@@ -121,7 +121,8 @@ D:\Querify/
 | **SQL Parser** | JSqlParser | 4.6+ | Abstract Syntax Tree (AST) validation |
 | **Database** | MySQL / H2 | 8.0+ / 2.2+ | Relational storage & in-memory testing |
 | **Connection Pool**| HikariCP | 5.1+ | Low-latency JDBC connection pooling |
-| **AI LLM** | Google Gemini | 1.5/2.0 Flash | Schema-grounded SQL synthesis |
+| **AI LLM / Embed** | OpenRouter / Gemini | Nemotron 3.5 Embed (1B) / 1.5 Flash | Neural Vector Embeddings & Schema Grounded SQL |
+| **OpenRouter SDK** | @openrouter/sdk | 1.5.6 | Official TypeScript SDK for OpenRouter API |
 | **Frontend** | React | 18.2+ | Declarative UI and state management |
 | **Bundler** | Vite | 5.0+ | Fast ESM development and production build |
 | **Styling** | Tailwind CSS | 3.4+ | Dark Navy Blue (`#1D3557`), Deep Navy Canvas (`#0D1B2A`), Gold (`#D4AF37`), & Transparent Frosted Glass (`backdrop-blur-xl`) |

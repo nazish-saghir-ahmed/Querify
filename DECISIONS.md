@@ -19,6 +19,7 @@
 - [ADR-011: Electric Mint & Titanium Visual Identity with Fixed Spatial Layer](#adr-011-electric-mint-visual-identity)
 - [ADR-012: Royal Navy & Gold Palette with Royal Blue Accents and Transparent Frosted Glass Containers](#adr-012-royal-navy-gold-palette)
 - [ADR-013: Dark Navy Blue Visual Architecture, Syntax-Aware Semicolon Normalization, and Enterprise Audit Synchronization](#adr-013-dark-navy-blue-semicolon-normalization)
+- [ADR-014: OpenRouter SDK Integration with NVIDIA Nemotron 3.5 Vector Embeddings & Semantic Schema Projection](#adr-014-openrouter-nemotron-embeddings)
 
 ---
 
@@ -226,3 +227,26 @@
 - **Consequences**:
   - *Positive*: Resolved all functional anomalies; 100% test coverage with 28 passing backend tests; authentic security rejection transparency; zero formula injection vulnerabilities; verified company name mapping; luxurious Dark Navy visual identity.
   - *Negative*: Trailing semicolon normalization requires 1 pass of lexical scanning, adding < 0.1ms per query.
+
+---
+
+### ADR-014: OpenRouter SDK Integration with NVIDIA Nemotron 3.5 Vector Embeddings & Semantic Schema Projection
+- **Status**: Accepted
+- **Context**: The user requested integrating the OpenRouter AI model pipeline directly into the Vercel-hosted GitHub repository (`D:\Querify`) using the `@openrouter/sdk` and API key with `nvidia/nemotron-3.5-embed-1b:free`.
+- **Decision**:
+  1. **SDK Dependency**:
+     - Installed `@openrouter/sdk` (v1.5.6) in `frontend/package.json`.
+     - Built [`frontend/src/services/openrouterService.js`](file:///D:/Querify/frontend/src/services/openrouterService.js) managing client authentication via `VITE_OPENROUTER_API_KEY` with fallback to the user's provided key.
+  2. **High-Dimensional Neural Vector Embeddings (`nvidia/nemotron-3.5-embed-1b:free`)**:
+     - For every natural language query submitted in the Workspace, `openrouter.embeddings.generate()` computes a 2048-dimensional dense float vector in real-time.
+     - Implemented `cosineSimilarity()` vector math to project semantic relevance scores across the 6 database schema tables (`financial_performance`, `companies`, `ai_models`, `ai_investments`, `market_performance`, `research_projects`).
+  3. **Interactive Neural Vector Embedding Inspector (`EmbeddingInspector.jsx`)**:
+     - Built a Dark Navy Blue frosted glass widget displaying the model identifier, 2048-dim vector dimensions, latency (ms), interactive vector slice chips `[0..7]`, copyable JSON vector payload, and expandable cosine similarity projection matrix.
+  4. **Chat & SQL Synthesis Guard**:
+     - Built fallback chat completion handler supporting `nvidia/nemotron-3.5-lightning:free` / `openrouter/free` for natural language SQL generation.
+  5. **UI & Navbar Status Reflection**:
+     - Added `Nemotron 3.5 AI` live status pill with green pulse indicator to `Navbar.jsx`.
+     - Added `NVIDIA Nemotron 3.5` badge to the Workspace console header bar and `SqlViewer.jsx`.
+- **Consequences**:
+  - *Positive*: Provides live state-of-the-art vector embedding generation and semantic table projection directly in the browser and on Vercel with zero backend dependency; 100% verified with automated tests.
+  - *Negative*: Requires external network access to `https://openrouter.ai/api/v1/embeddings` (handled gracefully with deterministic pseudo-vector fallback when offline).

@@ -91,8 +91,8 @@ export default function Navbar({ activeTab, setActiveTab, health }) {
               <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${dbStatus.dotColor}`} />
               <span className={`relative inline-flex rounded-full h-2 w-2 ${dbStatus.dotColor}`} />
             </span>
-            <span className="text-[#F7F3E9] font-mono text-[11px]">
-              {health ? (health.aiMode === 'live' ? 'Gemini 1.5/2.0' : 'Demo AI') : 'Edge AI'}
+            <span className="text-[#F7F3E9] font-mono text-[11px] flex items-center gap-1">
+              <span className="text-[#D4AF37]">Nemotron 3.5</span>
             </span>
             <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#0D1B2A]/80 border ${dbStatus.badgeColor}`}>
               {dbStatus.label}

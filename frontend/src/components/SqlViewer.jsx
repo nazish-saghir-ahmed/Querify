@@ -36,6 +36,10 @@ export default function SqlViewer({ sql, explanation, onRun, isExecuting }) {
             <span>AST Guard: Verified (SELECT Only)</span>
             {showSecurityDetails ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
           </button>
+          <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#0D1B2A]/70 text-[#D4AF37] border border-[#D4AF37]/35 text-[10px] font-mono">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>OpenRouter: nvidia/nemotron-3.5-embed-1b:free</span>
+          </span>
         </div>
 
         <div className="flex items-center gap-2 self-end sm:self-auto">
