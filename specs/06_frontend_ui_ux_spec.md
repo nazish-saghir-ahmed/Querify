@@ -1,63 +1,74 @@
 # SPEC-06: Frontend UI/UX & Component Architecture Specification
 
-> **Design Tokens, Cyberpunk Visual Language, React 18 Component Tree, and Error Boundary Systems**
+> **Design Tokens, Monochromatic Titanium + Electric Mint Visual Language, React 18 Tree, and Spatial Layering**
 
 ---
 
-## 1. Design System & Cyberpunk Aesthetic
+## 1. Design System & Craft Philosophy
 
-Querify employs a dark cyberpunk / glassmorphic visual language engineered for high legibility, analytical precision, and visual impact.
+Querify employs a bespoke, high-craft developer tool visual identity inspired by Linear, Raycast, and Stripe Radar. It eschews generic AI templates, purple glows, and heavy glassmorphism in favor of monochromatic titanium tones, dark obsidian surfaces, and a single signature brand accent: **Intelligent Electric Mint (`#00F5A0`)**.
 
 ```
 +-----------------------------------------------------------------------------------+
 |                              COLOR PALETTE TOKENS                                 |
 +-----------------------------------------------------------------------------------+
-|  Deep Background      |  #080B14  | Primary body & canvas background              |
-|  Surface Card         |  #0B1120  | Component card containers with glass blur    |
-|  Surface Elevated     |  #111827  | Modals, active tabs, and flyout menus        |
-|  Cyan Accent (Neon)   |  #06B6D4  | Primary CTAs, active highlights, links       |
-|  Indigo Accent        |  #6366F1  | Secondary gradients, SQL keywords            |
-|  Emerald Accent       |  #10B981  | Success badges, execution durations          |
-|  Rose Accent (Alert)  |  #F43F5E  | Error boundaries, AST rejection badges       |
-|  Border Subdued       |  #1E293B  | Subtle card borders with 80% opacity         |
+|  Deep Obsidian        |  #06080D  | Root canvas and body backdrop                 |
+|  Elevated Graphite    |  #0A0E17  | Card surfaces & command consoles             |
+|  Panel Surface        |  #0F1523  | Toolbar bars & elevated flyouts              |
+|  Card Container       |  #131B2A  | Active selection cards & table rows          |
+|  Titanium Border      |  #1C2638  | Subtle structural dividers (80% opacity)     |
+|  Active Brand Accent  |  #00F5A0  | Primary CTAs, active pills, SQL keywords     |
+|  Brand Hover State    |  #00DF89  | Interactive button hover state               |
+|  Brand Subtle Glow    |  #00F5A0  | Soft 15px box-shadow under active elements   |
+|  Text Primary         |  #F8FAFC  | High-contrast crisp white typography         |
+|  Text Muted           |  #94A3B8  | Technical metadata & secondary labels        |
+|  Ambiguity Warning    |  #F59E0B  | Amber warning indicators for polysemy        |
 +-----------------------------------------------------------------------------------+
 ```
 
 ### Typography Tokens
 - **Display & Interface**: `Inter`, `-apple-system`, `sans-serif` (balanced geometry, high legibility).
-- **Code & SQL**: `JetBrains Mono`, `Fira Code`, `monospace` (ligature support, tabular figures for currency and row metrics).
+- **Code, Dialect & SQL**: `JetBrains Mono`, `Fira Code`, `monospace` (ligature support, tabular figures for currency and row metrics).
 
 ---
 
 ## 2. Component Hierarchy Tree
 
 ```
-App.jsx (Root State & Tab Navigation: 'workspace' | 'explorer' | 'history' | 'about')
- └── ErrorBoundary.jsx (Global Exception Interceptor)
-      ├── Navbar.jsx (Logo, Active Tab Pills, Engine Mode Badge, GitHub Link)
-      │    └── BrandLogo.jsx (Cyan/Indigo SVG Glyph)
-      │
-      ├── Page Container (Conditional View Rendering)
-      │    ├── WorkspacePage.jsx (Natural Language Text-to-SQL Workflow)
-      │    │    ├── QuestionChip.jsx (Pre-built prompt chips)
-      │    │    ├── ClarificationModal.jsx (Multi-turn choice dialog)
-      │    │    ├── SqlViewer.jsx (Syntax highlighted SQL + Explain accordion)
-      │    │    ├── ResultTable.jsx (Paginated results + CSV Export)
-      │    │    └── ResultChart.jsx (Dynamic Recharts Bar/Line/Pie)
-      │    │
-      │    ├── ExplorerPage.jsx (Multi-Domain Schema Browser)
-      │    │    ├── Domain Selector Tabs (ecommerce, saas, hr, fintech)
-      │    │    ├── Table Filter & Search Input
-      │    │    ├── Table Card Grid (Columns, Data Types, PK/FK Badges)
-      │    │    └── Sample Data Drawer (First 5 records with header metadata)
-      │    │
-      │    ├── HistoryPage.jsx (Query Execution Audit Logs)
-      │    │    ├── KPI Cards (Total Queries, Avg Latency, Success Rate)
-      │    │    ├── Search & Status Filter Bar
-      │    │    └── Audit Log Table (Prompt, SQL, Duration, Timestamp)
-      │    │
-      │    └── AboutPage.jsx (Architecture, Pipeline, & Viva Defense Guide)
-      │
+App.jsx (Root Shell & View Router)
+ ├── FixedHeroBackground.jsx (Ultra-HD Stationary AI + Relational DB Spatial Layer)
+ ├── CursorTrail.jsx (Lightweight Canvas-based Electric Mint Particle Stream)
+ ├── Navbar.jsx (Logo, Active Tab Pills, Live Engine Badge, Launch CTA)
+ │    └── BrandLogo.jsx (Geometric Database Stack + Neural Diamond Glyph)
+ │
+ ├── Page Container (Foreground Scrolling Views)
+ │    ├── LandingPage.jsx (Overview Hero, Interactive Terminal Window, Feature Cards)
+ │    │    └── Sample Question Chips (Monospace prompts with AMBIGUOUS badges)
+ │    │
+ │    ├── WorkspacePage.jsx (Command Console Query Composer)
+ │    │    ├── Console Header (Schema: querify_db • Dialect: MySQL 8 • AST Guard)
+ │    │    ├── Command Input Chamber (>_ prompt with auto-expand & clear button)
+ │    │    ├── ClarificationModal.jsx (Targeted disambiguation decision dialog)
+ │    │    ├── SqlViewer.jsx (Syntax-highlighted SQL + Plain English query logic)
+ │    │    ├── ResultTable.jsx (Paginated results + CSV Export)
+ │    │    └── ResultChart.jsx (Dynamic Recharts Bar/Line/Pie with Electric Mint palette)
+ │    │
+ │    ├── ExplorerPage.jsx (Database Schema Explorer)
+ │    │    ├── Table Search Filter Input (Live column & table search)
+ │    │    ├── Domain Tables Sidebar (Row counts & selected state indicator)
+ │    │    ├── Subtab 1: Columns & Data Types (Data types, PK/FK badges)
+ │    │    ├── Subtab 2: Live Sample Records (Verified sample rows)
+ │    │    └── Subtab 3: Relational Schema Topology (Interactive ERD Diagram)
+ │    │
+ │    ├── HistoryPage.jsx (Query Audit Trail)
+ │    │    ├── KPI Cards (Total Executions, Avg Latency, AST Pass 100%)
+ │    │    ├── Audit Search Bar (Filter by query text, SQL keywords, or date)
+ │    │    └── Audit Log Cards (Copy SQL, Re-run in Workspace, latency chips)
+ │    │
+ │    └── AboutPage.jsx (Architecture Pipeline & 20+ Viva Voce Guide)
+ │
+ └── Footer.jsx (Platform Navigation, Architecture links, Copyright)
+```
       └── Footer.jsx (Copyright, GitHub Link, Vercel Status Badge)
 ```
 

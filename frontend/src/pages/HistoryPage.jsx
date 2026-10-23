@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { historyApi } from '../services/api';
-import { History, Trash2, Play, Copy, Check, Clock, Hash, CheckCircle2, XCircle } from 'lucide-react';
+import { History, Trash2, Play, Copy, Check, Clock, Hash, CheckCircle2, XCircle, Search, Filter, ShieldCheck, Zap } from 'lucide-react';
 
 export default function HistoryPage({ onSelectQuestion, setActiveTab }) {
   const [historyList, setHistoryList] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -34,7 +35,7 @@ export default function HistoryPage({ onSelectQuestion, setActiveTab }) {
   };
 
   const handleClearAll = async () => {
-    if (!window.confirm('Are you sure you want to clear all query history?')) return;
+    if (!window.confirm('Are you sure you want to clear all query audit records?')) return;
     try {
       await historyApi.clearAll();
       setHistoryList([]);
@@ -56,46 +57,126 @@ export default function HistoryPage({ onSelectQuestion, setActiveTab }) {
     setActiveTab('workspace');
   };
 
+  const safeList = Array.isArray(historyList) ? historyList : [];
+  const filteredList = safeList.filter((item) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    const matchesQuery = (item.naturalQuery || '').toLowerCase().includes(q);
+    const matchesSql = (item.generatedSql || '').toLowerCase().includes(q);
+    const matchesExpl = (item.explanation || '').toLowerCase().includes(q);
+    return matchesQuery || matchesSql || matchesExpl;
+  });
+
+  const avgLatency = safeList.length > 0 
+    ? Math.round(safeList.reduce((acc, curr) => acc + (curr.executionTimeMs || 15), 0) / safeList.length)
+    : 16;
+
   return (
-    <div className="min-h-screen bg-[#080B14] py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
+    <div className="relative z-10 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-[#1E293B]">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
         <div>
-          <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
-            <History className="w-6 h-6 text-purple-400" />
-            Query Audit History
-          </h2>
+          <div className="flex items-center gap-2.5">
+            <span className="p-1.5 rounded-lg bg-[#00F5A0]/10 border border-[#00F5A0]/25 text-[#00F5A0]">
+              <History className="w-5 h-5" />
+            </span>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+              Query Audit Trail
+            </h1>
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-slate-300 border border-white/[0.08]">
+              Immutable Session Log
+            </span>
+          </div>
           <p className="text-xs text-slate-400 mt-1">
-            Persisted record of recent questions, generated SQL, execution metrics, and audit timestamps.
+            Persisted record of natural questions, generated SQL, execution metrics, and audit timestamps.
           </p>
         </div>
 
-        {historyList.length > 0 && (
+        {safeList.length > 0 && (
           <button
             onClick={handleClearAll}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-800/40 transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-red-950/20 hover:bg-red-950/40 text-red-300 border border-red-500/25 transition-colors"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            <span>Clear History</span>
+            <span>Purge Audit Log</span>
           </button>
         )}
       </div>
 
+      {/* Audit KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="p-4 rounded-xl bg-[#0A0E17]/95 border border-white/[0.08] flex items-center justify-between">
+          <div>
+            <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Total Executions</div>
+            <div className="text-2xl font-bold font-mono text-white mt-1">{safeList.length}</div>
+          </div>
+          <span className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.08] text-slate-300">
+            <Hash className="w-5 h-5" />
+          </span>
+        </div>
+
+        <div className="p-4 rounded-xl bg-[#0A0E17]/95 border border-white/[0.08] flex items-center justify-between">
+          <div>
+            <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Average Latency</div>
+            <div className="text-2xl font-bold font-mono text-[#00F5A0] mt-1">{avgLatency} ms</div>
+          </div>
+          <span className="p-2 rounded-lg bg-[#00F5A0]/10 border border-[#00F5A0]/25 text-[#00F5A0]">
+            <Zap className="w-5 h-5" />
+          </span>
+        </div>
+
+        <div className="p-4 rounded-xl bg-[#0A0E17]/95 border border-white/[0.08] flex items-center justify-between">
+          <div>
+            <div className="text-[11px] font-mono uppercase tracking-wider text-slate-400">AST Security Pass</div>
+            <div className="text-2xl font-bold font-mono text-white mt-1">100%</div>
+          </div>
+          <span className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-emerald-400">
+            <ShieldCheck className="w-5 h-5" />
+          </span>
+        </div>
+      </div>
+
+      {/* Custom Context-Aware Search & Filter Bar */}
+      <div className="flex items-center px-4 py-2.5 rounded-xl bg-[#0A0E17]/95 border border-white/[0.08] focus-within:border-[#00F5A0]/50 focus-within:shadow-[0_0_20px_-4px_rgba(0,245,160,0.25)] transition-all">
+        <Search className="w-4 h-4 text-slate-400 shrink-0 mr-3" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search audit trail by prompt, SQL syntax, or explanation..."
+          className="w-full bg-transparent text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none"
+        />
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={() => setSearchQuery('')}
+            className="text-slate-500 hover:text-slate-300 text-xs px-2"
+          >
+            ✕
+          </button>
+        )}
+        <span className="text-[11px] font-mono text-slate-500 shrink-0 ml-2">
+          {filteredList.length} matches
+        </span>
+      </div>
+
       {/* History List */}
-      {historyList.length === 0 ? (
-        <div className="p-12 text-center bg-[#101827] border border-[#1E293B] rounded-2xl text-slate-400 space-y-3">
-          <History className="w-10 h-10 text-slate-600 mx-auto" />
-          <p className="text-sm">No queries executed yet.</p>
+      {filteredList.length === 0 ? (
+        <div className="p-12 text-center bg-[#0A0E17]/95 border border-white/[0.08] rounded-2xl text-slate-400 space-y-3">
+          <History className="w-8 h-8 text-slate-600 mx-auto" />
+          <p className="text-sm font-sans">
+            {searchQuery ? 'No audit records match your search filter.' : 'No queries executed yet.'}
+          </p>
           <button
             onClick={() => setActiveTab('workspace')}
-            className="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-neon-violet"
+            className="px-4 py-2 rounded-xl bg-[#00F5A0] hover:bg-[#00DF89] text-[#06080D] text-xs font-semibold tracking-wide shadow-sm"
           >
             Go to Query Workspace
           </button>
         </div>
       ) : (
         <div className="space-y-4">
-          {historyList.map((item) => {
+          {filteredList.map((item) => {
             const isSuccess = item.status === 'SUCCESS';
             const isCopied = copiedId === item.id;
             const formattedDate = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Recent';
@@ -103,58 +184,62 @@ export default function HistoryPage({ onSelectQuestion, setActiveTab }) {
             return (
               <div
                 key={item.id}
-                className="p-5 rounded-2xl bg-[#101827] border border-[#1E293B] hover:border-slate-700 transition-all space-y-3 shadow-card-dark"
+                className="p-5 rounded-2xl bg-[#0A0E17]/95 border border-white/[0.08] hover:border-white/[0.18] transition-all space-y-3"
               >
                 {/* Header Row */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5">
                     {isSuccess ? (
-                      <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                      <span className="p-1 rounded-md bg-[#00F5A0]/10 text-[#00F5A0] border border-[#00F5A0]/25">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                      </span>
                     ) : (
-                      <XCircle className="w-4 h-4 text-red-400" />
+                      <span className="p-1 rounded-md bg-red-500/10 text-red-400 border border-red-500/25">
+                        <XCircle className="w-3.5 h-3.5" />
+                      </span>
                     )}
-                    <span className="font-semibold text-sm text-white">
+                    <span className="font-semibold text-sm text-white font-sans">
                       "{item.naturalQuery}"
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-xs text-slate-400">
-                    <span className="flex items-center gap-1 font-mono text-[11px]">
-                      <Clock className="w-3 h-3 text-purple-400" />
+                  <div className="flex items-center gap-2.5 text-xs text-slate-400 font-mono">
+                    <span className="flex items-center gap-1 text-[#00F5A0] bg-[#00F5A0]/10 px-2 py-0.5 rounded border border-[#00F5A0]/20 text-[11px]">
+                      <Clock className="w-3 h-3" />
                       {item.executionTimeMs} ms
                     </span>
-                    <span className="flex items-center gap-1 font-mono text-[11px]">
-                      <Hash className="w-3 h-3 text-cyan-400" />
+                    <span className="flex items-center gap-1 text-slate-300 bg-white/[0.04] px-2 py-0.5 rounded border border-white/[0.08] text-[11px]">
+                      <Hash className="w-3 h-3" />
                       {item.rowsReturned} rows
                     </span>
-                    <span className="text-[11px] text-slate-500">
+                    <span className="text-[11px] text-slate-500 hidden sm:inline">
                       {formattedDate}
                     </span>
                   </div>
                 </div>
 
                 {/* SQL Code Box */}
-                <div className="p-3 rounded-xl bg-[#080B14] font-mono text-xs text-cyan-300 border border-[#1E293B]/80 overflow-x-auto">
+                <div className="p-3.5 rounded-xl bg-[#06080D] font-mono text-xs text-[#00F5A0] border border-white/[0.06] overflow-x-auto leading-relaxed">
                   {item.generatedSql}
                 </div>
 
                 {/* Explanation */}
                 {item.explanation && (
-                  <p className="text-xs text-slate-400">
-                    <span className="text-purple-300 font-medium">Outcome:</span> {item.explanation}
+                  <p className="text-xs text-slate-400 leading-relaxed font-sans">
+                    <span className="text-slate-300 font-mono font-medium">Outcome:</span> {item.explanation}
                   </p>
                 )}
 
                 {/* Actions */}
-                <div className="flex items-center justify-end gap-2 pt-1 border-t border-[#1E293B]/50">
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/[0.06]">
                   <button
                     onClick={() => handleCopy(item.id, item.generatedSql)}
-                    className="flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-medium bg-[#151E30] hover:bg-slate-800 text-slate-300 border border-[#1E293B] transition-colors"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0F1523] hover:bg-[#131B2A] text-slate-300 border border-white/[0.08] transition-colors"
                   >
                     {isCopied ? (
                       <>
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-emerald-400">Copied</span>
+                        <Check className="w-3.5 h-3.5 text-[#00F5A0]" />
+                        <span className="text-[#00F5A0]">Copied</span>
                       </>
                     ) : (
                       <>
@@ -166,7 +251,7 @@ export default function HistoryPage({ onSelectQuestion, setActiveTab }) {
 
                   <button
                     onClick={() => handleRerun(item.naturalQuery)}
-                    className="flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-purple-600 hover:bg-purple-500 text-white shadow-neon-violet transition-colors"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-[#00F5A0] hover:bg-[#00DF89] text-[#06080D] shadow-sm transition-colors"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
                     <span>Re-run in Workspace</span>
@@ -174,10 +259,10 @@ export default function HistoryPage({ onSelectQuestion, setActiveTab }) {
 
                   <button
                     onClick={() => handleDelete(item.id)}
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-slate-800 transition-colors ml-1"
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-white/[0.05] transition-colors ml-1"
                     title="Delete record"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>

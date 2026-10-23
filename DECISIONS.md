@@ -16,6 +16,7 @@
 - [ADR-008: In-Memory Multi-Domain Schema Catalogs for DB Explorer](#adr-008-in-memory-multi-domain-schema-catalogs)
 - [ADR-009: Dark Cyberpunk & Glassmorphism Design System](#adr-009-dark-cyberpunk-design-system)
 - [ADR-010: Archify Integration for Living Interactive Architecture Maps](#adr-010-archify-integration)
+- [ADR-011: Electric Mint & Titanium Visual Identity with Fixed Spatial Layer](#adr-011-electric-mint-visual-identity)
 
 ---
 
@@ -152,3 +153,17 @@
 - **Consequences**:
   - *Positive*: Single-command generation of verifiable, interactive architecture maps for reviews, stakeholder walkthroughs, and documentation.
   - *Negative*: Requires Node 20+ runtime for CLI execution (already verified on the host system).
+
+---
+
+### ADR-011: Electric Mint & Titanium Visual Identity with Fixed Spatial Layer
+- **Status**: Accepted
+- **Context**: Generic AI products rely on predictable blue-to-purple gradients, glowing rounded cards, and template styling. Querify requires a bespoke, high-craft developer tool aesthetic (inspired by Linear, Raycast, and Stripe Radar) that visually communicates the intersection of artificial intelligence and structured relational databases.
+- **Decision**:
+  1. **Monochromatic Titanium + Electric Mint (`#00F5A0`) Palette**: Replaced all purple-to-blue gradients with deep obsidian (`#06080D`), elevated graphite (`#0A0E17`), and a single signature brand accent (`#00F5A0`).
+  2. **Ultra-HD Stationary Spatial Background (`FixedHeroBackground.jsx`)**: Integrated custom 3D architectural artwork featuring neural lattices converging into floating relational tables. Fixed as a stationary background layer so content scrolls smoothly above it.
+  3. **Canvas-Based Cursor Trail (`CursorTrail.jsx`)**: Lightweight `requestAnimationFrame` particle stream in `#00F5A0` following the user pointer with automatic deactivation on touch devices and reduced-motion settings.
+  4. **Command Console Query Composer**: Redesigned inputs across all tabs (Workspace query composer with dialect badges and Enter hotkeys, DB Explorer table search filter, and History audit search bar).
+- **Consequences**:
+  - *Positive*: Exceptional visual craftsmanship, higher contrast, zero generic template aesthetics, fast rendering without DOM bloat.
+  - *Negative*: Requires strict CSS utility discipline to avoid introducing competing accent colors.

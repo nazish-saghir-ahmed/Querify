@@ -27,21 +27,21 @@ export default class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-[#080B14] flex items-center justify-center p-6 text-white">
-          <div className="max-w-lg w-full bg-[#101827] border border-red-500/40 rounded-2xl p-8 shadow-card-dark text-center space-y-6">
-            <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto text-red-400 shadow-neon-violet">
-              <AlertTriangle className="w-8 h-8" />
+        <div className="min-h-screen bg-[#06080D] flex items-center justify-center p-6 text-white font-sans">
+          <div className="max-w-lg w-full bg-[#0A0E17] border border-red-500/30 rounded-2xl p-8 shadow-2xl text-center space-y-6">
+            <div className="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/25 flex items-center justify-center mx-auto text-red-400">
+              <AlertTriangle className="w-7 h-7" />
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-xl font-bold text-white">Something went wrong</h2>
-              <p className="text-xs text-slate-400">
-                An unexpected interface issue occurred. You can reload the page or return to the home screen.
+              <h2 className="text-xl font-bold text-white tracking-tight">Something went wrong</h2>
+              <p className="text-xs text-slate-400 leading-relaxed">
+                An unexpected component exception was intercepted. You can safely reload the application or return to overview.
               </p>
             </div>
 
             {this.state.error && (
-              <div className="p-3 rounded-lg bg-[#080B14] border border-[#1E293B] text-left font-mono text-[11px] text-red-300 overflow-x-auto max-h-32">
+              <div className="p-3.5 rounded-xl bg-[#06080D] border border-white/[0.08] text-left font-mono text-[11px] text-red-300 overflow-x-auto max-h-32">
                 {this.state.error.toString()}
               </div>
             )}
@@ -49,7 +49,7 @@ export default class ErrorBoundary extends React.Component {
             <div className="flex items-center justify-center gap-3 pt-2">
               <button
                 onClick={this.handleReload}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold shadow-neon-violet transition-all"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#00F5A0] hover:bg-[#00DF89] text-[#06080D] text-xs font-bold tracking-wide shadow-sm transition-all"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>Reload Application</span>
@@ -57,7 +57,7 @@ export default class ErrorBoundary extends React.Component {
 
               <button
                 onClick={this.handleReset}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#151E30] hover:bg-slate-800 text-slate-300 text-xs font-medium border border-[#1E293B] transition-all"
+                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0F1523] hover:bg-[#131B2A] text-slate-300 text-xs font-medium border border-white/[0.08] transition-all"
               >
                 <Home className="w-3.5 h-3.5" />
                 <span>Return Home</span>

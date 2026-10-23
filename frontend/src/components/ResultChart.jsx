@@ -3,11 +3,11 @@ import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
-import { BarChart3, LineChart as LineIcon, PieChart as PieIcon, Layers } from 'lucide-react';
+import { BarChart3, LineChart as LineIcon, PieChart as PieIcon } from 'lucide-react';
 
-const NEON_COLORS = [
-  '#8B5CF6', '#22D3EE', '#EC4899', '#10B981', '#F59E0B',
-  '#6366F1', '#14B8A6', '#F43F5E', '#84CC16', '#A855F7'
+const PALETTE = [
+  '#00F5A0', '#00DF89', '#38BDF8', '#60A5FA', '#94A3B8',
+  '#F59E0B', '#34D399', '#A7F3D0', '#E2E8F0', '#64748B'
 ];
 
 export default function ResultChart({ data, suggestion }) {
@@ -15,15 +15,12 @@ export default function ResultChart({ data, suggestion }) {
 
   const { rows, columns } = data;
 
-  // Determine initial chart type from suggestion or default to "bar"
   const defaultType = suggestion?.type || 'bar';
   const [chartType, setChartType] = useState(defaultType);
 
-  // Identify X and Y keys
   const xKey = suggestion?.xAxis || columns[0];
   const yKey = suggestion?.yAxis || columns.find((c) => c !== xKey) || columns[1];
 
-  // Prepare normalized numeric data for charts
   const chartData = rows.map((r) => {
     const rawVal = r[yKey];
     let num = typeof rawVal === 'number' ? rawVal : parseFloat(rawVal);
@@ -39,9 +36,9 @@ export default function ResultChart({ data, suggestion }) {
     if (active && payload && payload.length) {
       const dataItem = payload[0];
       return (
-        <div className="bg-[#101827] border border-purple-500/40 p-3 rounded-xl shadow-xl shadow-black/80 text-xs">
+        <div className="bg-[#0A0E17] border border-white/[0.12] p-3 rounded-xl shadow-2xl text-xs font-sans">
           <p className="font-semibold text-white mb-1">{label || dataItem.name}</p>
-          <p className="text-cyan-400 font-mono">
+          <p className="text-[#00F5A0] font-mono">
             {yKey.replace(/_/g, ' ')}: <span className="font-bold">{dataItem.value.toLocaleString()}</span>
           </p>
         </div>
@@ -51,24 +48,24 @@ export default function ResultChart({ data, suggestion }) {
   };
 
   return (
-    <div className="w-full rounded-2xl bg-[#101827] border border-[#1E293B] p-5 shadow-card-dark">
+    <div className="w-full rounded-2xl bg-[#0A0E17]/95 border border-white/[0.08] p-5 shadow-2xl backdrop-blur-xl">
       {/* Chart Header & Type Switcher */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h4 className="text-sm font-semibold text-white">
+          <h4 className="text-xs sm:text-sm font-semibold text-white font-mono">
             {suggestion?.title || `${yKey.replace(/_/g, ' ')} by ${xKey.replace(/_/g, ' ')}`}
           </h4>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Visualization derived from {rows.length} live records
+          <p className="text-xs text-slate-400 mt-0.5 font-sans">
+            Automatic visual projection deduced from {rows.length} verified records
           </p>
         </div>
 
         {/* Switcher Buttons */}
-        <div className="flex items-center gap-1 bg-[#151E30] p-1 rounded-xl border border-[#1E293B]">
+        <div className="flex items-center gap-1 bg-[#0F1523] p-1 rounded-lg border border-white/[0.08]">
           <button
             onClick={() => setChartType('bar')}
-            className={`p-1.5 rounded-lg text-xs flex items-center gap-1 transition-colors ${
-              chartType === 'bar' ? 'bg-purple-600 text-white font-semibold' : 'text-slate-400 hover:text-white'
+            className={`px-2.5 py-1 rounded-md text-xs flex items-center gap-1.5 transition-all ${
+              chartType === 'bar' ? 'bg-[#00F5A0] text-[#06080D] font-bold shadow-sm' : 'text-slate-400 hover:text-white'
             }`}
             title="Bar Chart"
           >
@@ -77,8 +74,8 @@ export default function ResultChart({ data, suggestion }) {
           </button>
           <button
             onClick={() => setChartType('line')}
-            className={`p-1.5 rounded-lg text-xs flex items-center gap-1 transition-colors ${
-              chartType === 'line' ? 'bg-purple-600 text-white font-semibold' : 'text-slate-400 hover:text-white'
+            className={`px-2.5 py-1 rounded-md text-xs flex items-center gap-1.5 transition-all ${
+              chartType === 'line' ? 'bg-[#00F5A0] text-[#06080D] font-bold shadow-sm' : 'text-slate-400 hover:text-white'
             }`}
             title="Line Chart"
           >
@@ -87,8 +84,8 @@ export default function ResultChart({ data, suggestion }) {
           </button>
           <button
             onClick={() => setChartType('pie')}
-            className={`p-1.5 rounded-lg text-xs flex items-center gap-1 transition-colors ${
-              chartType === 'pie' ? 'bg-purple-600 text-white font-semibold' : 'text-slate-400 hover:text-white'
+            className={`px-2.5 py-1 rounded-md text-xs flex items-center gap-1.5 transition-all ${
+              chartType === 'pie' ? 'bg-[#00F5A0] text-[#06080D] font-bold shadow-sm' : 'text-slate-400 hover:text-white'
             }`}
             title="Pie Chart"
           >
@@ -103,7 +100,7 @@ export default function ResultChart({ data, suggestion }) {
         <ResponsiveContainer width="100%" height="100%">
           {chartType === 'bar' && (
             <BarChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 25 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#1C2638" vertical={false} />
               <XAxis
                 dataKey="name"
                 stroke="#64748B"
@@ -115,29 +112,23 @@ export default function ResultChart({ data, suggestion }) {
               />
               <YAxis stroke="#64748B" fontSize={11} tickLine={false} />
               <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="value" fill="url(#barGradient)" radius={[6, 6, 0, 0]} />
-              <defs>
-                <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#22D3EE" stopOpacity={0.9} />
-                  <stop offset="100%" stopColor="#8B5CF6" stopOpacity={0.6} />
-                </linearGradient>
-              </defs>
+              <Bar dataKey="value" fill="#00F5A0" radius={[6, 6, 0, 0]} />
             </BarChart>
           )}
 
           {chartType === 'line' && (
             <LineChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 25 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#1C2638" />
               <XAxis dataKey="name" stroke="#64748B" fontSize={11} tickLine={false} />
               <YAxis stroke="#64748B" fontSize={11} tickLine={false} />
               <Tooltip content={<CustomTooltip />} />
               <Line
                 type="monotone"
                 dataKey="value"
-                stroke="#22D3EE"
-                strokeWidth={3}
-                dot={{ fill: '#8B5CF6', r: 5, strokeWidth: 2, stroke: '#101827' }}
-                activeDot={{ r: 7, fill: '#22D3EE' }}
+                stroke="#00F5A0"
+                strokeWidth={2.5}
+                dot={{ fill: '#06080D', r: 4, strokeWidth: 2, stroke: '#00F5A0' }}
+                activeDot={{ r: 6, fill: '#00F5A0' }}
               />
             </LineChart>
           )}
@@ -157,7 +148,7 @@ export default function ResultChart({ data, suggestion }) {
                 paddingAngle={4}
               >
                 {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={NEON_COLORS[index % NEON_COLORS.length]} />
+                  <Cell key={`cell-${index}`} fill={PALETTE[index % PALETTE.length]} />
                 ))}
               </Pie>
             </PieChart>

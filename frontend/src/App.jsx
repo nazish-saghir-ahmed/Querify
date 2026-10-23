@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import FixedHeroBackground from './components/FixedHeroBackground';
+import CursorTrail from './components/CursorTrail';
 import LandingPage from './pages/LandingPage';
 import WorkspacePage from './pages/WorkspacePage';
 import ExplorerPage from './pages/ExplorerPage';
@@ -38,16 +40,22 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#080B14] text-[#F8FAFC]">
-      {/* Sticky Top Navigation */}
+    <div className="relative min-h-screen flex flex-col bg-[#06080D] text-[#F8FAFC] selection:bg-[#00F5A0]/20 selection:text-[#00F5A0]">
+      {/* 1. Ultra-HD Stationary AI + Database Background Layer */}
+      <FixedHeroBackground />
+
+      {/* 2. Fluid Electric Mint Glowing Cursor Trail (Canvas-based) */}
+      <CursorTrail />
+
+      {/* 3. Sticky Top Navigation */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         health={health}
       />
 
-      {/* Main Dynamic View */}
-      <main className="flex-1">
+      {/* 4. Foreground Scrolling View Container */}
+      <main className="flex-1 relative z-10">
         {activeTab === 'landing' && (
           <LandingPage
             setActiveTab={setActiveTab}
@@ -74,7 +82,7 @@ export default function App() {
         {activeTab === 'about' && <AboutPage />}
       </main>
 
-      {/* Global Footer */}
+      {/* 5. Global Platform Footer */}
       <Footer setActiveTab={setActiveTab} />
     </div>
   );

@@ -5,7 +5,7 @@ import SqlViewer from '../components/SqlViewer';
 import ResultTable from '../components/ResultTable';
 import ResultChart from '../components/ResultChart';
 import QuestionChip from '../components/QuestionChip';
-import { Sparkles, Terminal, Table as TableIcon, BarChart3, AlertCircle, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { Terminal, Table as TableIcon, BarChart3, AlertCircle, RotateCcw, ShieldCheck, Database, ArrowRight, CornerDownLeft, Sparkles } from 'lucide-react';
 
 export default function WorkspacePage({ initialQuestion = '', onClearInitialQuestion }) {
   const [question, setQuestion] = useState(initialQuestion);
@@ -20,7 +20,7 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
   const [isExecuting, setIsExecuting] = useState(false);
   const [error, setError] = useState(null);
 
-  // Suggested questions
+  // Suggested sample queries
   const sampleQuestions = [
     { text: 'Show me the best performing AI companies', isAmbiguous: true },
     { text: 'Which AI company made the most money?', isAmbiguous: true },
@@ -30,11 +30,9 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
     { text: 'Show the five most profitable companies.', isAmbiguous: false },
     { text: 'Compare revenue across companies in 2024.', isAmbiguous: false },
     { text: 'Which research projects have the largest budgets?', isAmbiguous: false },
-    { text: 'What is the average AI investment by company?', isAmbiguous: false },
-    { text: 'Show revenue trends over the available years.', isAmbiguous: false },
   ];
 
-  // Auto-run if question was passed from landing page
+  // Auto-run if question was passed from landing or history
   useEffect(() => {
     if (initialQuestion) {
       setQuestion(initialQuestion);
@@ -120,71 +118,126 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
   };
 
   return (
-    <div className="min-h-screen bg-[#080B14] py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
-      {/* Workspace Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-[#1E293B]">
+    <div className="relative z-10 py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-6">
+      {/* Workspace Header Toolbar */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/[0.08]">
         <div>
-          <h2 className="text-2xl font-extrabold text-white flex items-center gap-2">
-            <Terminal className="w-6 h-6 text-purple-400" />
-            Query Workspace
-          </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Ask analytical questions about AI companies, models, financials, and investments.
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
+              <span className="p-1.5 rounded-lg bg-[#00F5A0]/10 border border-[#00F5A0]/25 text-[#00F5A0]">
+                <Terminal className="w-5 h-5" />
+              </span>
+              Query Workspace
+            </h1>
+            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-slate-300 border border-white/[0.08]">
+              v1.2 Console
+            </span>
+          </div>
+          <p className="text-xs text-slate-400 mt-1 font-sans">
+            Natural language to AST-verified SQL translation with multi-turn ambiguity resolution.
           </p>
         </div>
 
-        <button
-          onClick={handleReset}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#151E30] hover:bg-slate-800 text-slate-300 hover:text-white border border-[#1E293B] transition-colors"
-        >
-          <RefreshCw className="w-3.5 h-3.5" />
-          <span>New Query</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-400 px-3 py-1.5 rounded-lg bg-[#0F1523] border border-white/[0.08]">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#00F5A0]" />
+            <span>AST Guard: Active</span>
+          </div>
+
+          <button
+            onClick={handleReset}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-[#0F1523] hover:bg-[#131B2A] text-slate-300 hover:text-white border border-white/[0.08] transition-colors"
+            title="Reset workspace and state"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>New Session</span>
+          </button>
+        </div>
       </div>
 
-      {/* Main Query Input Box */}
-      <div className="p-4 sm:p-6 rounded-2xl bg-[#101827] border border-purple-500/30 shadow-card-dark relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 via-indigo-500 to-cyan-400" />
+      {/* Redesigned Query Composer / Command Console */}
+      <div className="relative rounded-2xl bg-[#0A0E17]/95 border border-white/[0.1] shadow-2xl backdrop-blur-xl overflow-hidden focus-within:border-[#00F5A0]/50 focus-within:shadow-[0_0_35px_-5px_rgba(0,245,160,0.25)] transition-all duration-300">
+        {/* Top Console Bar */}
+        <div className="flex items-center justify-between px-4 py-2.5 bg-[#0F1523] border-b border-white/[0.08] text-xs">
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1.5 font-mono text-[11px] text-[#00F5A0]">
+              <Database className="w-3.5 h-3.5" />
+              <span>querify_db</span>
+            </span>
+            <span className="text-slate-600">•</span>
+            <span className="text-slate-400 font-mono text-[11px]">Dialect: MySQL 8</span>
+            <span className="text-slate-600">•</span>
+            <span className="text-slate-400 font-mono text-[11px]">Mode: Read-Only (SELECT)</span>
+          </div>
 
+          <div className="hidden md:flex items-center gap-2 text-[11px] text-slate-400 font-mono">
+            <span>Press</span>
+            <kbd className="px-1.5 py-0.5 rounded bg-[#131B2A] border border-white/[0.1] text-slate-300 text-[10px]">
+              Enter ↵
+            </kbd>
+            <span>to analyze</span>
+          </div>
+        </div>
+
+        {/* Input Chamber */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleAnalyze();
           }}
-          className="space-y-4"
+          className="p-4 sm:p-5 space-y-4"
         >
-          <div className="relative flex items-center">
-            <Sparkles className="w-5 h-5 text-purple-400 absolute left-4 pointer-events-none" />
-            <input
-              type="text"
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              placeholder="e.g. Which AI companies had highest revenue in 2024? or Show me the best performing AI companies"
-              className="w-full pl-12 pr-28 py-3.5 rounded-xl bg-[#080B14] border border-[#1E293B] text-white placeholder-slate-500 text-sm focus:outline-none focus:border-cyan-400 transition-colors shadow-inner"
-            />
+          <div className="flex items-start gap-3">
+            <span className="font-mono text-sm text-[#00F5A0] font-bold select-none pt-2.5">
+              &gt;_
+            </span>
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                placeholder="Ask in natural language... e.g. Which AI companies had highest revenue in 2024?"
+                className="w-full bg-transparent text-white placeholder-slate-500 font-sans text-sm sm:text-base focus:outline-none py-2 pr-10 tracking-wide"
+                autoFocus
+              />
+              {question && (
+                <button
+                  type="button"
+                  onClick={() => setQuestion('')}
+                  className="absolute right-0 top-2.5 text-slate-500 hover:text-slate-300 transition-colors text-xs p-1"
+                  title="Clear input"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Synthesize Action Button */}
             <button
               type="submit"
               disabled={isLoading || !question.trim()}
-              className="absolute right-2 px-5 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold text-xs shadow-neon-violet transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-1.5"
+              className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#00F5A0] hover:bg-[#00DF89] text-[#06080D] font-semibold text-xs tracking-wide shadow-[0_0_20px_-3px_rgba(0,245,160,0.4)] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
-                  <span className="w-3.5 h-3.5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                  <span>Thinking...</span>
+                  <span className="w-3.5 h-3.5 border-2 border-[#06080D]/30 border-t-[#06080D] rounded-full animate-spin" />
+                  <span>Synthesizing...</span>
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Ask AI</span>
+                  <span>Synthesize SQL</span>
+                  <CornerDownLeft className="w-3.5 h-3.5" />
                 </>
               )}
             </button>
           </div>
 
-          {/* Quick Suggestion Chips */}
-          <div className="flex flex-wrap items-center gap-2 pt-1">
-            <span className="text-[11px] text-slate-500 font-medium">Examples:</span>
-            {sampleQuestions.slice(0, 6).map((q, idx) => (
+          {/* Prompt Suggestion Chips */}
+          <div className="pt-2 border-t border-white/[0.06] flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-mono text-slate-500 uppercase tracking-wider mr-1">
+              Sample Prompts:
+            </span>
+            {sampleQuestions.slice(0, 5).map((q, idx) => (
               <QuestionChip
                 key={idx}
                 text={q.text}
@@ -198,10 +251,10 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
 
       {/* Error Alert Box */}
       {error && (
-        <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/40 text-red-200 text-xs flex items-start gap-3">
+        <div className="p-4 rounded-xl bg-red-950/30 border border-red-500/30 text-red-200 text-xs flex items-start gap-3 animate-fade-in">
           <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <span className="font-semibold text-red-300">Execution Error:</span>
+            <span className="font-semibold text-red-300 font-mono">Execution Notice:</span>
             <p>{error}</p>
           </div>
         </div>
@@ -219,28 +272,32 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
 
       {/* Generated SQL Viewer */}
       {generatedSql && (
-        <SqlViewer
-          sql={generatedSql}
-          explanation={explanation}
-          onRun={handleDirectExecute}
-          isExecuting={isExecuting}
-        />
+        <div className="animate-fade-in">
+          <SqlViewer
+            sql={generatedSql}
+            explanation={explanation}
+            onRun={handleDirectExecute}
+            isExecuting={isExecuting}
+          />
+        </div>
       )}
 
       {/* Result Display Section (Table or Chart) */}
       {resultData && resultData.rows && (
-        <div className="space-y-4">
+        <div className="space-y-4 animate-fade-in">
           {/* View Mode Toggle Bar */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
-                Output View:
+          <div className="flex items-center justify-between bg-[#0A0E17]/80 p-2 rounded-xl border border-white/[0.08]">
+            <div className="flex items-center gap-3">
+              <span className="text-[11px] font-mono font-medium text-slate-400 uppercase tracking-wider pl-2">
+                Visualization Mode:
               </span>
-              <div className="flex items-center bg-[#101827] p-1 rounded-xl border border-[#1E293B]">
+              <div className="flex items-center bg-[#0F1523] p-1 rounded-lg border border-white/[0.08]">
                 <button
                   onClick={() => setViewMode('table')}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
-                    viewMode === 'table' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                    viewMode === 'table'
+                      ? 'bg-[#00F5A0] text-[#06080D] font-semibold shadow-sm'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   <TableIcon className="w-3.5 h-3.5" />
@@ -248,14 +305,20 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
                 </button>
                 <button
                   onClick={() => setViewMode('chart')}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
-                    viewMode === 'chart' ? 'bg-purple-600 text-white' : 'text-slate-400 hover:text-white'
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                    viewMode === 'chart'
+                      ? 'bg-[#00F5A0] text-[#06080D] font-semibold shadow-sm'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   <BarChart3 className="w-3.5 h-3.5" />
                   <span>Visual Chart</span>
                 </button>
               </div>
+            </div>
+
+            <div className="text-xs font-mono text-slate-400 pr-2">
+              <span className="text-[#00F5A0] font-semibold">{resultData.rowCount || resultData.rows.length}</span> rows returned
             </div>
           </div>
 
