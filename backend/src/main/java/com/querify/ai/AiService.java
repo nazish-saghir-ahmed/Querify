@@ -9,8 +9,8 @@ import java.util.Map;
 
 /**
  * Orchestrator service for AI-powered Text-to-SQL generation.
- * Handles provider routing (Live Gemini vs Demo Mode) and implements
- * graceful, zero-downtime fallback to Demo Mode if the external API fails or rate-limits.
+ * Handles provider routing (Live OpenRouter NVIDIA Nemotron 3.5 Super VL vs Demo Mode)
+ * and implements graceful, zero-downtime fallback to Demo Mode if the external API fails or rate-limits.
  */
 @Service
 public class AiService {
@@ -18,26 +18,27 @@ public class AiService {
     private static final Logger log = LoggerFactory.getLogger(AiService.class);
 
     private final AiConfigProperties aiConfig;
-    private final GeminiAiProvider geminiAiProvider;
+    private final OpenRouterAiProvider openRouterAiProvider;
     private final DemoModeAiProvider demoModeAiProvider;
 
-    public AiService(AiConfigProperties aiConfig, GeminiAiProvider geminiAiProvider, DemoModeAiProvider demoModeAiProvider) {
+    public AiService(AiConfigProperties aiConfig, OpenRouterAiProvider openRouterAiProvider, DemoModeAiProvider demoModeAiProvider) {
         this.aiConfig = aiConfig;
-        this.geminiAiProvider = geminiAiProvider;
+        this.openRouterAiProvider = openRouterAiProvider;
         this.demoModeAiProvider = demoModeAiProvider;
     }
 
     /**
      * Generates SQL from a natural language question.
-     * Uses Gemini if in live mode with valid key; otherwise executes via deterministic Demo Mode.
+     * Uses OpenRouter (NVIDIA Nemotron 3.5 Super VL) if in live mode with valid key;
+     * otherwise executes via deterministic Demo Mode.
      */
     public GeneratedSqlResult generateSql(String naturalQuestion, Map<String, Object> context) {
         if (!aiConfig.isDemoMode()) {
             try {
-                log.info("Dispatching query to Live Gemini provider...");
-                return geminiAiProvider.generateSql(naturalQuestion, context);
+                log.info("Dispatching query to Live OpenRouter (NVIDIA Nemotron 3.5 Super VL) provider...");
+                return openRouterAiProvider.generateSql(naturalQuestion, context);
             } catch (Exception e) {
-                log.warn("Live AI generation failed ({}); automatically falling back to deterministic Demo Engine.", e.getMessage());
+                log.warn("Live OpenRouter AI generation failed ({}); automatically falling back to deterministic Demo Engine.", e.getMessage());
                 GeneratedSqlResult demoResult = demoModeAiProvider.generateSql(naturalQuestion, context);
                 String fallbackExplanation = demoResult.getExplanation() + " (Note: Served via Demo Engine due to API fallback).";
                 return new GeneratedSqlResult(demoResult.getSql(), fallbackExplanation);

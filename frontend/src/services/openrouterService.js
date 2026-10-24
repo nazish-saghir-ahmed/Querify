@@ -16,8 +16,8 @@ export const EMBEDDING_MODEL =
   (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_OPENROUTER_EMBED_MODEL) ||
   'nvidia/nemotron-3.5-embed-1b:free';
 
-export const CHAT_MODEL = 'nvidia/nemotron-3.5-lightning:free';
-export const FALLBACK_CHAT_MODEL = 'openrouter/free';
+export const CHAT_MODEL = 'nvidia/nemotron-3.5-super-vl:free';
+export const FALLBACK_CHAT_MODEL = 'nvidia/nemotron-3.5-lightning:free';
 
 export function getOpenRouterClient() {
   const key = getOpenRouterApiKey();
@@ -149,53 +149,58 @@ export function computeTableRelevance(promptText) {
 }
 
 /**
- * Generates an AST-safe SQL query using OpenRouter Chat Completions when available.
+ * Generates an AST-safe SQL query using OpenRouter Chat Completions with nvidia/nemotron-3.5-super-vl:free.
  */
 export async function generateSqlWithOpenRouter(promptText) {
-  const client = getOpenRouterClient();
-  const systemPrompt = `You are an expert SQL engineer for MySQL 8.
-Generate ONLY valid, read-only SELECT queries based strictly on this schema:
-- companies (company_id INT PK, company_name VARCHAR, ticker VARCHAR, hq_country VARCHAR, founded_year INT, employee_count INT)
-- ai_models (model_id INT PK, company_id INT FK, model_name VARCHAR, release_date DATE, parameter_count_billions DECIMAL, context_window_tokens INT, benchmark_score DECIMAL, architecture_type VARCHAR)
-- financial_performance (financial_id INT PK, company_id INT FK, fiscal_year INT, annual_revenue_millions DECIMAL, net_income_millions DECIMAL, r_and_d_spending_millions DECIMAL, net_profit_margin DECIMAL)
-- ai_investments (investment_id INT PK, company_id INT FK, round_name VARCHAR, amount_millions DECIMAL, valuation_millions DECIMAL, investment_date DATE, lead_investor VARCHAR)
-- research_projects (project_id INT PK, company_id INT FK, project_name VARCHAR, domain VARCHAR, start_date DATE, status VARCHAR, publication_count INT)
-- market_performance (market_id INT PK, company_id INT FK, recorded_date DATE, market_cap_billions DECIMAL, pe_ratio DECIMAL, stock_price_usd DECIMAL)
+  const key = getOpenRouterApiKey();
+  if (!key || key === 'placeholder-key') return null;
+
+  const systemPrompt = `You are an expert SQL engineer for MySQL 8 in Querify.
+Generate ONLY valid, read-only SELECT queries based strictly on this database schema:
+- companies (company_id INT PK, company_name VARCHAR, industry VARCHAR, country VARCHAR, founded_year INT, company_type VARCHAR, headquarters_city VARCHAR)
+- ai_models (model_id INT PK, company_id INT FK, model_name VARCHAR, model_category VARCHAR, release_year INT, parameter_count_billions DECIMAL, performance_score DECIMAL)
+- financial_performance (performance_id INT PK, company_id INT FK, fiscal_year INT, revenue_millions DECIMAL, profit_millions DECIMAL, operating_cost_millions DECIMAL, revenue_growth_percent DECIMAL)
+- ai_investments (investment_id INT PK, company_id INT FK, investment_year INT, investment_amount_millions DECIMAL, investment_category VARCHAR, estimated_return_percent DECIMAL)
+- research_projects (project_id INT PK, company_id INT FK, project_name VARCHAR, research_area VARCHAR, budget_millions DECIMAL, project_status VARCHAR, start_date DATE)
+- market_performance (market_id INT PK, company_id INT FK, fiscal_year INT, market_share_percent DECIMAL, customer_growth_percent DECIMAL, performance_index DECIMAL)
 
 RULES:
-1. Generate ONLY SELECT statements. No UPDATE, DELETE, DROP, INSERT, ALTER.
-2. Output JSON ONLY in this format:
+1. Generate ONLY SELECT statements. Never produce INSERT, UPDATE, DELETE, DROP, ALTER, or TRUNCATE.
+2. Join tables using company_id when combining entities.
+3. Output strictly valid JSON with no markdown backticks, in this format:
 {
   "sql": "SELECT ...",
   "explanation": "Brief explanation of query mechanics"
 }`;
 
   try {
-    let chatRes;
-    try {
-      chatRes = await client.chat.send({
-        chatRequest: {
-          model: CHAT_MODEL,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: promptText }
-          ]
+    const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${key}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://querify-nine.vercel.app',
+        'X-Title': 'Querify Text-to-SQL'
+      },
+      body: JSON.stringify({
+        model: CHAT_MODEL,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: promptText }
+        ],
+        extra_body: {
+          reasoning: { enabled: true }
         }
-      });
-    } catch {
-      // Fallback model
-      chatRes = await client.chat.send({
-        chatRequest: {
-          model: FALLBACK_CHAT_MODEL,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: promptText }
-          ]
-        }
-      });
+      })
+    });
+
+    if (!res.ok) {
+      console.warn('[OpenRouter] HTTP error:', res.status);
+      return null;
     }
 
-    const content = chatRes?.choices?.[0]?.message?.content || '';
+    const data = await res.json();
+    const content = data?.choices?.[0]?.message?.content || '';
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
@@ -203,8 +208,8 @@ RULES:
         return {
           success: true,
           sql: parsed.sql,
-          explanation: parsed.explanation || 'Synthesized using OpenRouter AI & schema grounding.',
-          model: chatRes.model || CHAT_MODEL
+          explanation: parsed.explanation || 'Synthesized via NVIDIA Nemotron 3.5 Super VL.',
+          model: data.model || CHAT_MODEL
         };
       }
     }
