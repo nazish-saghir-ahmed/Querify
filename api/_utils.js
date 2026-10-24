@@ -200,7 +200,10 @@ export function validateSqlSecurity(sql) {
 export function detectAmbiguity(question) {
   const lower = (question || '').toLowerCase().trim();
 
-  if (lower.includes('best') || lower.includes('top company') || lower.includes('top companies') || lower.includes('performance')) {
+  // If user is explicitly querying models or performance score, do NOT treat as company ambiguity
+  const isModelScoreQuery = lower.includes('score') || (lower.includes('model') && (lower.includes('performance') || lower.includes('benchmark') || lower.includes('param')));
+
+  if (!isModelScoreQuery && (lower.includes('best') || lower.includes('top company') || lower.includes('top companies') || lower.includes('company performance') || (lower.includes('performance') && !lower.includes('model')))) {
     return {
       isAmbiguous: true,
       questionId: 'clarify_best_performing',
@@ -276,7 +279,11 @@ export function executeSqlLocally(sql, naturalQuery = '') {
 
   if (clean.includes('ai_models') || clean.includes('model_name') || clean.includes('performance_score')) {
     const isParam = clean.includes('parameter_count');
+    const isAbove90 = clean.includes('90') || (naturalQuery && naturalQuery.toLowerCase().includes('90'));
     rows = [...AI_MODELS];
+    if (isAbove90 && !isParam) {
+      rows = rows.filter(r => r.performance_score > 90);
+    }
     if (isParam) {
       rows.sort((a, b) => (b.parameter_count_billions || 0) - (a.parameter_count_billions || 0));
       columns = ['model_name', 'company_name', 'parameter_count_billions', 'release_year'];

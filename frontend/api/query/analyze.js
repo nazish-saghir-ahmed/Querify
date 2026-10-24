@@ -55,7 +55,11 @@ export default async function handler(req, res) {
   } else if (lower.includes('growth') || lower.includes('fast')) {
     sql = 'SELECT c.company_name, f.revenue_growth_percent, f.revenue_millions, f.profit_millions FROM companies c JOIN financial_performance f ON c.company_id = f.company_id WHERE f.fiscal_year = 2024 ORDER BY f.revenue_growth_percent DESC LIMIT 10;';
   } else if (lower.includes('model') || lower.includes('score')) {
-    sql = 'SELECT m.model_name, c.company_name, m.model_category, m.performance_score FROM ai_models m JOIN companies c ON m.company_id = c.company_id ORDER BY m.performance_score DESC LIMIT 10;';
+    if (lower.includes('90') || lower.includes('above 90')) {
+      sql = 'SELECT model_name, company_name, model_category, performance_score FROM ai_models WHERE performance_score > 90 ORDER BY performance_score DESC;';
+    } else {
+      sql = 'SELECT m.model_name, c.company_name, m.model_category, m.performance_score FROM ai_models m JOIN companies c ON m.company_id = c.company_id ORDER BY m.performance_score DESC LIMIT 10;';
+    }
   } else if (lower.includes('investment') || lower.includes('capital')) {
     sql = 'SELECT c.company_name, i.investment_amount_millions, i.investment_category, i.estimated_return_percent FROM companies c JOIN ai_investments i ON c.company_id = i.company_id WHERE i.investment_year = 2024 ORDER BY i.investment_amount_millions DESC LIMIT 10;';
   } else if (lower.includes('project') || lower.includes('budget') || lower.includes('research')) {
