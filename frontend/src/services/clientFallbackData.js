@@ -259,8 +259,138 @@ export function handleFallbackAnalyze(question) {
     return buildResolvedResponse(question, 'highest_profit');
   }
 
-  // Direct queries: generate direct response
+  // Table-specific direct queries in client demo mode
+  if (lower.includes('project') || lower.includes('research') || lower.includes('robot') || lower.includes('budget')) {
+    return buildProjectsResponse(question);
+  }
+
+  if (lower.includes('invest') || lower.includes('funding') || lower.includes('capital') || lower.includes('roi')) {
+    return buildInvestmentsResponse(question);
+  }
+
+  if (lower.includes('market') || lower.includes('share') || lower.includes('index')) {
+    return buildMarketResponse(question);
+  }
+
+  if (lower.includes('model') || lower.includes('parameter') || lower.includes('llm') || lower.includes('gpt') || lower.includes('claude') || lower.includes('llama')) {
+    return buildResolvedResponse(question, 'model_score');
+  }
+
+  if (lower.includes('company') && (lower.includes('country') || lower.includes('city') || lower.includes('hq') || lower.includes('founded') || lower.includes('type') || lower.includes('startup') || lower.includes('usa'))) {
+    return buildCompaniesResponse(question);
+  }
+
+  // Direct financial queries
   return buildResolvedResponse(question, 'highest_revenue');
+}
+
+function buildProjectsResponse(question) {
+  const sql = "SELECT p.project_name, c.company_name, p.research_area, p.budget_millions, p.project_status FROM research_projects p JOIN companies c ON p.company_id = c.company_id ORDER BY p.budget_millions DESC LIMIT 10;";
+  return {
+    status: 'SQL_GENERATED',
+    sessionId: 'session-demo',
+    originalQuestion: question,
+    clarification: null,
+    generatedSql: sql,
+    explanation: 'Lists frontier research initiatives and robotics projects ranked by allocated budget in USD Millions.',
+    data: {
+      status: 'SUCCESS',
+      columns: ['project_name', 'company_name', 'research_area', 'budget_millions', 'project_status'],
+      rows: [...SAMPLE_PROJECTS],
+      rowCount: SAMPLE_PROJECTS.length,
+      executionTimeMs: 12,
+      sql,
+      explanation: 'Lists frontier research initiatives and robotics projects ranked by allocated budget in USD Millions.',
+      chartSuggestion: {
+        type: 'bar',
+        title: 'Project Budget (USD Millions)',
+        xAxis: 'project_name',
+        yAxis: 'budget_millions',
+        xaxis: 'project_name',
+        yaxis: 'budget_millions',
+      },
+    },
+  };
+}
+
+function buildInvestmentsResponse(question) {
+  const sql = "SELECT i.investment_year, c.company_name, i.investment_category, i.investment_amount_millions, i.estimated_return_percent FROM ai_investments i JOIN companies c ON i.company_id = c.company_id ORDER BY i.investment_amount_millions DESC LIMIT 10;";
+  return {
+    status: 'SQL_GENERATED',
+    sessionId: 'session-demo',
+    originalQuestion: question,
+    clarification: null,
+    generatedSql: sql,
+    explanation: 'Ranks capital investments in AI compute clusters, chip development, and safety by deployed capital in USD Millions.',
+    data: {
+      status: 'SUCCESS',
+      columns: ['investment_year', 'company_name', 'investment_category', 'investment_amount_millions', 'estimated_return_percent'],
+      rows: [...SAMPLE_INVESTMENTS],
+      rowCount: SAMPLE_INVESTMENTS.length,
+      executionTimeMs: 10,
+      sql,
+      explanation: 'Ranks capital investments in AI compute clusters, chip development, and safety by deployed capital in USD Millions.',
+      chartSuggestion: {
+        type: 'bar',
+        title: 'Capital Deployed (USD Millions)',
+        xAxis: 'company_name',
+        yAxis: 'investment_amount_millions',
+        xaxis: 'company_name',
+        yaxis: 'investment_amount_millions',
+      },
+    },
+  };
+}
+
+function buildMarketResponse(question) {
+  const sql = "SELECT c.company_name, m.fiscal_year, m.market_share_percent, m.customer_growth_percent, m.performance_index FROM market_performance m JOIN companies c ON m.company_id = c.company_id WHERE m.fiscal_year = 2024 ORDER BY m.market_share_percent DESC LIMIT 10;";
+  return {
+    status: 'SQL_GENERATED',
+    sessionId: 'session-demo',
+    originalQuestion: question,
+    clarification: null,
+    generatedSql: sql,
+    explanation: 'Evaluates market share dominance, customer adoption growth, and composite health indexes for fiscal 2024.',
+    data: {
+      status: 'SUCCESS',
+      columns: ['company_name', 'fiscal_year', 'market_share_percent', 'customer_growth_percent', 'performance_index'],
+      rows: [...SAMPLE_MARKET],
+      rowCount: SAMPLE_MARKET.length,
+      executionTimeMs: 11,
+      sql,
+      explanation: 'Evaluates market share dominance, customer adoption growth, and composite health indexes for fiscal 2024.',
+      chartSuggestion: {
+        type: 'bar',
+        title: 'Market Share (%)',
+        xAxis: 'company_name',
+        yAxis: 'market_share_percent',
+        xaxis: 'company_name',
+        yaxis: 'market_share_percent',
+      },
+    },
+  };
+}
+
+function buildCompaniesResponse(question) {
+  const sql = "SELECT company_name, industry, country, headquarters_city, founded_year, company_type FROM companies ORDER BY founded_year ASC LIMIT 15;";
+  return {
+    status: 'SQL_GENERATED',
+    sessionId: 'session-demo',
+    originalQuestion: question,
+    clarification: null,
+    generatedSql: sql,
+    explanation: 'Lists enterprise AI corporations and frontier research laboratories with headquarters and corporate structure.',
+    data: {
+      status: 'SUCCESS',
+      columns: ['company_name', 'industry', 'country', 'headquarters_city', 'founded_year', 'company_type'],
+      rows: [...SAMPLE_COMPANIES],
+      rowCount: SAMPLE_COMPANIES.length,
+      executionTimeMs: 9,
+      sql,
+      explanation: 'Lists enterprise AI corporations and frontier research laboratories with headquarters and corporate structure.',
+      chartSuggestion: null,
+    },
+  };
 }
 
 export function handleFallbackClarify(sessionId, selectedOptionId) {
