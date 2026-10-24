@@ -40,7 +40,7 @@ export default function BrandLogo({ size = 'md', showTagline = false }) {
           </span>
         </div>
         {showTagline && (
-          <span className="text-[11px] text-blue-200/70 font-mono tracking-wide -mt-0.5">
+          <span className="text-[11px] text-slate-300 font-mono tracking-wide -mt-0.5">
             Ask in English. Get the right SQL.
           </span>
         )}
