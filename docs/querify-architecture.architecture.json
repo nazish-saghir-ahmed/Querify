@@ -8,15 +8,15 @@
   },
   "components": [
     { "id": "users", "type": "external", "label": "User / Browser", "sublabel": "Natural Language Query", "pos": [40, 240], "size": [130, 60] },
-    { "id": "frontend", "type": "frontend", "label": "React 18 + Vite", "sublabel": "Workspace / Explorer / History", "pos": [220, 240], "size": [150, 60], "tag": "Cyberpunk UI" },
+    { "id": "frontend", "type": "frontend", "label": "React 18 + Vite", "sublabel": "Workspace / Explorer / History", "pos": [220, 240], "size": [150, 60], "tag": "Midnight UI" },
     { "id": "error_boundary", "type": "security", "label": "ErrorBoundary", "sublabel": "Crash-Proof Shield", "pos": [220, 100], "size": [150, 60], "tag": "React 18" },
-    { "id": "api_router", "type": "backend", "label": "API Router", "sublabel": "api.js (Content-Type Check)", "pos": [420, 240], "size": [150, 60] },
-    { "id": "fallback_engine", "type": "backend", "label": "Client Demo Engine", "sublabel": "clientFallbackData.js", "pos": [420, 390], "size": [150, 60], "tag": "Zero Backend" },
+    { "id": "api_router", "type": "backend", "label": "API Router", "sublabel": "api.js (Dual Edge / Server)", "pos": [420, 240], "size": [150, 60] },
+    { "id": "fallback_engine", "type": "backend", "label": "Client Demo Engine", "sublabel": "clientFallbackData.js", "pos": [420, 390], "size": [150, 60], "tag": "Edge Cloud" },
     { "id": "backend", "type": "backend", "label": "Spring Boot 3", "sublabel": "REST API (:8080)", "pos": [630, 240], "size": [140, 60] },
-    { "id": "clarification", "type": "backend", "label": "Clarification Engine", "sublabel": "Polysemy & Session State", "pos": [830, 130], "size": [150, 60], "tag": "Multi-Turn" },
-    { "id": "ai_service", "type": "cloud", "label": "Gemini 1.5/2.0 AI", "sublabel": "Schema Grounded Prompt", "pos": [830, 240], "size": [150, 60] },
+    { "id": "clarification", "type": "backend", "label": "Clarification Engine", "sublabel": "Ambiguity & Disambiguation", "pos": [830, 130], "size": [150, 60], "tag": "Multi-Turn" },
+    { "id": "ai_service", "type": "cloud", "label": "Gemini 1.5 & Nemotron", "sublabel": "Grounded Prompts & Embeddings", "pos": [830, 240], "size": [150, 60] },
     { "id": "ast_validator", "type": "security", "label": "AST Security Guard", "sublabel": "JSqlParser SELECT-Only", "pos": [830, 350], "size": [150, 60], "tag": "LIMIT 100" },
-    { "id": "db", "type": "database", "label": "MySQL 8.0", "sublabel": "querify_db (HikariCP)", "pos": [1040, 240], "size": [140, 60] }
+    { "id": "db", "type": "database", "label": "MySQL 8.0", "sublabel": "6 Domain Tables (HikariCP)", "pos": [1040, 240], "size": [140, 60] }
   ],
   "boundaries": [
     { "kind": "region", "label": "Presentation & Edge Tier", "wraps": ["users", "frontend", "error_boundary", "api_router", "fallback_engine"] },
@@ -36,8 +36,8 @@
     { "id": "ast-to-db", "from": "ast_validator", "to": "db", "label": "Validated SELECT", "variant": "emphasis" }
   ],
   "cards": [
-    { "dot": "cyan", "title": "Presentation & Edge Tier", "items": ["React 18 + Vite with Tailwind cyberpunk styling", "Content-Type inspection immunizes against Vercel HTML rewrites", "Zero-backend clientFallbackData provides instant offline demo parity"] },
-    { "dot": "emerald", "title": "Application Tier", "items": ["Spring Boot 3 with Java 17 LTS", "ClarificationEngine halts execution on polysemic metrics", "AiService integrates Google Gemini 1.5/2.0 REST with prompt schema grounding"] },
-    { "dot": "rose", "title": "AST Security & Data Tier", "items": ["JSqlParser verifies statement is strictly Select", "Table whitelisting blocks internal system catalogs", "Enforces maximum 100 row limits on MySQL 8 via HikariCP pool"] }
+    { "dot": "cyan", "title": "Presentation & Edge Tier", "items": ["React 18 + Vite with Midnight Blue and Electric Blue glassmorphism", "Dual edge routing with automatic fallback protection against network disconnects", "Embedded client demo engine provides zero-setup cloud preview on Vercel"] },
+    { "dot": "emerald", "title": "Application Tier", "items": ["Spring Boot 3 with Java 17/21 LTS and HikariCP connection pooling", "ClarificationEngine halts query synthesis on ambiguous metrics (revenue, profit, growth)", "Dual AI: Gemini 1.5 Flash structured reasoning + NVIDIA Nemotron-3.5 embeddings"] },
+    { "dot": "rose", "title": "AST Security & Data Tier", "items": ["JSqlParser verifies statement root is strictly net.sf.jsqlparser.statement.select.Select", "Table whitelisting and mutation blocking intercept injection attempts", "MySQL 8 database with 6 domain tables normalized to 3NF and USD Millions scaling"] }
   ]
 }
