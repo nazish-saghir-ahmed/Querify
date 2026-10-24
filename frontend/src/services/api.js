@@ -111,8 +111,10 @@ async function fallbackHandler(endpoint, options) {
 
   if (endpoint === '/query/analyze') {
     // 1. Check for interactive ambiguity first (Clarification Engine)
+    const qLower = (body.question || '').toLowerCase();
+    const isModelQuery = qLower.includes('model') && (qLower.includes('score') || qLower.includes('parameter') || qLower.includes('90') || qLower.includes('above'));
     const resp = handleFallbackAnalyze(body.question);
-    if (resp.status === 'CLARIFICATION_NEEDED') {
+    if (resp.status === 'CLARIFICATION_NEEDED' && !isModelQuery) {
       return resp;
     }
 
