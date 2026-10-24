@@ -33,14 +33,14 @@ export default function BrandLogo({ size = 'md', showTagline = false }) {
       <div className="flex flex-col">
         <div className="flex items-center gap-2">
           <span className={`font-display font-black tracking-tight text-white ${sizeClasses[size].split(' ')[2]}`}>
-            Queri<span className="text-blue-500">fy</span>
+            Queri<span className="text-blue-400 font-black">fy</span>
           </span>
-          <span className="text-[10px] font-mono font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-600/20 text-white border border-blue-500/40">
+          <span className="text-[10px] font-mono font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-600/30 text-white border border-blue-400/50 shadow-sm">
             SQL AI
           </span>
         </div>
         {showTagline && (
-          <span className="text-[11px] text-slate-300 font-mono tracking-wide -mt-0.5">
+          <span className="text-[11px] text-slate-200 font-mono font-medium tracking-wide -mt-0.5">
             Ask in English. Get the right SQL.
           </span>
         )}

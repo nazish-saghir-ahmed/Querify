@@ -25,7 +25,7 @@ D:\Querify/
 │   │   │   ├── AiProvider.java           # Interface: generateSql, explainSql
 │   │   │   ├── AiService.java            # Orchestration layer for AI generation
 │   │   │   ├── DemoModeAiProvider.java   # Deterministic offline heuristic generator
-│   │   │   ├── GeminiAiProvider.java     # Google Gemini 1.5/2.0 REST client
+│   │   │   ├── OpenRouterAiProvider.java # OpenRouter NVIDIA Nemotron 3.5 Super VL REST client
 │   │   │   └── GeneratedSqlResult.java   # Value object for generated SQL & reasoning
 │   │   ├── clarification/                # Multi-turn ambiguity detection & sessions
 │   │   │   ├── ClarificationEngine.java   # Polysemy analysis & question generator
@@ -121,7 +121,7 @@ D:\Querify/
 | **SQL Parser** | JSqlParser | 4.6+ | Abstract Syntax Tree (AST) validation |
 | **Database** | MySQL / H2 | 8.0+ / 2.2+ | Relational storage & in-memory testing |
 | **Connection Pool**| HikariCP | 5.1+ | Low-latency JDBC connection pooling |
-| **AI LLM / Embed** | OpenRouter / Gemini | Nemotron 3.5 Embed (1B) / 1.5 Flash | Neural Vector Embeddings & Schema Grounded SQL |
+| **AI LLM / Embed** | OpenRouter | Nemotron 3.5 Super VL / Nemotron 3.5 Embed (1B) | Neural Vector Embeddings & Schema Grounded SQL |
 | **OpenRouter SDK** | @openrouter/sdk | 1.5.6 | Official TypeScript SDK for OpenRouter API |
 | **Frontend** | React | 18.2+ | Declarative UI and state management |
 | **Bundler** | Vite | 5.0+ | Fast ESM development and production build |

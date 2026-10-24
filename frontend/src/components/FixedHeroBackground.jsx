@@ -3,7 +3,7 @@ import React from 'react';
 export default function FixedHeroBackground() {
   return (
     <div 
-      className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none"
+      className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none"
       aria-hidden="true"
     >
       {/* High-definition background artwork at restrained subtle opacity */}

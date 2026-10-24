@@ -12,9 +12,9 @@ import org.springframework.context.annotation.Configuration;
 public class AiConfigProperties {
 
     /**
-     * AI Provider name: "gemini", "groq", or "demo".
+     * AI Provider name: "openrouter" or "demo".
      */
-    private String provider = "gemini";
+    private String provider = "openrouter";
 
     /**
      * Secret API key for external AI provider.
@@ -22,9 +22,9 @@ public class AiConfigProperties {
     private String apiKey = "";
 
     /**
-     * Specific AI model name (e.g., gemini-1.5-flash).
+     * Specific AI model name (default: nvidia/nemotron-3.5-super-vl:free).
      */
-    private String model = "gemini-1.5-flash";
+    private String model = "nvidia/nemotron-3.5-super-vl:free";
 
     /**
      * Operational mode: "live" (uses external API) or "demo" (deterministic offline rule engine).

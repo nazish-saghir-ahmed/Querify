@@ -82,27 +82,31 @@ export default function ExplorerPage() {
   return (
     <div className="w-full max-w-[1150px] mx-auto px-4 sm:px-6 py-8 space-y-6">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#111827] border border-[#1F2E47]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-[#0B132B]/85 border border-blue-500/25 shadow-2xl backdrop-blur-xl">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <Database className="w-5 h-5 text-blue-400" />
-            <h1 className="text-xl font-bold text-white font-sans">
-              Domain Database Catalog
-            </h1>
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-blue-600/20 text-blue-400 border border-blue-500/30">
+              <Database className="w-5 h-5" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white font-display">
+                Domain Database Catalog
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-400 font-sans">
+                Inspect 6 relational domain tables, primary/foreign keys, and data fixtures.
+              </p>
+            </div>
           </div>
-          <p className="text-xs sm:text-sm text-slate-400 font-sans">
-            Inspect the 6 relational domain tables, primary/foreign keys, and data fixtures.
-          </p>
         </div>
 
         <div className="flex items-center gap-2">
           {/* Sub-tab switcher */}
-          <div className="flex items-center gap-1 bg-[#0B0F17] p-1 rounded-xl border border-[#1F2E47]">
+          <div className="flex items-center gap-1 bg-[#080D1A]/90 p-1 rounded-xl border border-blue-800/50">
             <button
               onClick={() => setActiveSubTab('cards')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeSubTab === 'cards'
-                  ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                  ? 'bg-blue-600 text-white shadow-midnight'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -113,9 +117,9 @@ export default function ExplorerPage() {
                 setActiveSubTab('sample');
                 fetchSampleData(selectedTable);
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                 activeSubTab === 'sample'
-                  ? 'bg-blue-600 text-white font-semibold shadow-sm'
+                  ? 'bg-blue-600 text-white shadow-midnight'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -125,7 +129,7 @@ export default function ExplorerPage() {
 
           <button
             onClick={fetchInitialData}
-            className="p-2 rounded-xl bg-[#0B0F17] hover:bg-[#162238] border border-[#1F2E47] text-slate-400 hover:text-white transition-colors"
+            className="p-2 rounded-xl bg-blue-950/60 hover:bg-blue-900/60 border border-blue-800/50 text-slate-300 hover:text-white transition-colors cursor-pointer"
             title="Refresh database schema"
           >
             <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
@@ -136,13 +140,13 @@ export default function ExplorerPage() {
       {/* Search Input Filter */}
       {activeSubTab === 'cards' && (
         <div className="relative">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-blue-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchFilter}
             onChange={(e) => setSearchFilter(e.target.value)}
-            placeholder="Search tables or columns..."
-            className="w-full pl-9 pr-4 py-2.5 bg-[#111827] border border-[#1F2E47] rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+            placeholder="Search tables or columns (e.g. company, revenue, model)..."
+            className="w-full pl-10 pr-4 py-2.5 bg-[#0B132B]/80 border border-blue-500/25 rounded-xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors backdrop-blur-md"
           />
         </div>
       )}
@@ -155,24 +159,24 @@ export default function ExplorerPage() {
             return (
               <div
                 key={schema.tableName}
-                className="p-5 rounded-2xl bg-[#111827] border border-[#1F2E47] hover:border-blue-500/40 transition-colors flex flex-col justify-between space-y-4"
+                className="p-5 rounded-2xl bg-[#0B132B]/80 border border-blue-500/20 hover:border-blue-500/40 transition-all flex flex-col justify-between space-y-4 shadow-xl backdrop-blur-md"
               >
                 <div>
                   {/* Table Header */}
-                  <div className="flex items-center justify-between gap-2 pb-3 border-b border-[#1F2E47]">
+                  <div className="flex items-center justify-between gap-2 pb-3 border-b border-blue-900/40">
                     <div className="flex items-center gap-2">
                       <TableIcon className="w-4 h-4 text-blue-400 shrink-0" />
-                      <h3 className="font-mono text-sm font-semibold text-white">
+                      <h3 className="font-mono text-sm font-bold text-white">
                         {schema.tableName}
                       </h3>
                     </div>
-                    <span className="text-[11px] font-mono text-slate-400 bg-[#0B0F17] px-2 py-0.5 rounded border border-[#1F2E47]">
+                    <span className="text-[11px] font-mono text-slate-300 bg-blue-950/80 px-2 py-0.5 rounded border border-blue-800/50">
                       {rowCount} rows
                     </span>
                   </div>
 
                   {/* Description */}
-                  <p className="text-xs text-slate-400 mt-2.5 line-clamp-2 leading-relaxed">
+                  <p className="text-xs text-slate-300 mt-2.5 line-clamp-2 leading-relaxed font-sans">
                     {schema.description}
                   </p>
 
@@ -181,16 +185,24 @@ export default function ExplorerPage() {
                     {schema.columns?.map((col) => (
                       <div
                         key={col.name}
-                        className="flex items-center justify-between text-xs py-1 px-2 rounded bg-[#0B0F17] border border-[#1F2E47]/50 font-mono"
+                        className="flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg bg-[#080D1A]/80 border border-blue-900/30 font-mono"
                       >
                         <div className="flex items-center gap-1.5 truncate">
-                          {col.primaryKey && <Key className="w-3 h-3 text-white shrink-0" />}
-                          {col.foreignKey && <Link2 className="w-3 h-3 text-blue-400 shrink-0" />}
-                          <span className={col.primaryKey ? 'text-white font-bold truncate' : 'text-blue-100 truncate'}>
+                          {col.primaryKey && (
+                            <span className="text-[9px] px-1 py-0.2 rounded bg-blue-600/30 text-blue-200 border border-blue-400/40 font-bold shrink-0">
+                              PK
+                            </span>
+                          )}
+                          {col.foreignKey && (
+                            <span className="text-[9px] px-1 py-0.2 rounded bg-cyan-600/30 text-cyan-200 border border-cyan-400/40 font-bold shrink-0">
+                              FK
+                            </span>
+                          )}
+                          <span className={col.primaryKey ? 'text-white font-bold truncate' : 'text-slate-200 truncate'}>
                             {col.name}
                           </span>
                         </div>
-                        <span className="text-[10px] text-slate-500 shrink-0 ml-2">
+                        <span className="text-[10px] text-slate-400 shrink-0 ml-2">
                           {col.type}
                         </span>
                       </div>
@@ -204,7 +216,7 @@ export default function ExplorerPage() {
                     setSelectedTable(schema.tableName);
                     setActiveSubTab('sample');
                   }}
-                  className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-[#0B0F17] hover:bg-[#162238] border border-[#1F2E47] transition-colors"
+                  className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold text-slate-200 hover:text-white bg-blue-950/60 hover:bg-blue-900/50 border border-blue-800/50 transition-colors cursor-pointer"
                 >
                   <Eye className="w-3.5 h-3.5 text-blue-400" />
                   <span>Inspect Sample Rows</span>
@@ -224,10 +236,10 @@ export default function ExplorerPage() {
               <button
                 key={schema.tableName}
                 onClick={() => setSelectedTable(schema.tableName)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-mono whitespace-nowrap transition-all border ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono whitespace-nowrap transition-all border cursor-pointer ${
                   selectedTable === schema.tableName
-                    ? 'bg-blue-600 text-white font-semibold border-blue-500 shadow-sm'
-                    : 'bg-[#111827] text-slate-400 hover:text-white border-[#1F2E47]'
+                    ? 'bg-blue-600 text-white font-semibold border-blue-500 shadow-midnight'
+                    : 'bg-[#0B132B]/80 text-slate-400 hover:text-white border-blue-900/40'
                 }`}
               >
                 {schema.tableName}
@@ -237,7 +249,7 @@ export default function ExplorerPage() {
 
           {/* Result Table for Sample */}
           {isLoading ? (
-            <div className="p-8 text-center bg-[#111827] border border-[#1F2E47] rounded-2xl text-slate-400">
+            <div className="p-8 text-center bg-[#0B132B]/80 border border-blue-500/25 rounded-2xl text-slate-300">
               <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
               <p className="text-xs font-mono">Loading records for {selectedTable}...</p>
             </div>
@@ -247,7 +259,7 @@ export default function ExplorerPage() {
               title={`Sample Records: ${selectedTable}`}
             />
           ) : (
-            <div className="p-8 text-center bg-[#111827] border border-[#1F2E47] rounded-2xl text-slate-400">
+            <div className="p-8 text-center bg-[#0B132B]/80 border border-blue-500/25 rounded-2xl text-slate-400">
               <p className="text-xs font-mono">No sample records found for {selectedTable}.</p>
             </div>
           )}

@@ -44,3 +44,6 @@ application-local.properties
 *.sqlite
 *.db
 *.zip
+
+scratch/
+.agents/

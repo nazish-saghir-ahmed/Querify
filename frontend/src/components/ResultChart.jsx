@@ -71,26 +71,26 @@ export default function ResultChart({ data, suggestion }) {
   };
 
   return (
-    <div className="w-full rounded-2xl bg-blue-950/20 border border-blue-800/40 p-5 shadow-midnight backdrop-blur-xl">
+    <div className="w-full rounded-2xl bg-[#0B132B]/85 border border-blue-500/25 p-5 shadow-2xl backdrop-blur-xl">
       {/* Chart Header & Type Switcher (Bar / Line / Pie) */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-6">
         <div>
           <h4 className="text-sm font-display font-bold text-white tracking-wide">
             {suggestion?.title || `${yKey.replace(/_/g, ' ')} by ${xKey.replace(/_/g, ' ')}`}
           </h4>
-          <p className="text-xs text-blue-200/70 mt-0.5 font-sans">
+          <p className="text-xs text-slate-400 mt-0.5 font-sans">
             Visual distribution generated from {rows.length} verified records
           </p>
         </div>
 
         {/* Bar / Line / Pie Toggle Controls */}
-        <div className="flex items-center gap-1 bg-blue-950/60 p-1 rounded-xl border border-blue-900/60">
+        <div className="flex items-center gap-1 bg-blue-950/60 p-1 rounded-xl border border-blue-800/50">
           <button
             onClick={() => setChartType('bar')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               chartType === 'bar'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-blue-300 hover:text-white'
+                ? 'bg-blue-600 text-white shadow-midnight'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5" />
@@ -98,10 +98,10 @@ export default function ResultChart({ data, suggestion }) {
           </button>
           <button
             onClick={() => setChartType('line')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               chartType === 'line'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-blue-300 hover:text-white'
+                ? 'bg-blue-600 text-white shadow-midnight'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             <LineIcon className="w-3.5 h-3.5" />
@@ -109,10 +109,10 @@ export default function ResultChart({ data, suggestion }) {
           </button>
           <button
             onClick={() => setChartType('pie')}
-            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               chartType === 'pie'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'text-blue-300 hover:text-white'
+                ? 'bg-blue-600 text-white shadow-midnight'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             <PieIcon className="w-3.5 h-3.5" />

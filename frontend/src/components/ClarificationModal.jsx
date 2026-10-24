@@ -160,6 +160,17 @@ export default function ClarificationModal({ clarification, onSubmit, onCancel, 
           })}
         </div>
 
+        {/* Optional Custom Parameter / Clarification Input */}
+        <div className="mb-4">
+          <input
+            type="text"
+            value={customInput}
+            onChange={(e) => setCustomInput(e.target.value)}
+            placeholder="Optional: specify custom timeframe, threshold, or filtering criteria..."
+            className="w-full px-3.5 py-2 bg-blue-950/30 border border-blue-900/40 rounded-xl text-xs text-white placeholder-slate-500 font-sans focus:outline-none focus:border-blue-500 transition-colors"
+          />
+        </div>
+
         {/* Keyboard hints & Confirm CTA */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-blue-900/30">
           <div className="hidden sm:flex items-center gap-2 text-[11px] font-mono text-blue-300/70">
@@ -173,7 +184,7 @@ export default function ClarificationModal({ clarification, onSubmit, onCancel, 
               <button
                 type="button"
                 onClick={onCancel}
-                className="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-semibold text-blue-200 hover:text-white bg-blue-950/40 hover:bg-blue-900/40 border border-blue-800/40 transition-colors"
+                className="flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-semibold text-blue-200 hover:text-white bg-blue-950/40 hover:bg-blue-900/40 border border-blue-800/40 transition-colors cursor-pointer"
               >
                 Dismiss
               </button>
@@ -182,7 +193,7 @@ export default function ClarificationModal({ clarification, onSubmit, onCancel, 
               type="button"
               onClick={handleConfirm}
               disabled={isLoading || !selectedId}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-bold tracking-wide shadow-midnight transition-all"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-xs font-bold tracking-wide shadow-midnight transition-all cursor-pointer"
             >
               <span>{isLoading ? 'Synthesizing...' : 'Generate Verified SQL'}</span>
               <ArrowRight className="w-3.5 h-3.5" />

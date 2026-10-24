@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  * Common abstraction for Text-to-SQL generation providers.
- * Allows swapping between Gemini, Groq, OpenAI, or local deterministic engines.
+ * Allows swapping between OpenRouter (NVIDIA Nemotron 3.5 Super VL) or local deterministic engines.
  */
 public interface AiProvider {
 
@@ -14,7 +14,7 @@ public interface AiProvider {
     GeneratedSqlResult generateSql(String naturalQuestion, Map<String, Object> context);
 
     /**
-     * Provider identifier (e.g. "gemini", "demo").
+     * Provider identifier (e.g. "openrouter", "demo").
      */
     String getProviderName();
 }

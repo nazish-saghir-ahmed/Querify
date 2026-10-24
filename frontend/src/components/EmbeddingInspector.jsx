@@ -25,7 +25,7 @@ export default function EmbeddingInspector({ embeddingData, queryText, tableRele
   };
 
   return (
-    <div className="rounded-2xl bg-blue-950/20 border border-blue-800/40 shadow-midnight backdrop-blur-xl overflow-hidden transition-all duration-300">
+    <div className="rounded-2xl bg-[#0B132B]/85 border border-blue-500/25 shadow-2xl backdrop-blur-xl overflow-hidden transition-all duration-300">
       {/* Header bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-blue-950/40 border-b border-blue-900/40">
         <div className="flex items-center gap-2.5">
