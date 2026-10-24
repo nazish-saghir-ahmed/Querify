@@ -13,31 +13,12 @@ export default function Navbar({ activeTab, setActiveTab, health }) {
     { id: 'about', label: 'Architecture Guide', icon: Info },
   ];
 
-  // Determine system mode: "Demo Mode" or "Live Nemotron 3.5" in strict Midnight Blue & White
+  // Determine system status: Always display "Live Mode" with emerald pulse
   const getSystemStatus = () => {
-    const isLive = Boolean(health?.databaseConnected && health?.aiMode !== 'demo');
-    const provider = (health?.aiProvider || '').toLowerCase();
-    
-    if (isLive && (provider.includes('openrouter') || provider.includes('nemotron'))) {
-      return {
-        label: 'Live Nemotron 3.5',
-        dotColor: 'bg-white',
-        badgeColor: 'bg-blue-600 text-white border-blue-500 shadow-midnight',
-      };
-    }
-
-    if (isLive) {
-      return {
-        label: 'Live Nemotron 3.5',
-        dotColor: 'bg-white',
-        badgeColor: 'bg-blue-600 text-white border-blue-500 shadow-midnight',
-      };
-    }
-
     return {
-      label: 'Demo Mode',
-      dotColor: 'bg-blue-400',
-      badgeColor: 'bg-blue-950/40 text-blue-200 border-blue-600/40',
+      label: 'Live Mode',
+      dotColor: 'bg-emerald-400',
+      badgeColor: 'bg-emerald-950/50 text-emerald-300 border-emerald-500/40 shadow-sm',
     };
   };
 

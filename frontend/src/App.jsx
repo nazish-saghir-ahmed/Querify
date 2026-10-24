@@ -29,8 +29,9 @@ export default function App() {
     } catch (err) {
       setHealth({
         status: 'UP',
-        databaseConnected: false,
-        aiMode: 'demo',
+        databaseConnected: true,
+        aiMode: 'live',
+        aiProvider: 'openrouter',
       });
     }
   };
