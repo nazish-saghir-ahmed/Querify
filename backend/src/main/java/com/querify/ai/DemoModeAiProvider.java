@@ -12,6 +12,7 @@ import java.util.Map;
  * Requires zero external API keys and guarantees instantaneous, 100% reliable responses
  * for demonstration, presentation, grading, and offline operation.
  * Accurately translates 30+ domain questions and all clarification resolution paths into clean SQL.
+ * Correctly identifies out-of-domain queries and flags them when data is unavailable.
  */
 @Component
 public class DemoModeAiProvider implements AiProvider {
@@ -31,6 +32,15 @@ public class DemoModeAiProvider implements AiProvider {
         // Check if context contains a resolved clarification metric
         String selectedMetric = context != null && context.get("selectedMetric") != null 
                 ? context.get("selectedMetric").toString().toLowerCase(Locale.ROOT) : "";
+
+        // Check for out-of-domain query when not actively resolving a clarification
+        if ((selectedMetric == null || selectedMetric.isEmpty()) && !isDomainRelevant(q)) {
+            log.info("Demo AI determined query is outside schema scope: '{}'", naturalQuestion);
+            return new GeneratedSqlResult(
+                    null,
+                    "No relevant data available for this query in the database. The database catalog contains records for AI companies, AI models, financial performance, research projects, market metrics, and AI investments."
+            );
+        }
 
         // ---------------------------------------------------------------------
         // Clarification Resolution Routes
@@ -463,7 +473,15 @@ public class DemoModeAiProvider implements AiProvider {
             );
         }
 
-        // Default robust query: List top AI companies with recent revenue & profit
+        // Check if query is in domain before providing a default query
+        if (!isDomainRelevant(q)) {
+            return new GeneratedSqlResult(
+                    null,
+                    "No relevant data available for this query in the database. The database catalog contains records for AI companies, AI models, financial performance, research projects, market metrics, and AI investments."
+            );
+        }
+
+        // Default query only when within domain: List top AI companies with recent revenue & profit
         return new GeneratedSqlResult(
                 "SELECT c.company_name, c.industry, c.country, f.revenue_millions, f.profit_millions " +
                 "FROM companies c " +
@@ -472,5 +490,46 @@ public class DemoModeAiProvider implements AiProvider {
                 "LIMIT 10;",
                 "Displays top AI companies ranked by their 2024 revenue figures."
         );
+    }
+
+    /**
+     * Determines whether an incoming query relates to the 6 schema tables.
+     */
+    private boolean isDomainRelevant(String q) {
+        if (q == null || q.trim().isEmpty()) return false;
+        String lower = q.toLowerCase(Locale.ROOT);
+
+        // Obvious off-topic keywords
+        if (lower.contains("weather") || lower.contains("recipe") || lower.contains("cook") || 
+            lower.contains("joke") || lower.contains("song") || lower.contains("movie") || 
+            lower.contains("president") || lower.contains("capital of") || lower.contains("flight") || 
+            lower.contains("car") || lower.contains("hotel") || lower.contains("game") || 
+            lower.contains("sport") || lower.contains("football") || lower.contains("cricket") ||
+            lower.contains("salary") || lower.contains("employee") || lower.contains("doctor") ||
+            lower.contains("hospital") || lower.contains("school") || lower.contains("university") ||
+            lower.contains("poem") || lower.contains("story") || lower.contains("planet") ||
+            lower.contains("history of") || lower.contains("how are you")) {
+            return false;
+        }
+
+        // Domain table & entity keywords
+        return lower.contains("company") || lower.contains("companies") || lower.contains("firm") || 
+               lower.contains("enterprise") || lower.contains("startup") || lower.contains("model") || 
+               lower.contains("parameter") || lower.contains("benchmark") || lower.contains("score") || 
+               lower.contains("revenue") || lower.contains("profit") || lower.contains("cost") || 
+               lower.contains("margin") || lower.contains("growth") || lower.contains("invest") || 
+               lower.contains("funding") || lower.contains("roi") || lower.contains("valuation") || 
+               lower.contains("project") || lower.contains("research") || lower.contains("budget") || 
+               lower.contains("market") || lower.contains("share") || lower.contains("customer") || 
+               lower.contains("nvidia") || lower.contains("openai") || lower.contains("microsoft") || 
+               lower.contains("google") || lower.contains("deepmind") || lower.contains("anthropic") || 
+               lower.contains("meta") || lower.contains("apple") || lower.contains("amazon") || 
+               lower.contains("ibm") || lower.contains("baidu") || lower.contains("databricks") || 
+               lower.contains("cohere") || lower.contains("mistral") || lower.contains("gpt") || 
+               lower.contains("claude") || lower.contains("llama") || lower.contains("gemini") ||
+               lower.contains("country") || lower.contains("headquarter") || lower.contains("city") ||
+               lower.contains("founded") || lower.contains("fiscal") || lower.contains("financial") ||
+               lower.contains("ai") || lower.contains("artificial intelligence") ||
+               lower.contains("performance") || lower.contains("capital");
     }
 }

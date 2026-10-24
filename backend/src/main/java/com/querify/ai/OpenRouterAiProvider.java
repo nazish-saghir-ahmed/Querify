@@ -55,7 +55,9 @@ public class OpenRouterAiProvider implements AiProvider {
             "- Use proper JOIN syntax on company_id.\n" +
             "- All monetary values are in millions USD.\n" +
             "- Always include a sensible LIMIT (e.g., LIMIT 10) unless computing a single row aggregation.\n" +
-            "- Output strictly valid JSON in the format: {\"sql\": \"SELECT ...\", \"explanation\": \"...\"}\n" +
+            "- OUT-OF-DOMAIN HANDLING: If the question asks for topics, entities, or data completely unrelated to the 6 tables above (e.g. weather, recipes, cooking, sports, general world knowledge, flights, cars, non-schema items, or general chit-chat), DO NOT fabricate tables or invent queries. Output JSON with \"sql\": null:\n" +
+            "{\"sql\": null, \"explanation\": \"No relevant data available for this query in the database. The database catalog contains records for AI companies, AI models, financial metrics, research projects, market share, and AI investments.\"}\n" +
+            "- Output strictly valid JSON in the format: {\"sql\": \"SELECT ...\" or null, \"explanation\": \"...\"}\n" +
             "- Do not wrap the JSON in backticks or markdown fences.";
 
     public OpenRouterAiProvider(AiConfigProperties aiConfig) {
@@ -164,11 +166,16 @@ public class OpenRouterAiProvider implements AiProvider {
             }
 
             JsonNode sqlJson = objectMapper.readTree(jsonStr);
-            String sql = sqlJson.path("sql").asText();
+            JsonNode sqlNode = sqlJson.path("sql");
+            String sql = (sqlNode.isNull() || sqlNode.isMissingNode()) ? null : sqlNode.asText();
             String explanation = sqlJson.path("explanation").asText();
 
-            if (sql == null || sql.trim().isEmpty()) {
-                throw new RuntimeException("OpenRouter response did not contain a valid 'sql' field");
+            // Out-of-domain query detection: null or empty SQL
+            if (sql == null || sql.trim().isEmpty() || "null".equalsIgnoreCase(sql.trim())) {
+                log.info("Query was recognized as out-of-domain by OpenRouter: {}", explanation);
+                return new GeneratedSqlResult(null, explanation != null && !explanation.isEmpty() 
+                        ? explanation 
+                        : "No relevant data available for this query in the database. The database contains records for AI companies, AI models, financial metrics, research projects, market metrics, and AI investments.");
             }
 
             log.info("Successfully synthesized SQL via OpenRouter ({}): {}", model, sql);

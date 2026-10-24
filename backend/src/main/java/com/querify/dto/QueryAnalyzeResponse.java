@@ -3,7 +3,7 @@ package com.querify.dto;
 public class QueryAnalyzeResponse {
 
     /**
-     * "CLARIFICATION_NEEDED" or "SQL_GENERATED"
+     * "CLARIFICATION_NEEDED", "SQL_GENERATED", or "NO_DATA_AVAILABLE"
      */
     private String status;
 
@@ -35,6 +35,15 @@ public class QueryAnalyzeResponse {
         resp.setGeneratedSql(generatedSql);
         resp.setExplanation(explanation);
         resp.setData(data);
+        return resp;
+    }
+
+    public static QueryAnalyzeResponse noDataAvailable(String sessionId, String originalQuestion, String explanation) {
+        QueryAnalyzeResponse resp = new QueryAnalyzeResponse();
+        resp.setStatus("NO_DATA_AVAILABLE");
+        resp.setSessionId(sessionId);
+        resp.setOriginalQuestion(originalQuestion);
+        resp.setExplanation(explanation);
         return resp;
     }
 

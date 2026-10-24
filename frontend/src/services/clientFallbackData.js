@@ -179,10 +179,62 @@ export function getFallbackTableSample(tableName) {
 }
 
 /**
+ * Determines whether an incoming query relates to the 6 schema tables.
+ */
+export function isDomainRelevant(text) {
+  if (!text || !text.trim()) return false;
+  const lower = text.toLowerCase().trim();
+
+  // Obvious off-topic keywords
+  const offTopicKeywords = [
+    'weather', 'recipe', 'cook', 'baking', 'bake', 'joke', 'song', 'movie', 'film',
+    'president', 'capital of', 'flight', 'airline', 'car', 'automobile',
+    'hotel', 'game', 'sport', 'football', 'soccer', 'cricket', 'baseball',
+    'salary', 'employee', 'doctor', 'hospital', 'school', 'university',
+    'poem', 'story', 'planet', 'history of', 'how are you', 'who are you',
+    'what is your name', 'translate', 'dress', 'shoe', 'food', 'restaurant',
+    'travel', 'vacation', 'dog', 'cat', 'pet', 'animal'
+  ];
+
+  if (offTopicKeywords.some(kw => lower.includes(kw))) {
+    return false;
+  }
+
+  // Domain table & entity keywords
+  const domainKeywords = [
+    'company', 'companies', 'firm', 'enterprise', 'startup', 'model',
+    'parameter', 'benchmark', 'score', 'revenue', 'profit', 'cost',
+    'margin', 'growth', 'invest', 'funding', 'roi', 'valuation',
+    'project', 'research', 'budget', 'market', 'share', 'customer',
+    'nvidia', 'openai', 'microsoft', 'google', 'deepmind', 'anthropic',
+    'meta', 'apple', 'amazon', 'ibm', 'baidu', 'databricks',
+    'cohere', 'mistral', 'gpt', 'claude', 'llama', 'gemini',
+    'country', 'headquarter', 'city', 'founded', 'fiscal', 'financial',
+    'ai', 'artificial intelligence', 'performance', 'capital', 'tech',
+    'corporation', 'money', 'earnings', 'operating', 'index'
+  ];
+
+  return domainKeywords.some(kw => lower.includes(kw));
+}
+
+/**
  * Simulates the Clarification Engine locally when no backend server is reached.
  */
 export function handleFallbackAnalyze(question) {
   const lower = (question || '').toLowerCase().trim();
+
+  // Check if query is completely outside database domain scope
+  if (!isDomainRelevant(question)) {
+    return {
+      status: 'NO_DATA_AVAILABLE',
+      sessionId: 'session-no-data',
+      originalQuestion: question,
+      clarification: null,
+      generatedSql: null,
+      explanation: 'No relevant data available for this query in the database. The database catalog contains records for AI companies, AI models, financial performance, research projects, market metrics, and AI investments.',
+      data: null,
+    };
+  }
 
   // If user is explicitly querying models or performance score, do NOT treat as company ambiguity
   const isModelScoreQuery = lower.includes('score') || (lower.includes('model') && (lower.includes('performance') || lower.includes('benchmark') || lower.includes('param')));

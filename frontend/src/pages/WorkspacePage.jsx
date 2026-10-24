@@ -8,7 +8,7 @@ import QuestionChip from '../components/QuestionChip';
 import EmbeddingInspector from '../components/EmbeddingInspector';
 import { generateQueryEmbedding, computeTableRelevance } from '../services/openrouterService';
 import {
-  Terminal, Table as TableIcon, BarChart3, AlertCircle, RotateCcw,
+  Terminal, Table as TableIcon, BarChart3, AlertCircle, AlertTriangle, RotateCcw,
   ShieldCheck, Database, CornerDownLeft, Sparkles, HelpCircle, Layers,
   ChevronRight, ArrowRight, X, Cpu, Search, CheckCircle2
 } from 'lucide-react';
@@ -28,6 +28,7 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
   const [loadingStep, setLoadingStep] = useState('');
   const [isExecuting, setIsExecuting] = useState(false);
   const [error, setError] = useState(null);
+  const [warning, setWarning] = useState(null);
 
   // Grouped example questions
   const ambiguousQuestions = [
@@ -56,6 +57,7 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
     setIsLoading(true);
     setLoadingStep('Evaluating semantic intent and checking ambiguity...');
     setError(null);
+    setWarning(null);
     setClarification(null);
 
     // Concurrently trigger vector embedding generation via OpenRouter SDK
@@ -78,6 +80,10 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
         setGeneratedSql(response.generatedSql);
         setExplanation(response.explanation);
         setResultData(response.data);
+      } else if (response.status === 'NO_DATA_AVAILABLE') {
+        setGeneratedSql('');
+        setResultData(null);
+        setWarning(response.explanation || 'No relevant data available for this query in the database.');
       }
     } catch (err) {
       setError(err.message || 'Failed to process natural language question');
@@ -131,6 +137,7 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
     setResultData(null);
     setEmbeddingData(null);
     setError(null);
+    setWarning(null);
   };
 
   return (
@@ -324,6 +331,36 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
           <div className="space-y-1">
             <p className="font-bold text-red-200">Execution Rejected or Security Policy Triggered</p>
             <p className="font-mono text-xs text-red-300/90">{error}</p>
+          </div>
+        </section>
+      )}
+
+      {/* 3.1 LIGHT WARNING: NO DATA AVAILABLE IN DATABASE */}
+      {warning && (
+        <section className="p-5 rounded-2xl bg-amber-950/25 border border-amber-500/40 text-white flex items-start gap-3.5 backdrop-blur-xl animate-fade-in shadow-xl">
+          <div className="w-8 h-8 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 shrink-0 mt-0.5">
+            <AlertTriangle className="w-4 h-4" />
+          </div>
+          <div className="space-y-2 flex-1">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="font-bold text-amber-200 text-sm font-display tracking-wide">
+                No Data Available in Database Catalog
+              </p>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40">
+                Outside Schema Scope
+              </span>
+            </div>
+            <p className="text-xs text-amber-100/90 leading-relaxed font-sans">
+              {warning}
+            </p>
+            <div className="pt-1.5 flex flex-wrap items-center gap-1.5 text-[11px] font-mono">
+              <span className="text-slate-400">Available database tables:</span>
+              {['companies', 'ai_models', 'financial_performance', 'ai_investments', 'research_projects', 'market_performance'].map((tbl) => (
+                <span key={tbl} className="px-2 py-0.5 rounded-md bg-blue-950/70 border border-blue-700/50 text-blue-300">
+                  {tbl}
+                </span>
+              ))}
+            </div>
           </div>
         </section>
       )}

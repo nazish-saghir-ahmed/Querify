@@ -40,7 +40,10 @@ public class AiService {
             } catch (Exception e) {
                 log.warn("Live OpenRouter AI generation failed ({}); automatically falling back to deterministic Demo Engine.", e.getMessage());
                 GeneratedSqlResult demoResult = demoModeAiProvider.generateSql(naturalQuestion, context);
-                String fallbackExplanation = demoResult.getExplanation() + " (Note: Served via Demo Engine due to API fallback).";
+                String fallbackExplanation = demoResult.getExplanation();
+                if (demoResult.getSql() != null) {
+                    fallbackExplanation += " (Note: Served via Demo Engine due to API fallback).";
+                }
                 return new GeneratedSqlResult(demoResult.getSql(), fallbackExplanation);
             }
         }

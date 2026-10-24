@@ -117,10 +117,25 @@ async function fallbackHandler(endpoint, options) {
     if (resp.status === 'CLARIFICATION_NEEDED' && !isModelQuery) {
       return resp;
     }
+    if (resp.status === 'NO_DATA_AVAILABLE') {
+      return resp;
+    }
 
     // 2. Synthesize live SQL using OpenRouter NVIDIA Nemotron 3.5 Super VL with reasoning
     try {
       const openRouterResult = await generateSqlWithOpenRouter(body.question);
+      if (openRouterResult && openRouterResult.noData) {
+        return {
+          status: 'NO_DATA_AVAILABLE',
+          sessionId: 'nemotron-' + Date.now(),
+          originalQuestion: body.question,
+          clarification: null,
+          generatedSql: null,
+          explanation: openRouterResult.explanation,
+          data: null,
+        };
+      }
+
       if (openRouterResult && openRouterResult.sql) {
         // Detect target table from generated SQL
         const lowerSql = openRouterResult.sql.toLowerCase();

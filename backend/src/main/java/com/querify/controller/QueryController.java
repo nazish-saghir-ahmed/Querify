@@ -18,7 +18,7 @@ import java.util.Optional;
 /**
  * Primary REST Controller managing the natural language Text-to-SQL pipeline.
  * Handles initial question analysis, ambiguity detection, clarification resolution,
- * and direct SQL execution.
+ * out-of-domain detection, and direct SQL execution.
  */
 @RestController
 @RequestMapping("/api/query")
@@ -38,7 +38,7 @@ public class QueryController {
 
     /**
      * Stage 1 & 2: Analyzes user's question, detects ambiguity,
-     * and either asks for clarification or directly returns executed SQL.
+     * and either asks for clarification, reports out-of-domain scope, or returns executed SQL.
      */
     @PostMapping("/analyze")
     public ResponseEntity<QueryAnalyzeResponse> analyzeQuery(@Valid @RequestBody QueryAnalyzeRequest request) {
@@ -57,8 +57,19 @@ public class QueryController {
             return ResponseEntity.ok(QueryAnalyzeResponse.clarificationNeeded(session.getSessionId(), question, clarQuestion));
         }
 
-        // No ambiguity detected: proceed directly to SQL generation and execution
+        // No ambiguity detected: proceed directly to SQL generation
         GeneratedSqlResult aiResult = aiService.generateSql(question, session.getResolvedContext());
+
+        // Check if question is outside database domain scope
+        if (aiResult.getSql() == null || aiResult.getSql().trim().isEmpty() || "null".equalsIgnoreCase(aiResult.getSql().trim()) || "NO_DATA".equalsIgnoreCase(aiResult.getSql().trim())) {
+            log.info("Query '{}' determined to be out-of-domain. Returning light warning.", question);
+            return ResponseEntity.ok(QueryAnalyzeResponse.noDataAvailable(
+                    session.getSessionId(),
+                    question,
+                    aiResult.getExplanation() != null ? aiResult.getExplanation() : "No relevant data available for this query in the database catalog."
+            ));
+        }
+
         QueryResultDto queryResult = sqlExecutionService.executeQuery(aiResult.getSql(), question, aiResult.getExplanation());
 
         return ResponseEntity.ok(QueryAnalyzeResponse.sqlGenerated(
@@ -93,6 +104,15 @@ public class QueryController {
 
         // Generate SQL based on the clarified parameters
         GeneratedSqlResult aiResult = aiService.generateSql(resolvedIntent, session.getResolvedContext());
+
+        if (aiResult.getSql() == null || aiResult.getSql().trim().isEmpty() || "null".equalsIgnoreCase(aiResult.getSql().trim())) {
+            return ResponseEntity.ok(QueryAnalyzeResponse.noDataAvailable(
+                    session.getSessionId(),
+                    session.getOriginalQuestion(),
+                    aiResult.getExplanation() != null ? aiResult.getExplanation() : "No relevant data available for this query in the database catalog."
+            ));
+        }
+
         QueryResultDto queryResult = sqlExecutionService.executeQuery(aiResult.getSql(), session.getOriginalQuestion(), aiResult.getExplanation());
 
         return ResponseEntity.ok(QueryAnalyzeResponse.sqlGenerated(

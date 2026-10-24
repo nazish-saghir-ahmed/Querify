@@ -167,7 +167,12 @@ Generate ONLY valid, read-only SELECT queries based strictly on this database sc
 RULES:
 1. Generate ONLY SELECT statements. Never produce INSERT, UPDATE, DELETE, DROP, ALTER, or TRUNCATE.
 2. Join tables using company_id when combining entities.
-3. Output strictly valid JSON with no markdown backticks, in this format:
+3. OUT-OF-DOMAIN HANDLING: If the question asks for topics, data, or entities completely unrelated to the 6 tables above (e.g. weather, recipes, cooking, sports, general world knowledge, flights, cars, non-schema items, or general chit-chat), DO NOT fabricate tables or invent queries. Output JSON with "sql": null:
+{
+  "sql": null,
+  "explanation": "No relevant data available for this query in the database. The database catalog contains records for AI companies, AI models, financial performance, research projects, market metrics, and AI investments."
+}
+4. Output strictly valid JSON with no markdown backticks, in this format:
 {
   "sql": "SELECT ...",
   "explanation": "Brief explanation of query mechanics"
@@ -204,14 +209,21 @@ RULES:
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
-      if (parsed.sql) {
+      if (parsed.sql === null || !parsed.sql || parsed.sql === 'null') {
         return {
-          success: true,
-          sql: parsed.sql,
-          explanation: parsed.explanation || 'Synthesized via NVIDIA Nemotron 3.5 Super VL.',
+          success: false,
+          noData: true,
+          sql: null,
+          explanation: parsed.explanation || 'No relevant data available for this query in the database. The database catalog contains records for AI companies, AI models, financial metrics, research projects, market metrics, and AI investments.',
           model: data.model || CHAT_MODEL
         };
       }
+      return {
+        success: true,
+        sql: parsed.sql,
+        explanation: parsed.explanation || 'Synthesized via NVIDIA Nemotron 3.5 Super VL.',
+        model: data.model || CHAT_MODEL
+      };
     }
   } catch (err) {
     console.warn('[OpenRouter] Chat SQL generation skipped:', err);
