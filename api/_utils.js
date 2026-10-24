@@ -194,57 +194,18 @@ export function validateSqlSecurity(sql) {
   return { valid: true, sanitizedSql: cleaned + ';' };
 }
 
+const OFF_TOPIC_REGEX = /\b(hotels?|hostels?|motels?|resorts?|inns?|lodgings?|dorms?|rooms?|flights?|airlines?|airports?|tickets?|tourisms?|vacations?|travel|restaurants?|cafes?|foods?|meals?|recipes?|cook(ing)?|bak(e|ing)|pizzas?|burgers?|coffees?|cars?|vehicles?|automobiles?|bikes?|bicycles?|trains?|buses?|subways?|metros?|movies?|films?|cinemas?|actors?|actresses?|singers?|songs?|musics?|albums?|games?|sports?|footballs?|soccers?|crickets?|basketballs?|tennis|baseballs?|weathers?|climates?|temperatures?|rains?|snows?|forecasts?|planets?|solar systems?|galaxys?|galaxies|hospitals?|doctors?|nurses?|patients?|medicines?|diseases?|drugs?|clinics?|schools?|colleges?|universit(y|ies)|students?|teachers?|salaries|salary|employees?|workers?|jobs?|hiring?|resumes?|dogs?|cats?|pets?|animals?|shoes?|clothes|clothings?|dresses?|jokes?|poems?|poetries|poetry|stories|story|presidents?|prime ministers?|politics|elections?)\b/i;
+
+const DOMAIN_REGEX = /\b(compan(y|ies)|firm|firms|enterprise|enterprises|startups?|corporations?|conglomerates?|ai_models|models?|parameters?|benchmarks?|evaluations?|revenues?|profits?|operating costs?|expenses?|margins?|growth rates?|growths?|fiscal years?|financials?|financial performance|investments?|investors?|fundings?|capitals?|rois?|valuations?|research projects?|projects?|robotics?|budgets?|market shares?|market performance|customer growths?|performance index|nvidia|openai|microsoft|google|deepmind|anthropic|meta|apple|amazon|ibm|baidu|databricks|cohere|mistral|hugging face|stability ai|scale ai|inflection|gpt|gpt-4|claude|llama|gemini|grok|nemotron|dall-e|sora|\b(ai|a\.i\.|llm|llms)\b)\b/i;
+
 /**
  * Checks if the question has any relevance to the 6 database schema tables
  */
 export function isDomainRelevant(text) {
   if (!text || !text.trim()) return false;
-  const lower = text.toLowerCase().trim();
-
-  // Explicit off-topic keywords
-  const offTopicKeywords = [
-    'hotel', 'hostel', 'motel', 'resort', 'flight', 'airline', 'airport',
-    'car', 'automobile', 'vehicle', 'weather', 'climate', 'temperature',
-    'recipe', 'cook', 'baking', 'bake', 'food', 'restaurant', 'meal',
-    'joke', 'song', 'music', 'singer', 'movie', 'film', 'actor', 'cinema',
-    'president', 'prime minister', 'capital of', 'politics', 'election',
-    'game', 'sport', 'football', 'soccer', 'cricket', 'basketball', 'tennis',
-    'salary', 'employee', 'staff', 'worker', 'hire', 'resume',
-    'doctor', 'hospital', 'patient', 'disease', 'medicine', 'drug',
-    'school', 'university', 'college', 'student', 'teacher', 'course',
-    'poem', 'poetry', 'story', 'novel', 'planet', 'solar system', 'galaxy',
-    'dog', 'cat', 'pet', 'animal', 'dress', 'shoe', 'clothing',
-    'travel', 'vacation', 'tourism', 'ticket', 'booking', 'room'
-  ];
-
-  if (offTopicKeywords.some(kw => lower.includes(kw))) {
-    return false;
-  }
-
-  // Schema-relevant terms and known entities in Querify's catalog
-  const domainKeywords = [
-    'company', 'companies', 'firm', 'firms', 'enterprise', 'enterprises', 'startup', 'startups',
-    'corporation', 'corporations', 'conglomerate', 'tech', 'technology',
-    'model', 'models', 'parameter', 'parameters', 'benchmark', 'benchmarks', 'score', 'scores',
-    'revenue', 'revenues', 'profit', 'profits', 'cost', 'costs', 'expense', 'expenses',
-    'margin', 'margins', 'growth', 'growth rate', 'fiscal', 'financial', 'financials', 'earning', 'earnings',
-    'income', 'money', 'dollar', 'dollars', 'millions', 'billions',
-    'invest', 'invests', 'investment', 'investments', 'investor', 'investors', 'funding', 'round', 'rounds',
-    'roi', 'capital', 'valuation', 'valuations', 'seed', 'series a', 'series b',
-    'project', 'projects', 'research', 'lab', 'labs', 'laboratory', 'laboratories',
-    'budget', 'budgets', 'robot', 'robots', 'robotics', 'autonomous', 'vision', 'nlp',
-    'market', 'markets', 'share', 'market share', 'market cap', 'customer', 'customers',
-    'user', 'users', 'index', 'performance index', 'pe ratio',
-    'nvidia', 'openai', 'microsoft', 'google', 'deepmind', 'anthropic',
-    'meta', 'apple', 'amazon', 'aws', 'ibm', 'watson', 'baidu', 'databricks',
-    'cohere', 'mistral', 'hugging face', 'stability', 'scale ai', 'inflection',
-    'gpt', 'gpt-4', 'claude', 'llama', 'gemini', 'grok', 'nemotron', 'dall-e', 'sora',
-    'country', 'countries', 'headquarter', 'headquarters', 'hq', 'city', 'founded',
-    'ai', 'artificial intelligence', 'machine learning', 'deep learning', 'llm', 'llms',
-    'multimodal', 'reasoning'
-  ];
-
-  return domainKeywords.some(kw => lower.includes(kw));
+  const cleaned = text.trim();
+  if (OFF_TOPIC_REGEX.test(cleaned)) return false;
+  return DOMAIN_REGEX.test(cleaned);
 }
 
 /**
@@ -256,7 +217,11 @@ export function detectAmbiguity(question) {
   // If user is explicitly querying models or performance score, do NOT treat as company ambiguity
   const isModelScoreQuery = lower.includes('score') || (lower.includes('model') && (lower.includes('performance') || lower.includes('benchmark') || lower.includes('param')));
 
-  if (!isModelScoreQuery && (lower.includes('best') || lower.includes('top company') || lower.includes('top companies') || lower.includes('company performance') || (lower.includes('performance') && !lower.includes('model')))) {
+  // Ambiguity Check 1: General company ranking without a specific metric
+  const companyAmbiguousRegex = /\b(best|top|leading|highest|strongest)\s+(performing\s+)?(ai\s+)?(compan(y|ies)|enterprises?|firms?|labs?)\b|\bcompany\s+performance\b|\bbest\s+performing\b/i;
+  const hasExplicitMetric = /\b(revenues?|profits?|investments?|scores?|benchmarks?|market shares?|growths?|budgets?|rois?|costs?|parameters?)\b/i.test(lower);
+
+  if (!isModelScoreQuery && companyAmbiguousRegex.test(lower) && !hasExplicitMetric) {
     return {
       isAmbiguous: true,
       questionId: 'clarify_best_performing',
@@ -271,7 +236,9 @@ export function detectAmbiguity(question) {
     };
   }
 
-  if (lower.includes('money') || lower.includes('earn') || lower.includes('made')) {
+  // Ambiguity Check 2: "money" or "made the most" without specifying revenue vs profit
+  const moneyRegex = /\b(made\s+the\s+most(\s+money)?|most\s+money|highest\s+earning|richest)\b/i;
+  if (moneyRegex.test(lower) && !hasExplicitMetric) {
     return {
       isAmbiguous: true,
       questionId: 'clarify_money',
@@ -284,7 +251,9 @@ export function detectAmbiguity(question) {
     };
   }
 
-  if (lower.includes('model') && !lower.includes('score') && !lower.includes('parameter') && !lower.includes('category')) {
+  // Ambiguity Check 3: Models without a ranking metric
+  const topModelsRegex = /\b(top|best|leading|highest\s+rated)\s+(ai\s+)?models?\b/i;
+  if (topModelsRegex.test(lower) && !hasExplicitMetric) {
     return {
       isAmbiguous: true,
       questionId: 'clarify_models',

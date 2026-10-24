@@ -481,55 +481,43 @@ public class DemoModeAiProvider implements AiProvider {
             );
         }
 
-        // Default query only when within domain: List top AI companies with recent revenue & profit
+        // Query only provided if question explicitly matches company or enterprise context
+        if (q.contains("company") || q.contains("companies") || q.contains("enterprise") || q.contains("firm") || q.contains("revenue") || q.contains("catalog") || q.contains("overview")) {
+            return new GeneratedSqlResult(
+                    "SELECT c.company_name, c.industry, c.country, f.revenue_millions, f.profit_millions " +
+                    "FROM companies c " +
+                    "LEFT JOIN financial_performance f ON c.company_id = f.company_id AND f.fiscal_year = 2024 " +
+                    "ORDER BY f.revenue_millions DESC " +
+                    "LIMIT 10;",
+                    "Displays top AI companies ranked by their 2024 revenue figures."
+            );
+        }
+
         return new GeneratedSqlResult(
-                "SELECT c.company_name, c.industry, c.country, f.revenue_millions, f.profit_millions " +
-                "FROM companies c " +
-                "LEFT JOIN financial_performance f ON c.company_id = f.company_id AND f.fiscal_year = 2024 " +
-                "ORDER BY f.revenue_millions DESC " +
-                "LIMIT 10;",
-                "Displays top AI companies ranked by their 2024 revenue figures."
+                null,
+                "No relevant data available for this query in the database. The database catalog contains records for AI companies, AI models, financial performance, research projects, market metrics, and AI investments."
         );
     }
+
+    private static final java.util.regex.Pattern OFF_TOPIC_PATTERN = java.util.regex.Pattern.compile(
+            "\\b(hotels?|hostels?|motels?|resorts?|inns?|lodgings?|dorms?|rooms?|flights?|airlines?|airports?|tickets?|tourisms?|vacations?|travel|restaurants?|cafes?|foods?|meals?|recipes?|cook(ing)?|bak(e|ing)|pizzas?|burgers?|coffees?|cars?|vehicles?|automobiles?|bikes?|bicycles?|trains?|buses?|subways?|metros?|movies?|films?|cinemas?|actors?|actresses?|singers?|songs?|musics?|albums?|games?|sports?|footballs?|soccers?|crickets?|basketballs?|tennis|baseballs?|weathers?|climates?|temperatures?|rains?|snows?|forecasts?|planets?|solar systems?|galaxys?|galaxies|hospitals?|doctors?|nurses?|patients?|medicines?|diseases?|drugs?|clinics?|schools?|colleges?|universit(y|ies)|students?|teachers?|salaries|salary|employees?|workers?|jobs?|hiring?|resumes?|dogs?|cats?|pets?|animals?|shoes?|clothes|clothings?|dresses?|jokes?|poems?|poetries|poetry|stories|story|presidents?|prime ministers?|politics|elections?)\\b",
+            java.util.regex.Pattern.CASE_INSENSITIVE
+    );
+
+    private static final java.util.regex.Pattern DOMAIN_PATTERN = java.util.regex.Pattern.compile(
+            "\\b(compan(y|ies)|firm|firms|enterprise|enterprises|startups?|corporations?|conglomerates?|ai_models|models?|parameters?|benchmarks?|evaluations?|revenues?|profits?|operating costs?|expenses?|margins?|growth rates?|growths?|fiscal years?|financials?|financial performance|investments?|investors?|fundings?|capitals?|rois?|valuations?|research projects?|projects?|robotics?|budgets?|market shares?|market performance|customer growths?|performance index|nvidia|openai|microsoft|google|deepmind|anthropic|meta|apple|amazon|ibm|baidu|databricks|cohere|mistral|hugging face|stability ai|scale ai|inflection|gpt|gpt-4|claude|llama|gemini|grok|nemotron|dall-e|sora|ai|a\\.i\\.|llm|llms)\\b",
+            java.util.regex.Pattern.CASE_INSENSITIVE
+    );
 
     /**
      * Determines whether an incoming query relates to the 6 schema tables.
      */
     private boolean isDomainRelevant(String q) {
         if (q == null || q.trim().isEmpty()) return false;
-        String lower = q.toLowerCase(Locale.ROOT);
-
-        // Obvious off-topic keywords
-        if (lower.contains("weather") || lower.contains("recipe") || lower.contains("cook") || 
-            lower.contains("joke") || lower.contains("song") || lower.contains("movie") || 
-            lower.contains("president") || lower.contains("capital of") || lower.contains("flight") || 
-            lower.contains("car") || lower.contains("hotel") || lower.contains("hostel") || lower.contains("resort") || lower.contains("game") || 
-            lower.contains("sport") || lower.contains("football") || lower.contains("cricket") ||
-            lower.contains("salary") || lower.contains("employee") || lower.contains("doctor") ||
-            lower.contains("hospital") || lower.contains("school") || lower.contains("university") ||
-            lower.contains("poem") || lower.contains("story") || lower.contains("planet") ||
-            lower.contains("history of") || lower.contains("how are you")) {
+        String trimmed = q.trim();
+        if (OFF_TOPIC_PATTERN.matcher(trimmed).find()) {
             return false;
         }
-
-        // Domain table & entity keywords
-        return lower.contains("company") || lower.contains("companies") || lower.contains("firm") || 
-               lower.contains("enterprise") || lower.contains("startup") || lower.contains("model") || 
-               lower.contains("parameter") || lower.contains("benchmark") || lower.contains("score") || 
-               lower.contains("revenue") || lower.contains("profit") || lower.contains("cost") || 
-               lower.contains("margin") || lower.contains("growth") || lower.contains("invest") || 
-               lower.contains("funding") || lower.contains("roi") || lower.contains("valuation") || 
-               lower.contains("project") || lower.contains("research") || lower.contains("budget") || 
-               lower.contains("market") || lower.contains("share") || lower.contains("customer") || 
-               lower.contains("nvidia") || lower.contains("openai") || lower.contains("microsoft") || 
-               lower.contains("google") || lower.contains("deepmind") || lower.contains("anthropic") || 
-               lower.contains("meta") || lower.contains("apple") || lower.contains("amazon") || 
-               lower.contains("ibm") || lower.contains("baidu") || lower.contains("databricks") || 
-               lower.contains("cohere") || lower.contains("mistral") || lower.contains("gpt") || 
-               lower.contains("claude") || lower.contains("llama") || lower.contains("gemini") ||
-               lower.contains("country") || lower.contains("headquarter") || lower.contains("city") ||
-               lower.contains("founded") || lower.contains("fiscal") || lower.contains("financial") ||
-               lower.contains("ai") || lower.contains("artificial intelligence") ||
-               lower.contains("performance") || lower.contains("capital");
+        return DOMAIN_PATTERN.matcher(trimmed).find();
     }
 }

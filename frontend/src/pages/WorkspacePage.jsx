@@ -386,7 +386,7 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
       )}
 
       {/* 6. OPENROUTER VECTOR INSPECTOR (Fixed Props) */}
-      {embeddingData && !isLoading && (
+      {embeddingData && !isLoading && !warning && (
         <EmbeddingInspector
           embeddingData={embeddingData}
           queryText={question}

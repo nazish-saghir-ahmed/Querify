@@ -178,44 +178,18 @@ export function getFallbackTableSample(tableName) {
   };
 }
 
+const OFF_TOPIC_REGEX = /\b(hotels?|hostels?|motels?|resorts?|inns?|lodgings?|dorms?|rooms?|flights?|airlines?|airports?|tickets?|tourisms?|vacations?|travel|restaurants?|cafes?|foods?|meals?|recipes?|cook(ing)?|bak(e|ing)|pizzas?|burgers?|coffees?|cars?|vehicles?|automobiles?|bikes?|bicycles?|trains?|buses?|subways?|metros?|movies?|films?|cinemas?|actors?|actresses?|singers?|songs?|musics?|albums?|games?|sports?|footballs?|soccers?|crickets?|basketballs?|tennis|baseballs?|weathers?|climates?|temperatures?|rains?|snows?|forecasts?|planets?|solar systems?|galaxys?|galaxies|hospitals?|doctors?|nurses?|patients?|medicines?|diseases?|drugs?|clinics?|schools?|colleges?|universit(y|ies)|students?|teachers?|salaries|salary|employees?|workers?|jobs?|hiring?|resumes?|dogs?|cats?|pets?|animals?|shoes?|clothes|clothings?|dresses?|jokes?|poems?|poetries|poetry|stories|story|presidents?|prime ministers?|politics|elections?)\b/i;
+
+const DOMAIN_REGEX = /\b(compan(y|ies)|firm|firms|enterprise|enterprises|startups?|corporations?|conglomerates?|ai_models|models?|parameters?|benchmarks?|evaluations?|revenues?|profits?|operating costs?|expenses?|margins?|growth rates?|growths?|fiscal years?|financials?|financial performance|investments?|investors?|fundings?|capitals?|rois?|valuations?|research projects?|projects?|robotics?|budgets?|market shares?|market performance|customer growths?|performance index|nvidia|openai|microsoft|google|deepmind|anthropic|meta|apple|amazon|ibm|baidu|databricks|cohere|mistral|hugging face|stability ai|scale ai|inflection|gpt|gpt-4|claude|llama|gemini|grok|nemotron|dall-e|sora|\b(ai|a\.i\.|llm|llms)\b)\b/i;
+
 /**
  * Determines whether an incoming query relates to the 6 schema tables.
  */
 export function isDomainRelevant(text) {
   if (!text || !text.trim()) return false;
-  const lower = text.toLowerCase().trim();
-
-  // Obvious off-topic keywords
-  const offTopicKeywords = [
-    'hotel', 'hostel', 'motel', 'resort', 'lodging', 'dorm', 'room',
-    'weather', 'recipe', 'cook', 'baking', 'bake', 'joke', 'song', 'movie', 'film',
-    'president', 'capital of', 'flight', 'airline', 'car', 'automobile',
-    'game', 'sport', 'football', 'soccer', 'cricket', 'baseball',
-    'salary', 'employee', 'doctor', 'hospital', 'school', 'university',
-    'poem', 'story', 'planet', 'history of', 'how are you', 'who are you',
-    'what is your name', 'translate', 'dress', 'shoe', 'food', 'restaurant',
-    'travel', 'vacation', 'dog', 'cat', 'pet', 'animal'
-  ];
-
-  if (offTopicKeywords.some(kw => lower.includes(kw))) {
-    return false;
-  }
-
-  // Domain table & entity keywords
-  const domainKeywords = [
-    'company', 'companies', 'firm', 'enterprise', 'startup', 'model',
-    'parameter', 'benchmark', 'score', 'revenue', 'profit', 'cost',
-    'margin', 'growth', 'invest', 'funding', 'roi', 'valuation',
-    'project', 'research', 'budget', 'market', 'share', 'customer',
-    'nvidia', 'openai', 'microsoft', 'google', 'deepmind', 'anthropic',
-    'meta', 'apple', 'amazon', 'ibm', 'baidu', 'databricks',
-    'cohere', 'mistral', 'gpt', 'claude', 'llama', 'gemini',
-    'country', 'headquarter', 'city', 'founded', 'fiscal', 'financial',
-    'ai', 'artificial intelligence', 'performance', 'capital', 'tech',
-    'corporation', 'money', 'earnings', 'operating', 'index'
-  ];
-
-  return domainKeywords.some(kw => lower.includes(kw));
+  const cleaned = text.trim();
+  if (OFF_TOPIC_REGEX.test(cleaned)) return false;
+  return DOMAIN_REGEX.test(cleaned);
 }
 
 /**
@@ -240,8 +214,11 @@ export function handleFallbackAnalyze(question) {
   // If user is explicitly querying models or performance score, do NOT treat as company ambiguity
   const isModelScoreQuery = lower.includes('score') || (lower.includes('model') && (lower.includes('performance') || lower.includes('benchmark') || lower.includes('param')));
 
-  // Ambiguity Check 1: "best performing", "top companies" (for general corporate performance)
-  if (!isModelScoreQuery && (lower.includes('best') || lower.includes('top company') || lower.includes('top companies') || lower.includes('company performance') || (lower.includes('performance') && !lower.includes('model')))) {
+  // Ambiguity Check 1: "best performing", "top company" (where specific metric is missing)
+  const companyAmbiguousRegex = /\b(best|top|leading|highest|strongest)\s+(performing\s+)?(ai\s+)?(compan(y|ies)|enterprises?|firms?|labs?)\b|\bcompany\s+performance\b|\bbest\s+performing\b/i;
+  const hasExplicitMetric = /\b(revenues?|profits?|investments?|scores?|benchmarks?|market shares?|growths?|budgets?|rois?|costs?|parameters?)\b/i.test(lower);
+
+  if (!isModelScoreQuery && companyAmbiguousRegex.test(lower) && !hasExplicitMetric) {
     return {
       status: 'CLARIFICATION_NEEDED',
       sessionId: 'client-session-' + Date.now(),
@@ -263,8 +240,9 @@ export function handleFallbackAnalyze(question) {
     };
   }
 
-  // Ambiguity Check 2: "money"
-  if (lower.includes('money') || lower.includes('earn') || lower.includes('made')) {
+  // Ambiguity Check 2: "money" or "made the most" without specifying revenue vs profit
+  const moneyRegex = /\b(made\s+the\s+most(\s+money)?|most\s+money|highest\s+earning|richest)\b/i;
+  if (moneyRegex.test(lower) && !hasExplicitMetric) {
     return {
       status: 'CLARIFICATION_NEEDED',
       sessionId: 'client-session-' + Date.now(),
@@ -284,8 +262,9 @@ export function handleFallbackAnalyze(question) {
     };
   }
 
-  // Ambiguity Check 3: "models" without metric
-  if (lower.includes('model') && !lower.includes('score') && !lower.includes('parameter') && !lower.includes('category')) {
+  // Ambiguity Check 3: Models without a ranking metric
+  const topModelsRegex = /\b(top|best|leading|highest\s+rated)\s+(ai\s+)?models?\b/i;
+  if (topModelsRegex.test(lower) && !hasExplicitMetric) {
     return {
       status: 'CLARIFICATION_NEEDED',
       sessionId: 'client-session-' + Date.now(),
@@ -336,8 +315,20 @@ export function handleFallbackAnalyze(question) {
     return buildCompaniesResponse(question);
   }
 
-  // Direct financial queries
-  return buildResolvedResponse(question, 'highest_revenue');
+  if (lower.includes('revenue') || lower.includes('financial') || lower.includes('earning') || lower.includes('sales')) {
+    return buildResolvedResponse(question, 'highest_revenue');
+  }
+
+  // If not matched to any database schema table, return light warning instead of default company data
+  return {
+    status: 'NO_DATA_AVAILABLE',
+    sessionId: 'session-no-data',
+    originalQuestion: question,
+    clarification: null,
+    generatedSql: null,
+    explanation: 'No relevant data available for this query in the database. The database catalog contains records for AI companies, AI models, financial performance, research projects, market metrics, and AI investments.',
+    data: null,
+  };
 }
 
 function buildProjectsResponse(question) {
