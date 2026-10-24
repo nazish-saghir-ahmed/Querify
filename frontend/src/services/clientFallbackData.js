@@ -184,8 +184,11 @@ export function getFallbackTableSample(tableName) {
 export function handleFallbackAnalyze(question) {
   const lower = (question || '').toLowerCase().trim();
 
-  // Ambiguity Check 1: "best performing", "top companies"
-  if (lower.includes('best') || lower.includes('top company') || lower.includes('top companies') || lower.includes('performance')) {
+  // If user is explicitly querying models or performance score, do NOT treat as company ambiguity
+  const isModelScoreQuery = lower.includes('score') || (lower.includes('model') && (lower.includes('performance') || lower.includes('benchmark') || lower.includes('param')));
+
+  // Ambiguity Check 1: "best performing", "top companies" (for general corporate performance)
+  if (!isModelScoreQuery && (lower.includes('best') || lower.includes('top company') || lower.includes('top companies') || lower.includes('company performance') || (lower.includes('performance') && !lower.includes('model')))) {
     return {
       status: 'CLARIFICATION_NEEDED',
       sessionId: 'client-session-' + Date.now(),
@@ -405,18 +408,30 @@ export function handleFallbackClarify(sessionId, selectedOptionId) {
 }
 
 function buildResolvedResponse(question, metric) {
+  const lowerQ = (question || '').toLowerCase();
   if (metric === 'model_score' || metric === 'model_params') {
     const isScore = metric === 'model_score';
-    const sql = isScore
-      ? 'SELECT m.model_name, c.company_name, m.model_category, m.performance_score FROM ai_models m JOIN companies c ON m.company_id = c.company_id ORDER BY m.performance_score DESC LIMIT 10;'
+    const isAbove90 = lowerQ.includes('90') || lowerQ.includes('above 90');
+
+    let sql = isScore
+      ? (isAbove90
+          ? 'SELECT model_name, company_name, model_category, performance_score FROM ai_models WHERE performance_score > 90 ORDER BY performance_score DESC;'
+          : 'SELECT m.model_name, c.company_name, m.model_category, m.performance_score FROM ai_models m JOIN companies c ON m.company_id = c.company_id ORDER BY m.performance_score DESC LIMIT 10;')
       : 'SELECT m.model_name, c.company_name, m.parameter_count_billions, m.release_year FROM ai_models m JOIN companies c ON m.company_id = c.company_id WHERE m.parameter_count_billions IS NOT NULL ORDER BY m.parameter_count_billions DESC LIMIT 10;';
 
-    const rows = [...SAMPLE_MODELS];
+    let rows = [...SAMPLE_MODELS];
     if (isScore) {
+      if (isAbove90) {
+        rows = rows.filter(r => r.performance_score > 90);
+      }
       rows.sort((a, b) => b.performance_score - a.performance_score);
     } else {
       rows.sort((a, b) => b.parameter_count_billions - a.parameter_count_billions);
     }
+
+    const explanation = isScore
+      ? (isAbove90 ? 'Filters and ranks frontier AI models with a benchmark evaluation score strictly above 90.' : 'Ranks AI models by standardized evaluation score.')
+      : 'Ranks AI models by total parameter count in billions.';
 
     return {
       status: 'SQL_GENERATED',
@@ -424,7 +439,7 @@ function buildResolvedResponse(question, metric) {
       originalQuestion: question,
       clarification: null,
       generatedSql: sql,
-      explanation: isScore ? 'Ranks AI models by standardized evaluation score.' : 'Ranks AI models by total parameter count in billions.',
+      explanation,
       data: {
         status: 'SUCCESS',
         columns: isScore ? ['model_name', 'company_name', 'model_category', 'performance_score'] : ['model_name', 'company_name', 'parameter_count_billions', 'release_year'],
@@ -432,7 +447,7 @@ function buildResolvedResponse(question, metric) {
         rowCount: rows.length,
         executionTimeMs: 14,
         sql,
-        explanation: isScore ? 'Ranks AI models by standardized evaluation score.' : 'Ranks AI models by total parameter count in billions.',
+        explanation,
         chartSuggestion: {
           type: 'bar',
           title: isScore ? 'Performance score by Model name' : 'Parameter count by Model name',
