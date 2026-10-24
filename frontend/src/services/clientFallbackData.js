@@ -187,9 +187,10 @@ export function isDomainRelevant(text) {
 
   // Obvious off-topic keywords
   const offTopicKeywords = [
+    'hotel', 'hostel', 'motel', 'resort', 'lodging', 'dorm', 'room',
     'weather', 'recipe', 'cook', 'baking', 'bake', 'joke', 'song', 'movie', 'film',
     'president', 'capital of', 'flight', 'airline', 'car', 'automobile',
-    'hotel', 'game', 'sport', 'football', 'soccer', 'cricket', 'baseball',
+    'game', 'sport', 'football', 'soccer', 'cricket', 'baseball',
     'salary', 'employee', 'doctor', 'hospital', 'school', 'university',
     'poem', 'story', 'planet', 'history of', 'how are you', 'who are you',
     'what is your name', 'translate', 'dress', 'shoe', 'food', 'restaurant',

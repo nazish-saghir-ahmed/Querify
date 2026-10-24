@@ -8,6 +8,7 @@ import {
   parseBody,
   maybeProxyToBackend,
   detectAmbiguity,
+  isDomainRelevant,
   executeSqlLocally,
 } from '../_utils.js';
 
@@ -43,6 +44,19 @@ export default async function handler(req, res) {
       },
       generatedSql: null,
       explanation: null,
+      data: null,
+    });
+  }
+
+  // Out-of-Domain Guard: Check if query relates to the database catalog
+  if (!isDomainRelevant(question)) {
+    return sendJson(res, 200, {
+      status: 'NO_DATA_AVAILABLE',
+      sessionId,
+      originalQuestion: question,
+      clarification: null,
+      generatedSql: null,
+      explanation: 'No relevant data available for this query in the database. The database catalog contains records for AI companies, AI models, financial performance, research projects, market metrics, and AI investments.',
       data: null,
     });
   }

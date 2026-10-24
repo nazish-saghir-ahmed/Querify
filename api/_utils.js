@@ -195,6 +195,59 @@ export function validateSqlSecurity(sql) {
 }
 
 /**
+ * Checks if the question has any relevance to the 6 database schema tables
+ */
+export function isDomainRelevant(text) {
+  if (!text || !text.trim()) return false;
+  const lower = text.toLowerCase().trim();
+
+  // Explicit off-topic keywords
+  const offTopicKeywords = [
+    'hotel', 'hostel', 'motel', 'resort', 'flight', 'airline', 'airport',
+    'car', 'automobile', 'vehicle', 'weather', 'climate', 'temperature',
+    'recipe', 'cook', 'baking', 'bake', 'food', 'restaurant', 'meal',
+    'joke', 'song', 'music', 'singer', 'movie', 'film', 'actor', 'cinema',
+    'president', 'prime minister', 'capital of', 'politics', 'election',
+    'game', 'sport', 'football', 'soccer', 'cricket', 'basketball', 'tennis',
+    'salary', 'employee', 'staff', 'worker', 'hire', 'resume',
+    'doctor', 'hospital', 'patient', 'disease', 'medicine', 'drug',
+    'school', 'university', 'college', 'student', 'teacher', 'course',
+    'poem', 'poetry', 'story', 'novel', 'planet', 'solar system', 'galaxy',
+    'dog', 'cat', 'pet', 'animal', 'dress', 'shoe', 'clothing',
+    'travel', 'vacation', 'tourism', 'ticket', 'booking', 'room'
+  ];
+
+  if (offTopicKeywords.some(kw => lower.includes(kw))) {
+    return false;
+  }
+
+  // Schema-relevant terms and known entities in Querify's catalog
+  const domainKeywords = [
+    'company', 'companies', 'firm', 'firms', 'enterprise', 'enterprises', 'startup', 'startups',
+    'corporation', 'corporations', 'conglomerate', 'tech', 'technology',
+    'model', 'models', 'parameter', 'parameters', 'benchmark', 'benchmarks', 'score', 'scores',
+    'revenue', 'revenues', 'profit', 'profits', 'cost', 'costs', 'expense', 'expenses',
+    'margin', 'margins', 'growth', 'growth rate', 'fiscal', 'financial', 'financials', 'earning', 'earnings',
+    'income', 'money', 'dollar', 'dollars', 'millions', 'billions',
+    'invest', 'invests', 'investment', 'investments', 'investor', 'investors', 'funding', 'round', 'rounds',
+    'roi', 'capital', 'valuation', 'valuations', 'seed', 'series a', 'series b',
+    'project', 'projects', 'research', 'lab', 'labs', 'laboratory', 'laboratories',
+    'budget', 'budgets', 'robot', 'robots', 'robotics', 'autonomous', 'vision', 'nlp',
+    'market', 'markets', 'share', 'market share', 'market cap', 'customer', 'customers',
+    'user', 'users', 'index', 'performance index', 'pe ratio',
+    'nvidia', 'openai', 'microsoft', 'google', 'deepmind', 'anthropic',
+    'meta', 'apple', 'amazon', 'aws', 'ibm', 'watson', 'baidu', 'databricks',
+    'cohere', 'mistral', 'hugging face', 'stability', 'scale ai', 'inflection',
+    'gpt', 'gpt-4', 'claude', 'llama', 'gemini', 'grok', 'nemotron', 'dall-e', 'sora',
+    'country', 'countries', 'headquarter', 'headquarters', 'hq', 'city', 'founded',
+    'ai', 'artificial intelligence', 'machine learning', 'deep learning', 'llm', 'llms',
+    'multimodal', 'reasoning'
+  ];
+
+  return domainKeywords.some(kw => lower.includes(kw));
+}
+
+/**
  * Semantic Clarification Engine
  */
 export function detectAmbiguity(question) {

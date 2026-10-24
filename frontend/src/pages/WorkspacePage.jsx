@@ -76,14 +76,14 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
 
       if (response.status === 'CLARIFICATION_NEEDED') {
         setClarification(response.clarification);
+      } else if (response.status === 'NO_DATA_AVAILABLE' || (!response.generatedSql && response.explanation)) {
+        setGeneratedSql('');
+        setResultData(null);
+        setWarning(response.explanation || 'No relevant data available for this query in the database.');
       } else if (response.status === 'SQL_GENERATED') {
         setGeneratedSql(response.generatedSql);
         setExplanation(response.explanation);
         setResultData(response.data);
-      } else if (response.status === 'NO_DATA_AVAILABLE') {
-        setGeneratedSql('');
-        setResultData(null);
-        setWarning(response.explanation || 'No relevant data available for this query in the database.');
       }
     } catch (err) {
       setError(err.message || 'Failed to process natural language question');

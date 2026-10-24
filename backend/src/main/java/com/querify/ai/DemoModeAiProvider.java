@@ -503,7 +503,7 @@ public class DemoModeAiProvider implements AiProvider {
         if (lower.contains("weather") || lower.contains("recipe") || lower.contains("cook") || 
             lower.contains("joke") || lower.contains("song") || lower.contains("movie") || 
             lower.contains("president") || lower.contains("capital of") || lower.contains("flight") || 
-            lower.contains("car") || lower.contains("hotel") || lower.contains("game") || 
+            lower.contains("car") || lower.contains("hotel") || lower.contains("hostel") || lower.contains("resort") || lower.contains("game") || 
             lower.contains("sport") || lower.contains("football") || lower.contains("cricket") ||
             lower.contains("salary") || lower.contains("employee") || lower.contains("doctor") ||
             lower.contains("hospital") || lower.contains("school") || lower.contains("university") ||
