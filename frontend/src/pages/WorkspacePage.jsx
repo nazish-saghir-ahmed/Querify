@@ -10,7 +10,7 @@ import { generateQueryEmbedding, computeTableRelevance } from '../services/openr
 import {
   Terminal, Table as TableIcon, BarChart3, AlertCircle, RotateCcw,
   ShieldCheck, Database, CornerDownLeft, Sparkles, HelpCircle, Layers,
-  ChevronRight, ArrowRight
+  ChevronRight, ArrowRight, X, Cpu, Search, CheckCircle2
 } from 'lucide-react';
 
 export default function WorkspacePage({ initialQuestion = '', onClearInitialQuestion }) {
@@ -29,7 +29,7 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
   const [isExecuting, setIsExecuting] = useState(false);
   const [error, setError] = useState(null);
 
-  // Grouped example questions as explicitly requested
+  // Grouped example questions
   const ambiguousQuestions = [
     { text: 'Show me the best performing AI companies', isAmbiguous: true },
     { text: 'Which AI company made the most money?', isAmbiguous: true },
@@ -54,7 +54,7 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
     if (!q) return;
 
     setIsLoading(true);
-    setLoadingStep('Analyzing semantic intent and inspecting ambiguity...');
+    setLoadingStep('Evaluating semantic intent and checking ambiguity...');
     setError(null);
     setClarification(null);
 
@@ -135,35 +135,47 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
 
   return (
     <div className="w-full max-w-[1150px] mx-auto px-4 sm:px-6 py-8 space-y-6">
-      {/* 1. QUERY CONSOLE INPUT CARD */}
-      <section className="p-6 rounded-2xl bg-[#111827] border border-[#1F2E47] shadow-card space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Terminal className="w-4 h-4 text-blue-400" />
-            <h2 className="text-sm font-semibold text-white uppercase tracking-wider font-mono">
-              Natural Language Console
-            </h2>
+      {/* 1. QUERY CONSOLE COMMAND BAR */}
+      <section className="relative p-6 sm:p-7 rounded-2xl bg-[#0B132B]/85 border border-blue-500/20 shadow-2xl backdrop-blur-xl space-y-5 transition-all">
+        {/* Ambient Top Glow Line */}
+        <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-blue-500/40 to-transparent" />
+
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-blue-600/20 border border-blue-500/30 text-blue-400">
+              <Terminal className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-white uppercase tracking-wider font-mono flex items-center gap-2">
+                <span>Natural Language Console</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+              </h2>
+              <p className="text-[11px] text-slate-400 font-sans">
+                Type natural queries — ambiguity triggers proactive disambiguation before execution
+              </p>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1.5 text-[11px] font-mono font-bold text-white bg-blue-600/30 px-3 py-1 rounded-full border border-blue-400/40">
-              <ShieldCheck className="w-3.5 h-3.5 text-white" />
+          <div className="flex items-center gap-2.5">
+            <span className="flex items-center gap-1.5 text-[11px] font-mono font-bold text-white bg-blue-950/80 px-3 py-1.5 rounded-full border border-blue-500/30 shadow-sm">
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
               <span>AST Guard Active</span>
             </span>
+
             {(generatedSql || resultData || question) && (
               <button
                 onClick={handleReset}
-                className="flex items-center gap-1 text-xs font-mono text-blue-300 hover:text-white px-2 py-0.5 rounded hover:bg-blue-900/30 transition-colors"
-                title="Clear current session"
+                className="flex items-center gap-1.5 text-xs font-mono text-slate-300 hover:text-white px-3 py-1.5 rounded-xl bg-blue-950/40 border border-blue-800/40 hover:bg-blue-900/40 transition-colors cursor-pointer"
+                title="Clear current session and reset fields"
               >
-                <RotateCcw className="w-3 h-3" />
+                <RotateCcw className="w-3.5 h-3.5 text-blue-400" />
                 <span>Reset</span>
               </button>
             )}
           </div>
         </div>
 
-        {/* Input Form */}
+        {/* Input Form with Command Bar Design */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -171,33 +183,54 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
           }}
           className="relative"
         >
-          <div className="relative flex items-center">
+          <div className="relative flex items-center group rounded-xl bg-[#080D1A]/90 border border-blue-600/30 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/25 transition-all shadow-inner">
+            <div className="pl-4 text-blue-400 shrink-0 select-none">
+              <Search className="w-4 h-4" />
+            </div>
+
             <input
               type="text"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               placeholder="e.g. Which AI companies have the highest revenue in 2024?"
               disabled={isLoading}
-              className="w-full px-4 py-3.5 bg-blue-950/30 border border-blue-800/40 rounded-xl text-sm sm:text-base text-white placeholder-blue-300/50 font-sans focus:outline-none focus:border-blue-500 transition-colors disabled:opacity-50 pr-28 backdrop-blur-md"
+              className="w-full pl-3 pr-32 py-3.5 bg-transparent text-sm sm:text-base text-white placeholder-slate-500 font-sans focus:outline-none transition-colors disabled:opacity-50"
             />
+
+            {question && !isLoading && (
+              <button
+                type="button"
+                onClick={() => setQuestion('')}
+                className="p-1.5 mr-2 rounded-lg text-slate-400 hover:text-white hover:bg-blue-900/40 transition-colors"
+                title="Clear input"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+
             <button
               type="submit"
               disabled={isLoading || !question.trim()}
-              className="absolute right-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all disabled:opacity-40 disabled:hover:bg-blue-600 shadow-midnight"
+              className="absolute right-2 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs flex items-center gap-1.5 transition-all disabled:opacity-40 disabled:hover:bg-blue-600 shadow-midnight cursor-pointer"
             >
-              <span>{isLoading ? 'Thinking...' : 'Query'}</span>
+              <span>{isLoading ? 'Processing' : 'Run Query'}</span>
               <CornerDownLeft className="w-3.5 h-3.5" />
             </button>
           </div>
         </form>
 
         {/* CLICKABLE EXAMPLE QUESTION CHIPS (SPLIT INTO AMBIGUOUS VS DIRECT) */}
-        <div className="pt-2 border-t border-blue-900/30 space-y-3">
+        <div className="pt-3 border-t border-blue-900/30 space-y-3.5">
           {/* Ambiguous Prompts */}
           <div>
-            <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-white mb-2">
-              <HelpCircle className="w-3.5 h-3.5 text-blue-400" />
-              <span>Ambiguous Questions (Triggers Clarification):</span>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-blue-200">
+                <HelpCircle className="w-3.5 h-3.5 text-blue-400" />
+                <span>Ambiguous Questions (Triggers Clarification Dialogue):</span>
+              </div>
+              <span className="text-[10px] font-mono text-slate-400 hidden sm:inline">
+                Halts execution & prompts options
+              </span>
             </div>
             <div className="flex flex-wrap gap-2">
               {ambiguousQuestions.map((q, idx) => (
@@ -216,9 +249,14 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
 
           {/* Direct Prompts */}
           <div>
-            <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-blue-200 mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-white" />
-              <span>Direct Analytical Questions:</span>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-slate-300">
+                <Sparkles className="w-3.5 h-3.5 text-blue-400" />
+                <span>Direct Analytical Questions:</span>
+              </div>
+              <span className="text-[10px] font-mono text-slate-400 hidden sm:inline">
+                Executes directly without clarification
+              </span>
             </div>
             <div className="flex flex-wrap gap-2">
               {directQuestions.map((q, idx) => (
@@ -237,31 +275,55 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
         </div>
       </section>
 
-      {/* 2. LOADING SKELETON */}
+      {/* 2. PROGRESSIVE PIPELINE LOADING STATE */}
       {isLoading && (
-        <section className="p-6 rounded-2xl bg-blue-950/20 border border-blue-800/40 backdrop-blur-xl space-y-4 animate-fade-in">
-          <div className="flex items-center gap-3">
-            <div className="w-4 h-4 rounded-full border-2 border-blue-400 border-t-transparent animate-spin" />
-            <span className="text-xs font-mono text-white">
-              {loadingStep || 'Evaluating semantic AST rules and querying catalog...'}
+        <section className="p-6 rounded-2xl bg-[#0B132B]/80 border border-blue-500/30 backdrop-blur-xl space-y-4 animate-fade-in shadow-xl">
+          <div className="flex items-center justify-between border-b border-blue-900/40 pb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-4 h-4 rounded-full border-2 border-blue-400 border-t-transparent animate-spin" />
+              <span className="text-xs font-mono font-bold text-white">
+                {loadingStep || 'Evaluating semantic AST rules and querying catalog...'}
+              </span>
+            </div>
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-blue-600/30 text-white border border-blue-400/40">
+              Live Pipeline Active
             </span>
           </div>
 
-          <div className="space-y-2.5 pt-2">
-            <div className="h-4 bg-blue-950/60 rounded-md w-3/4 animate-pulse" />
-            <div className="h-4 bg-blue-950/60 rounded-md w-1/2 animate-pulse" />
-            <div className="h-24 bg-blue-950/30 rounded-xl border border-blue-900/40 animate-pulse" />
+          {/* Stepper Status Indicators */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] font-mono">
+            <div className="p-2.5 rounded-xl bg-blue-950/40 border border-blue-800/40 flex items-center gap-2 text-blue-200">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse shrink-0" />
+              <span className="truncate">1. Intent Parsing</span>
+            </div>
+            <div className="p-2.5 rounded-xl bg-blue-950/40 border border-blue-800/40 flex items-center gap-2 text-blue-200">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse shrink-0" />
+              <span className="truncate">2. Ambiguity Check</span>
+            </div>
+            <div className="p-2.5 rounded-xl bg-blue-950/40 border border-blue-800/40 flex items-center gap-2 text-blue-200">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse shrink-0" />
+              <span className="truncate">3. AST Security Guard</span>
+            </div>
+            <div className="p-2.5 rounded-xl bg-blue-950/40 border border-blue-800/40 flex items-center gap-2 text-blue-200">
+              <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse shrink-0" />
+              <span className="truncate">4. SQL Synthesis</span>
+            </div>
+          </div>
+
+          <div className="space-y-2 pt-2">
+            <div className="h-3.5 bg-blue-950/70 rounded-md w-3/4 animate-pulse" />
+            <div className="h-3.5 bg-blue-950/70 rounded-md w-1/2 animate-pulse" />
           </div>
         </section>
       )}
 
       {/* 3. ERROR BANNER */}
       {error && (
-        <section className="p-4 rounded-xl bg-blue-950/40 border border-blue-500/50 text-white text-xs sm:text-sm flex items-start gap-3 backdrop-blur-xl">
-          <AlertCircle className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+        <section className="p-4 rounded-xl bg-red-950/30 border border-red-500/40 text-white text-xs sm:text-sm flex items-start gap-3 backdrop-blur-xl animate-fade-in">
+          <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <p className="font-bold text-white">Execution Rejected</p>
-            <p className="font-mono text-xs text-blue-200">{error}</p>
+            <p className="font-bold text-red-200">Execution Rejected or Security Policy Triggered</p>
+            <p className="font-mono text-xs text-red-300/90">{error}</p>
           </div>
         </section>
       )}
@@ -286,26 +348,26 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
         />
       )}
 
-      {/* 6. OPENROUTER VECTOR INSPECTOR (COLLAPSIBLE / OPTIONAL) */}
+      {/* 6. OPENROUTER VECTOR INSPECTOR (Fixed Props) */}
       {embeddingData && !isLoading && (
         <EmbeddingInspector
-          embedding={embeddingData.embedding}
-          model={embeddingData.model}
+          embeddingData={embeddingData}
+          queryText={question}
           tableRelevance={tableRelevance}
         />
       )}
 
       {/* 7. RESULT TABS & VISUALIZATION */}
       {resultData && !isLoading && (
-        <section className="space-y-4">
-          <div className="flex items-center justify-between border-b border-[#1F2E47] pb-3">
-            <div className="flex items-center gap-2">
+        <section className="space-y-4 animate-fade-in">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-blue-900/40 pb-3">
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-blue-950/60 border border-blue-800/40">
               <button
                 onClick={() => setViewMode('table')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   viewMode === 'table'
-                    ? 'bg-blue-600 text-white font-semibold shadow-sm'
-                    : 'text-slate-400 hover:text-white bg-[#111827] border border-[#1F2E47]'
+                    ? 'bg-blue-600 text-white shadow-midnight'
+                    : 'text-slate-400 hover:text-white'
                 }`}
               >
                 <TableIcon className="w-3.5 h-3.5" />
@@ -314,10 +376,10 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
 
               <button
                 onClick={() => setViewMode('chart')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   viewMode === 'chart'
-                    ? 'bg-blue-600 text-white font-semibold shadow-sm'
-                    : 'text-slate-400 hover:text-white bg-[#111827] border border-[#1F2E47]'
+                    ? 'bg-blue-600 text-white shadow-midnight'
+                    : 'text-slate-400 hover:text-white'
                 }`}
               >
                 <BarChart3 className="w-3.5 h-3.5" />
@@ -325,9 +387,17 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
               </button>
             </div>
 
-            <span className="text-xs font-mono text-slate-400">
-              Query returned {resultData.rowCount ?? resultData.rows?.length ?? 0} verified records
-            </span>
+            <div className="flex items-center gap-3 text-xs font-mono text-slate-300">
+              <span className="flex items-center gap-1 text-slate-400">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-400" />
+                <span>{resultData.rowCount ?? resultData.rows?.length ?? 0} verified records</span>
+              </span>
+              {resultData.executionTimeMs !== undefined && (
+                <span className="px-2 py-0.5 rounded bg-blue-950/70 border border-blue-800/40 text-blue-300">
+                  {resultData.executionTimeMs}ms
+                </span>
+              )}
+            </div>
           </div>
 
           {viewMode === 'table' ? (
@@ -338,18 +408,31 @@ export default function WorkspacePage({ initialQuestion = '', onClearInitialQues
         </section>
       )}
 
-      {/* 8. FRIENDLY EMPTY STATE (WHEN NO QUERY IS RUN YET) */}
+      {/* 8. PROFESSIONAL EMPTY STATE (WHEN NO QUERY IS RUN YET) */}
       {!isLoading && !generatedSql && !resultData && !error && (
-        <section className="py-12 px-6 rounded-2xl bg-[#111827] border border-[#1F2E47] text-center space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/30 flex items-center justify-center text-blue-400 mx-auto">
-            <Database className="w-5 h-5" />
+        <section className="py-14 px-6 rounded-2xl bg-[#0B132B]/60 border border-blue-900/40 text-center space-y-4 backdrop-blur-xl">
+          <div className="w-12 h-12 rounded-2xl bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400 mx-auto shadow-inner">
+            <Database className="w-6 h-6" />
           </div>
-          <h3 className="text-sm font-semibold text-white font-sans">
-            Ready to Translate Analytical Inquiries
-          </h3>
-          <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
-            Click one of the sample prompt chips above or type a natural language inquiry. If your question contains ambiguity, Querify will ask for clarification before querying the database.
-          </p>
+          <div className="space-y-1.5 max-w-lg mx-auto">
+            <h3 className="text-base font-bold text-white font-display">
+              Ready to Translate Analytical Inquiries
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed font-sans">
+              Click one of the prompt chips above or type your own question. If ambiguity is detected, Querify halts execution and guides you to the exact business metric.
+            </p>
+          </div>
+          <div className="pt-2 flex items-center justify-center gap-4 text-xs font-mono text-slate-400">
+            <span className="flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5 text-blue-400" />
+              SELECT-only Guarantee
+            </span>
+            <span>•</span>
+            <span className="flex items-center gap-1.5">
+              <Cpu className="w-3.5 h-3.5 text-blue-400" />
+              OpenRouter 2048-dim Embeddings
+            </span>
+          </div>
         </section>
       )}
     </div>

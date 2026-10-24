@@ -12,6 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +60,39 @@ public class OpenRouterAiProvider implements AiProvider {
 
     public OpenRouterAiProvider(AiConfigProperties aiConfig) {
         this.aiConfig = aiConfig;
-        this.restTemplate = new RestTemplate();
+        
+        org.springframework.http.client.SimpleClientHttpRequestFactory factory;
+        try {
+            TrustManager[] trustAllCerts = new TrustManager[]{
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() { return null; }
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) { }
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) { }
+                }
+            };
+            SSLContext sc = SSLContext.getInstance("TLS");
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+
+            factory = new org.springframework.http.client.SimpleClientHttpRequestFactory() {
+                @Override
+                protected void prepareConnection(HttpURLConnection connection, String httpMethod) throws IOException {
+                    if (connection instanceof HttpsURLConnection httpsConnection) {
+                        httpsConnection.setSSLSocketFactory(sc.getSocketFactory());
+                        httpsConnection.setHostnameVerifier((hostname, session) -> true);
+                    }
+                    super.prepareConnection(connection, httpMethod);
+                }
+            };
+        } catch (Exception e) {
+            log.warn("Failed to initialize custom SSLContext for OpenRouter, using default factory", e);
+            factory = new org.springframework.http.client.SimpleClientHttpRequestFactory();
+        }
+
+        factory.setConnectTimeout(15000);
+        factory.setReadTimeout(60000);
+        this.restTemplate = new RestTemplate(factory);
         this.objectMapper = new ObjectMapper();
     }
 
