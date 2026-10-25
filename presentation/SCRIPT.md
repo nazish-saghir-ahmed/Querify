@@ -1,52 +1,65 @@
-# Querify: Executive Presentation & Demonstration Script
+# Querify: Executive Viva Presentation & Demonstration Script
 
-> **Target Audience:** Professors, Viva Examiners, Technical Evaluators, or Executive Stakeholders  
-> **Total Duration:** 3 to 4 Minutes (Punchy, High-Impact, Zero Theory Fluff)  
-> **Slide Deck URL / File:** `presentation/index.html` (Double-click to open in any browser)  
+> **Project Name:** Querify (Text-to-SQL Clarification Engine)  
+> **Presenter:** Nazish Saghir Ahmed (Lead Full-Stack & AI Engineer)  
+> **Total Duration:** ~3.5 Minutes (High-Impact, Visual-Centric, Zero Theory Fluff)  
+> **Slide Deck File:** `presentation/index.html` (Double-click to open in any web browser)  
 > **Live App URL:** `https://querify-nine.vercel.app` (or local `http://localhost:5173`)
 
 ---
 
-## Slide Navigation & Keyboard Shortcuts
+## ⌨️ Slide Navigation Shortcuts
 - `→` / `Space`: Next Slide
 - `←`: Previous Slide
-- `S`: Toggle On-Screen Speaker Teleprompter Drawer
+- `S`: Toggle On-Screen Speaker Script / Teleprompter
+- `F`: Toggle Fullscreen Presentation Mode
 
 ---
 
 ## 🎙️ Slide-by-Slide Script & Visual Cues
 
-### Slide 1: The Industry Blind Spot (Why Naive Text-to-SQL Fails)
-- **Time:** 40 seconds
-- **On Screen:** Split comparison: Red card (Naive Guesswork) vs. Green card (Querify Clarification).
+### Slide 1: Introduction & Project Identity
+- **Time:** 30 seconds
+- **On Screen:** Large Querify Branding, System Tags (Spring Boot, React 18, JSqlParser, MySQL), and Presenter Card (**Nazish Saghir Ahmed**).
 - **Spoken Script:**
-  > "Good morning/afternoon. Today I am presenting **Querify**.
+  > "Good morning/afternoon respected examiners and professors. My name is **Nazish Saghir Ahmed**, and today I am excited to present **Querify**: a stateful Text-to-SQL Clarification Engine.
   > 
-  > In enterprise data systems, Text-to-SQL is supposed to allow anyone to query databases in plain English. But traditional LLMs have a fatal blind spot: **they guess when questions are ambiguous.**
-  > 
-  > For example, if an executive asks: *'Show me the best performing AI companies'*, a standard LLM blindly assumes 'best' means revenue. It completely ignores net profit, revenue growth rate, or ROI. The user receives a confident answer that is fundamentally misleading.
-  > 
-  > Querify fixes this by replacing dangerous guesswork with a stateful **Clarification Engine** that halts execution, prompts the user for clarification, and guarantees deterministic truth."
-- **Visual Cue:** *Point to the red card showing the LLM guessing, then point to the green card showing Querify's targeted options.*
+  > Querify allows non-technical business users to ask complex questions in plain English and receive instant, verified relational database insights. Built with Java 17, Spring Boot 3, and React 18, Querify solves the most critical flaw in modern relational AI: **silent guesswork and security vulnerabilities**."
+- **Visual Cue:** *Greet the audience, introduce your name and role, and point to the core tagline: 'Ask in English. Understand your data.'*
 
 ---
 
-### Slide 2: The Three Pillars of Querify
+### Slide 2: The Fatal Flaw of Naive Text-to-SQL
+- **Time:** 40 seconds
+- **On Screen:** Visual Split: Red Danger Card (Naive LLM Guesswork) vs. Green Highlight Card (Querify Clarification Dialogue).
+- **Spoken Script:**
+  > "Let us start with the core problem. Today, when businesses use raw LLMs like ChatGPT or naive Text-to-SQL systems, there is a dangerous blind spot: **ambiguity**.
+  > 
+  > When an executive asks: *'Show me the best performing AI companies'*, what does 'best' actually mean? Does it mean highest gross revenue? Net profit? Year-over-year revenue growth? Or standardized model evaluation score?
+  > 
+  > A standard LLM guesses blindly. It picks revenue, ignoring profit or growth. The user receives a confident answer that is fundamentally misleading.
+  > 
+  > Querify fixes this by introducing a stateful **Clarification Engine** that halts execution, prompts the user with targeted disambiguation options, and guarantees deterministic truth."
+- **Visual Cue:** *Point to the red card showing the LLM guessing, then contrast with the green card showing Querify's structured options.*
+
+---
+
+### Slide 3: The Three Pillars of Querify
 - **Time:** 35 seconds
-- **On Screen:** 3 visual cards: Ambiguity Detection, AST Security Guard, Instant Visual Insights.
+- **On Screen:** 3 visual glassmorphism cards: Ambiguity Detection, AST Security Guard, and Instant Visual Insights.
 - **Spoken Script:**
   > "Querify solves this through three core architectural pillars:
   > 
-  > 1. **Semantic Ambiguity Detection:** Our engine analyzes polysemous business vocabulary like *'best'*, *'top'*, or *'money'*, halting execution until the user's intent is confirmed.
-  > 2. **AST Security Guard:** We parse the generated SQL into an Abstract Syntax Tree using **JSqlParser**. It physically prevents SQL injections, statement chaining, or any data mutations.
+  > 1. **Semantic Ambiguity Detection:** Our engine analyzes polysemous business vocabulary like *'best'*, *'top'*, or *'money'*, halting execution until user intent is confirmed.
+  > 2. **AST Security Guard:** Using **JSqlParser**, we parse the generated SQL into an Abstract Syntax Tree to physically prevent any data modification, statement chaining, or injection.
   > 3. **Instant Visual Insights:** Results are automatically mapped into dynamic charts—Bar, Line, and Pie—with sub-20 millisecond execution."
-- **Visual Cue:** *Point to the 3 icons (Brain, Shield, Chart).*
+- **Visual Cue:** *Point to the 3 glowing icons (Brain, Shield, Chart).*
 
 ---
 
-### Slide 3: The 4-Step Deterministic Pipeline
+### Slide 4: The 4-Step Deterministic Engine
 - **Time:** 40 seconds
-- **On Screen:** Interactive pipeline flowchart (1. Intent Parsing → 2. Clarification → 3. AST Security → 4. Execution & Charts) + terminal audit trace.
+- **On Screen:** Horizontal pipeline flowchart (1. Intent Parsing ➔ 2. Clarification ➔ 3. AST Security ➔ 4. Execution & Charts) + terminal audit trace.
 - **Spoken Script:**
   > "Here is how a query flows through Querify:
   > 
@@ -54,11 +67,11 @@
   > - **Step 2:** If ambiguity is detected, the engine halts and creates an in-memory session with structured disambiguation choices.
   > - **Step 3:** The confirmed query passes through our AST Security Guard, verifying that it is strictly a read-only SELECT with whitelisted tables and an enforced `LIMIT 100`.
   > - **Step 4:** The query executes through our connection pool in under 20 milliseconds, returning verified records, copyable SQL, and dynamic charts."
-- **Visual Cue:** *Trace the 4 step badges horizontally across the screen.*
+- **Visual Cue:** *Trace the 4 step numbers horizontally across the screen.*
 
 ---
 
-### Slide 4: Enterprise AST Security Barrier
+### Slide 5: The AST Security Barrier
 - **Time:** 35 seconds
 - **On Screen:** Rejection Rules (Red) vs. Enforced Execution Controls (Green).
 - **Spoken Script:**
@@ -73,11 +86,11 @@
 
 ---
 
-### Slide 5: Performance & Accuracy Proof
+### Slide 6: Performance & Accuracy Proof
 - **Time:** 35 seconds
-- **On Screen:** 4 big metric cards (<20ms latency, 100% read-only safety, 0% hallucinations, 6 tables) + Chart.js Bar Chart.
+- **On Screen:** 4 Big Stat Numbers (<20ms, 100% read-only, 0% hallucinations, 6 tables) + Interactive Chart.js Graph.
 - **Spoken Script:**
-  > "Here are the benchmark results.
+  > "Here are the empirical benchmark numbers:
   > 
   > Notice the chart on the right: on ambiguous business prompts, standard LLMs drop below **35% accuracy** because they guess blindly. Querify achieves **98%+ intent accuracy** because it clarifies first.
   > 
@@ -86,14 +99,14 @@
 
 ---
 
-### Slide 6: Ready for Live Demonstration
+### Slide 7: Ready for Live Demonstration
 - **Time:** 20 seconds
-- **On Screen:** 3 tech stack badges (Vercel Edge, Spring Boot 3 + MySQL, React 18 + Vite).
+- **On Screen:** 3 tech stack cards (Vercel Edge, Spring Boot 3 + MySQL, React 18 + Vite).
 - **Spoken Script:**
-  > "Querify is fully implemented and live right now. It is built with a Java 17 Spring Boot backend and a React 18 frontend with obsidian titanium styling.
+  > "Querify is fully implemented and live right now. It is deployed on Vercel Edge with zero-backend fallbacks and supports full local full-stack development with MySQL.
   > 
-  > Let's switch directly to the live workspace to demonstrate the Clarification Engine in real time."
-- **Visual Cue:** *Click over to the live browser tab at `querify-nine.vercel.app`.*
+  > I will now switch to the live workspace to demonstrate the Clarification Engine in real time with the query: *'Show me the best performing AI companies'*."
+- **Visual Cue:** *Open the live application at `querify-nine.vercel.app` or local port 5173 and demonstrate the live query.*
 
 ---
 
@@ -103,11 +116,11 @@
    - Click or type: `"Show me the best performing AI companies"`
    - Explain: *"Notice it does not guess. The Clarification Modal appears asking whether we want Revenue, Net Profit, Growth Rate, or ROI."*
 2. **Resolve Ambiguity:**
-   - Select **"Highest Revenue"** → Click **"Confirm"**.
+   - Select **"Highest Revenue"** ➔ Click **"Confirm & Generate SQL"**.
    - Show the generated SQL with the green `AST Security Verified` badge.
    - Show the resulting data table and toggle to the **Bar Chart**.
 3. **Show Out-of-Domain Safety:**
-   - Type `"give me top hotels"`.
+   - Type `"hotels"` or `"give me top hostels"`.
    - Explain: *"Hotels do not exist in our catalog. Rather than hallucinating mock records, Querify renders an amber warning stating it is outside the schema scope."*
 4. **Show Schema Explorer & History:**
    - Click **DB Explorer** to display the 6 relational tables and schema catalog.
